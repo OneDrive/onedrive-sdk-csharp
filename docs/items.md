@@ -17,7 +17,7 @@ Get an Item
 ---------------
 ### 1. By ID
 
-```
+```csharp
 var item = await oneDriveClient
                      .Items[itemId]
                      .Request()
@@ -26,7 +26,7 @@ var item = await oneDriveClient
 
 ### 2. By path
 
-```
+```csharp
 var item = await oneDriveClient
                      .Drive
                      .Root
@@ -36,7 +36,7 @@ var item = await oneDriveClient
 ```
 
 Access an item by parent reference path:
-```
+```csharp
 var item = await oneDriveClient
                      .ItemWithPath(parentItem.ParentReference.Path + "/" + parentItem.Name + "/relative/path")
                      .Request()
@@ -45,7 +45,7 @@ var item = await oneDriveClient
 
 Delete an Item
 ---------------
-```
+```csharp
 await oneDriveClient
           .Drive
           .Items[itemId]
@@ -58,7 +58,7 @@ Get Children for an Item
 
 More info about collections [here](/docs/collections.md).
 
-```
+```csharp
 await oneDriveClient
           .Drive
           .Items[itemId]
@@ -70,7 +70,7 @@ await oneDriveClient
 Uploading contents
 ------------------------------
 
-```
+```csharp
 using (contentStream)
 {
     var uploadedItem = await oneDriveClient
@@ -86,7 +86,7 @@ using (contentStream)
 Downloading contents
 ------------------------------
 
-```
+```csharp
 var contentStream = await oneDriveClient
                               .Drive
                               .Items[itemId]
@@ -99,7 +99,7 @@ Moving and updating an Item
 --------------
 To [move](https://dev.onedrive.com/items/move.htm) an item you must update its parent reference.
 
-```
+```csharp
 var updateItem = new Item { ParentReference = new ItemReference { Id = newParentId } };
 var itemWithUpdates = await oneDriveClient
                                 .Drive
@@ -110,7 +110,7 @@ var itemWithUpdates = await oneDriveClient
 
 To change an item's name you could:
 
-```
+```csharp
 var updateItem = new Item { Name = "New name!" };
 var itemWithUpdates = await oneDriveClient
                                 .Drive
@@ -124,7 +124,7 @@ Copy an Item
 ---------------
 Copying and item is an async action described [here](https://dev.onedrive.com/items/copy.htm).
 
-```
+```csharp
 var asyncStatus = await oneDriveClient
                             .Drive
                             .Items[itemId]
@@ -137,7 +137,7 @@ The `Copy` action returns an `IItemCopyAsyncMonitor` instance that has a method 
 
 To poll until the copy action completes:
 
-```
+```csharp
 var newItem = await asyncStatus.CompleteOperationAsync(null, CancellationToken.None);
 ```
 
