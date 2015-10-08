@@ -55,7 +55,7 @@ The OneDriveClient extensions available vary based on the build flavor of the pr
 
 `GetUniversalClient` calls `GetClientUsingOnlineIdAuthenticator` internally, using the [OnlineIdAuthenticator](https://msdn.microsoft.com/en-us/library/windows/apps/windows.security.authentication.onlineid.onlineidauthenticator.aspx) for authentication. `GetClientUsingWebAuthenticationBroker` uses the [WebAuthenticationBroker](https://msdn.microsoft.com/en-us/library/windows/apps/windows.security.authentication.web.webauthenticationbroker.aspx) in SSO mode for authentication.
 
-Authentication with both the OnlineIdAuthenticator and WebAuthenticationBroker requires your app be registered with the Windows Store first.
+Authentication with both the OnlineIdAuthenticator and WebAuthenticationBroker requires your app be associated with the Windows Store first.
 
 ### Authentication using OnlineIdAuthenticator
 
