@@ -35,7 +35,7 @@ Once you have an OneDriveClient that is authenticated you can begin to make call
 
 To retrieve a user's drive:
 
-```
+```csharp
     var drive = await oneDriveClient
                           .Drive
                           .Request()
@@ -46,7 +46,7 @@ To retrieve a user's drive:
 
 To get the current user's root folder of their drive:
 
-```
+```csharp
     var rootItem = await oneDriveClient
                              .Drive
                              .Root

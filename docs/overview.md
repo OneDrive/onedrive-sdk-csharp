@@ -65,7 +65,7 @@ Once you have built the request you call the `Request` method on the request bui
 
 For an item you call:
 
-```
+```csharp
 var itemRequest = oneDriveClient
                       .Drive
 					  .Items[itemId]
@@ -74,7 +74,7 @@ var itemRequest = oneDriveClient
 
 All request builders have a `Request` method that can generate a request object. Request objects may have different methods on them depending on the type of request. To get an item you call:
 
-```
+```csharp
 var item = await oneDriveClient
                      .Drive
 					 .Items[itemId]
@@ -88,7 +88,7 @@ See [items](/docs/items.md) for more info on items and [errors](/docs/errors.md)
 
 If you only want to retrieve certain properties of a resource you can select them. Here's how to get only the names and IDs of an item:
 
-```
+```csharp
 var item = await oneDriveClient
                      .Drive
 					 .Items[itemId]
@@ -101,7 +101,7 @@ All properties other than `Name` and `Id` will be null on the item.
 
 To expand certain properties on resources you can call a similar expand method, like this:
 
-```
+```csharp
 var item = await oneDriveClient
                      .Drive
 					 .Items[itemId]

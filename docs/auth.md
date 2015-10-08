@@ -6,7 +6,7 @@ To authenticate your app to use OneDrive, you need to get a `OneDriveClient`, wh
 ## Simple authentication
 The easiest way to get an authenticated client is to use one of the `OneDriveClient` extensions and call `AuthenticateAsync` on the resulting client:
 
-```
+```csharp
 var oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
                          clientId,
                          returnUrl,
@@ -35,7 +35,7 @@ When using the default `IServiceInfoProvider` and `IAuthenticationProvider` impl
 
 ## Authentication for WinForms
 
-```
+```csharp
 var oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
                          clientId,
                          returnUrl,
@@ -59,7 +59,7 @@ Authentication with both the OnlineIdAuthenticator and WebAuthenticationBroker r
 
 ### Authentication using OnlineIdAuthenticator
 
-```
+```csharp
 var oneDriveClient = OneDriveClientExtensions.GetClientUsingOnlineIdAuthenticator(scopes);
                          
 await oneDriveClient.AuthenticateAsync();
@@ -67,7 +67,7 @@ await oneDriveClient.AuthenticateAsync();
 
 ### Authentication using WebAuthenticationBroker
 
-```
+```csharp
 var oneDriveClient = OneDriveClientExtensions.GetClientUsingWebAuthenticationBroker(
                          appId,
                          scopes);
@@ -79,6 +79,6 @@ await oneDriveClient.AuthenticateAsync();
 
 To sign out you can call:
 
-```
+```csharp
 await oneDriveClient.SignOutAsync();
 ```
