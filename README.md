@@ -29,6 +29,8 @@ For more info about scopes, see [Authentication scopes](https://dev.onedrive.com
 
 ### 3. Getting an authenticated OneDriveClient object
 
+For more info about authentication, see [auth](docs/auth.md).
+
 ### 4. Making requests to the service
 
 Once you have an OneDriveClient that is authenticated you can begin to make calls against the service. The requests against the service look like our [REST API](https://dev.onedrive.com/README.htm).
@@ -62,7 +64,7 @@ The following sample applications are also available:
 * [OneDrive API Browser](samples/OneDriveApiBrowser) - Windows Forms app
 * [OneDrive Photo Browser](samples/OneDrivePhotoBrowser) - Windows Universal app
 
-To run the OneDrivePhotoBrowser sample app your machine will need to be configured for [UWP app development](https://msdn.microsoft.com/en-us/library/windows/apps/dn609832.aspx).
+To run the OneDrivePhotoBrowser sample app your machine will need to be configured for [UWP app development](https://msdn.microsoft.com/en-us/library/windows/apps/dn609832.aspx) and the project must be associated with the Windows Store.
 
 ## Documentation
 
