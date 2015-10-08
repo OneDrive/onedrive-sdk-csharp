@@ -7,7 +7,7 @@ The OneDrive SDK for C# allows you to work with item collections in OneDrive.
 
 To retrieve a collection, like a folder's children, you call `GetAsync`:
 
-```
+```csharp
 await oneDriveClient
           .Drive
 		  .Items[itemId]
@@ -30,7 +30,7 @@ await oneDriveClient
 
 Some collections, like the children of a folder, can be changed. To add a folder to the children of an item you can call the `AddAsync` method:
 
-```
+```csharp
 var folderToCreate = new Item { Name = "New folder", Folder = new Folder() };
 var newFolder = await oneDriveClient
                           .Drive
@@ -46,7 +46,7 @@ var newFolder = await oneDriveClient
 
 To expand a collection, you call `Expand` on the collection request object with the string value of the expand:
 
-```
+```csharp
 var children = await oneDriveClient
                          .Drive
 						 .Items[itemId]
@@ -62,7 +62,7 @@ Some API calls will return collections with added properties.  These properties 
 
 To get the delta of an item you call:
 
-```
+```csharp
 var deltaCollectionPage = await oneDriveClient
                                     .Drive
 									.Items[itemId]
