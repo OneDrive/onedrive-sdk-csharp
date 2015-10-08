@@ -10,7 +10,7 @@ There are a few different types of errors that can occur during a network call. 
 
 ### Checking the Error Code
 You can easily check if an error is a specific code by calling `IsMatch` on the error code value. `IsMatch` is not case sensitive:
-```
+```csharp
 if (exception.IsMatch(OneDriveErrorCode.AccessDenied.ToString())
 {
         // Handle access denied error
@@ -24,7 +24,7 @@ Each error object has a `Message` property as well as code. This message is for 
 
 There can be errors during the authentication process. Authentication errors will have the code `AuthenticationFailed`. Authentication cancelled errors will have the code `AuthenticationCancelled`.
 
-```
+```csharp
 if (exception.IsMatch(OneDriveErrorCode.AuthenticationFailure.ToString())
 {
         // Handle auth error
