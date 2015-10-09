@@ -54,7 +54,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>5F7BEB78466BDAF97761C780B64F2F22A7EC731E</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>05C138DE1E7E36097F14D8739CD39B4AD4DD35F9</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>OneDriveApiBrowser_TemporaryKey.pfx</ManifestKeyFile>
