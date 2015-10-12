@@ -1,9 +1,9 @@
 Collections in the OneDrive SDK for C#
 =====
 
-The OneDrive SDK for C# allows you to work with item collections in OneDrive.
+You can use the OneDrive SDK for C# to work with item collections in OneDrive.
 
-## Getting a Collection
+## Getting a collection
 
 To retrieve a collection, like a folder's children, you call `GetAsync`:
 
@@ -16,9 +16,9 @@ await oneDriveClient
 		  .GetAsync();
 ```
 
-`GetAsync` for a collection returns an `ICollectionPage<T>` implementation on success and throws a `OneDriveException` on error. For children, the type returned is `IChildrenCollectionPage`, which inherits `ICollectionPage<Item>`.
+`GetAsync` returns an `ICollectionPage<T>` implementation on success and throws a `OneDriveException` on error. For children collections, the type returned is `IChildrenCollectionPage`, which inherits `ICollectionPage<Item>`.
 
-`IChildrenCollectionPage` that contains three properties: 
+`IChildrenCollectionPage` contains three properties: 
 
 |Name                |Description                                                                                                                                  |
 |--------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
@@ -26,9 +26,9 @@ await oneDriveClient
 |**NextPageRequest** |An `IChildrenPageRequest` used to get to the next page of items, if another page exists. This value will be null if there is not a next page.|
 |**AdditionData**    |An `IDictionary<string, object>` to any additional values returned by the service. In this case, none.                                       |
 
-## Adding to a Collection
+## Adding to a collection
 
-Some collections, like the children of a folder, can be changed. To add a folder to the children of an item you can call the `AddAsync` method:
+Some collections, like the children of a folder, can be changed. To add a folder to the children of an item, you can call the `AddAsync` method:
 
 ```csharp
 var folderToCreate = new Item { Name = "New folder", Folder = new Folder() };
@@ -42,7 +42,7 @@ var newFolder = await oneDriveClient
 
 `AddAsync` returns the created item on success and throws a `OneDriveException` on error.
 
-## Expanding a Collection
+## Expanding a collection
 
 To expand a collection, you call `Expand` on the collection request object with the string value of the expand:
 
@@ -56,9 +56,9 @@ var children = await oneDriveClient
 						 .GetAsync();
 ```
 
-## Special Collections
+## Special collections
 
-Some API calls will return collections with added properties.  These properties will always be in the additional data dictionary. These collections are also their own objects (subclasses of `ICollectionPage<T>`) that will have these properties attached to them.  
+Some API calls will return collections with added properties. These properties will always be in the additional data dictionary. These collections are also their own objects (subclasses of `ICollectionPage<T>`) that will have these properties attached to them.  
 
 To get the delta of an item you call:
 
