@@ -1,9 +1,9 @@
 Items in the OneDrive SDK for C#
 =====
 
-Items in the OneDrive SDK for C# behave just like items through the API. For more information see the [Items Reference](https://dev.onedrive.com/README.htm#item-resource). All actions on items described there are available through the SDK.
+Items in the OneDrive SDK for C# behave just like items through the OneDrive API. All actions on items described in the OneDrive API are available through the SDK. For more information, see the [Items Reference](https://dev.onedrive.com/README.htm#item-resource). 
 
-The examples below assume that you have [Authenticated](/docs/auth.md) your app with a OneDriveClient object.
+The examples below assume that you have [Authenticated](/docs/auth.md) your app with a **OneDriveClient** object.
 
 * [Get an Item](#get-an-item)
 * [Delete an Item](#delete-an-item)
@@ -53,7 +53,7 @@ await oneDriveClient
           .DeleteAsync();
 ```
 
-Get Children for an Item
+Get children for an Item
 -------------------------
 
 More info about collections [here](/docs/collections.md).
