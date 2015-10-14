@@ -32,7 +32,7 @@ For more information, see [Authentication scopes](https://dev.onedrive.com/auth/
 
 ### 3. Getting an authenticated OneDriveClient object
 
-The **OneDriveCLient** object will handle authentication for you. You must get a **OneDriveClient** object in order for your app to make requests to the service. 
+The **OneDriveClient** object will handle authentication for you. You must get a **OneDriveClient** object in order for your app to make requests to the service. 
 For more information, see [Authenticate your C# app for OneDrive](docs/auth.md).
 
 ### 4. Making requests to the service
