@@ -37,7 +37,7 @@ For more information, see [Authenticate your C# app for OneDrive](docs/auth.md).
 
 ### 4. Making requests to the service
 
-Once you have an OneDriveClient that is authenticated you can begin to make calls against the service. The requests against the service look like OneDrive's [REST API](https://dev.onedrive.com/README.htm).
+Once you have a OneDriveClient that is authenticated you can begin to make calls against the service. The requests against the service look like OneDrive's [REST API](https://dev.onedrive.com/README.htm).
 
 To retrieve a user's drive:
 
