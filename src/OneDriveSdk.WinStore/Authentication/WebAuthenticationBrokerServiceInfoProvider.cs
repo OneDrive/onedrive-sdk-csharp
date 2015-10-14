@@ -36,8 +36,22 @@ namespace Microsoft.OneDrive.Sdk.WinStore
 
         public IAuthenticationProvider AuthenticationProvider { get; set; }
 
-        public Task<ServiceInfo> GetServiceInfo(AppConfig appConfig, CredentialCache credentialCache, IHttpProvider httpProvider)
+        public Task<ServiceInfo> GetServiceInfo(
+            AppConfig appConfig,
+            CredentialCache credentialCache,
+            IHttpProvider httpProvider,
+            ClientType clientType = ClientType.Consumer)
         {
+            if (clientType == ClientType.Business)
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "WebAuthenticationBrokerServiceInfoProvider only supports Microsoft Account authentication."
+                    });
+            }
+
             var microsoftAccountServiceInfo = new MicrosoftAccountServiceInfo
             {
                 AppId = appConfig.MicrosoftAccountAppId,

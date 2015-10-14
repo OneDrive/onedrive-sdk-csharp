@@ -36,7 +36,8 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.signInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.signInAadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.signInMsaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.signOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.getChangesHereToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -161,7 +162,8 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.signInToolStripMenuItem,
+            this.signInAadToolStripMenuItem,
+            this.signInMsaToolStripMenuItem,
             this.signOutToolStripMenuItem,
             this.toolStripMenuItem3,
             this.getChangesHereToolStripMenuItem,
@@ -172,12 +174,19 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "&File";
             // 
-            // signInToolStripMenuItem
+            // signInAadToolStripMenuItem
             // 
-            this.signInToolStripMenuItem.Name = "signInToolStripMenuItem";
-            this.signInToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
-            this.signInToolStripMenuItem.Text = "Sign In to MSA...";
-            this.signInToolStripMenuItem.Click += new System.EventHandler(this.signInToolStripMenuItem_Click);
+            this.signInAadToolStripMenuItem.Name = "signInAadToolStripMenuItem";
+            this.signInAadToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
+            this.signInAadToolStripMenuItem.Text = "Sign In to AAD...";
+            this.signInAadToolStripMenuItem.Click += new System.EventHandler(this.signInAadToolStripMenuItem_Click);
+            // 
+            // signInMsaToolStripMenuItem
+            // 
+            this.signInMsaToolStripMenuItem.Name = "signInMsaToolStripMenuItem";
+            this.signInMsaToolStripMenuItem.Size = new System.Drawing.Size(258, 24);
+            this.signInMsaToolStripMenuItem.Text = "Sign In to MSA...";
+            this.signInMsaToolStripMenuItem.Click += new System.EventHandler(this.signInMsaToolStripMenuItem_Click);
             // 
             // signOutToolStripMenuItem
             // 
@@ -336,7 +345,8 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem signInToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem signInAadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem signInMsaToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem signOutToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;

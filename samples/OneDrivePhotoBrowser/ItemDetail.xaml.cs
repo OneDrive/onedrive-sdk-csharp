@@ -29,8 +29,7 @@ namespace OneDrivePhotoBrowser
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-    using Windows.Graphics.Imaging;
-    using Windows.Storage.Streams;
+    using Microsoft.OneDrive.Sdk;
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -88,16 +87,27 @@ namespace OneDrivePhotoBrowser
             // Only load a detail view image for image items. Initialize the bitmap from the image conent stream.
             if (item.Bitmap == null && (item.Item.Image != null))
             {
-                item.Bitmap = new BitmapImage(new Uri(item.SmallThumbnail.Url));
+                item.Bitmap = new BitmapImage();
                 var client = ((App)Application.Current).OneDriveClient;
 
                 using (var responseStream = await client.Drive.Items[item.Id].Content.Request().GetAsync())
-                using (var memoryStream = new MemoryStream())
                 {
-                    await responseStream.CopyToAsync(memoryStream);
-                    memoryStream.Position = 0;
-                    
-                    await item.Bitmap.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                    var memoryStream = responseStream as MemoryStream;
+
+                    if (memoryStream != null)
+                    {
+                        await item.Bitmap.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                    }
+                    else
+                    {
+                        using (memoryStream = new MemoryStream())
+                        {
+                            await responseStream.CopyToAsync(memoryStream);
+                            memoryStream.Position = 0;
+
+                            await item.Bitmap.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                        }
+                    }
                 }
             }
         }

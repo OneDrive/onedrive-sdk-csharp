@@ -20,26 +20,37 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk
+namespace Microsoft.OneDrive.Sdk.WindowsForms
 {
-    using System.Threading.Tasks;
-
-    public interface IServiceInfoProvider
+    public static class OneDriveClientExtensions
     {
-        IAuthenticationProvider AuthenticationProvider { get; }
+        public static IOneDriveClient GetActiveDirectoryClient(
+            string appId,
+            string returnUrl,
+            IHttpProvider httpProvider = null)
+        {
+            return OneDriveClientExtensions.GetActiveDirectoryClient(
+                appId,
+                /* clientSecret */ null,
+                returnUrl, httpProvider);
+        }
 
-        /// <summary>
-        /// Generates the <see cref="ServiceInfo"/> for the current application configuration.
-        /// </summary>
-        /// <param name="appConfig">The <see cref="AppConfig"/> for the current application.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="clientType">The <see cref="ClientType"/> to specify the business or consumer service.</param>
-        /// <returns>The <see cref="ServiceInfo"/> for the current session.</returns>
-        Task<ServiceInfo> GetServiceInfo(
-            AppConfig appConfig,
-            CredentialCache credentialCache,
-            IHttpProvider httpProvider,
-            ClientType clientType);
+        public static IOneDriveClient GetActiveDirectoryClient(
+            string appId,
+            string clientSecret,
+            string returnUrl,
+            IHttpProvider httpProvider = null)
+        {
+            return new OneDriveClient(
+                new AppConfig
+                {
+                    ActiveDirectoryAppId = appId,
+                    ActiveDirectoryReturnUrl = returnUrl,
+                },
+                /* credentialCache */ null,
+                new HttpProvider(),
+                new AdalServiceInfoProvider(),
+                ClientType.Business);
+        }
     }
 }

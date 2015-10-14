@@ -17,6 +17,8 @@
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PackageCertificateThumbprint>F5315225664B8C3DF63C077FAE4454D977F5B89C</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>OneDrivePhotoBrowser_StoreKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -89,6 +91,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <None Include="OneDrivePhotoBrowser_StoreKey.pfx" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -109,10 +112,10 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="OneDrivePhotoBrowser_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\App\folder.png" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -137,9 +140,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\OneDriveSdk.WinStore\OneDriveSdk.WinStore.csproj">
-      <Project>{a8c54259-542c-40ac-aeb6-eefc3aa79859}</Project>
-      <Name>OneDriveSdk.WinStore</Name>
+    <ProjectReference Include="..\..\src\OneDriveSdk.WinRT\OneDriveSdk.WinRT.csproj">
+      <Project>{9f6bb55b-3985-42e8-88de-ce10a39c6389}</Project>
+      <Name>OneDriveSdk.WinRT</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\OneDriveSdk\OneDriveSdk.csproj">
       <Project>{1368527b-d7b2-46ad-893d-6dc8c073d819}</Project>

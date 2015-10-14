@@ -25,7 +25,7 @@
 namespace OneDrivePhotoBrowser
 {
     using Controllers;
-    using Microsoft.OneDrive.Sdk.WinStore;
+    using Microsoft.OneDrive.Sdk;
     using Models;
     using System.Linq;
     using Windows.UI.Xaml;
@@ -52,9 +52,13 @@ namespace OneDrivePhotoBrowser
             if (((App)Application.Current).OneDriveClient == null)
             {
 
-                ((App)Application.Current).OneDriveClient = OneDriveClientExtensions.GetUniversalClient(
-                    this.scopes);
-                
+                /*((App)Application.Current).OneDriveClient = OneDriveClientExtensions.GetUniversalClient(
+                    this.scopes);*/
+
+                ((App)Application.Current).OneDriveClient = OneDriveClientExtensions.GetActiveDirectoryClient(
+                    "67b8454b-58df-4e6d-a688-c769bd327052",
+                    "https://localhost:777");
+
                 await ((App)Application.Current).OneDriveClient.AuthenticateAsync();
             }
 

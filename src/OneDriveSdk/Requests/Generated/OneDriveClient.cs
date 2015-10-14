@@ -38,8 +38,9 @@ namespace Microsoft.OneDrive.Sdk
             AppConfig appConfig,
             CredentialCache credentialCache = null,
             IHttpProvider httpProvider = null,
-            IServiceInfoProvider serviceInfoProvider = null)
-            : base(appConfig, credentialCache, httpProvider, serviceInfoProvider)
+            IServiceInfoProvider serviceInfoProvider = null,
+            ClientType clientType = ClientType.Consumer)
+            : base(appConfig, credentialCache, httpProvider, serviceInfoProvider, clientType)
         {
         }
     

@@ -43,11 +43,13 @@
     <Compile Include="Authentication\IAuthenticationProvider.cs" />
     <Compile Include="Authentication\IServiceInfoProvider.cs" />
     <Compile Include="Authentication\MicrosoftAccountAuthenticationProvider.cs" />
+    <Compile Include="Authentication\ActiveDirectoryServiceInfo.cs" />
     <Compile Include="Authentication\MicrosoftAccountServiceInfo.cs" />
     <Compile Include="Authentication\ServiceInfo.cs" />
     <Compile Include="Authentication\ServiceInfoProvider.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Enums\AccountType.cs" />
+    <Compile Include="Enums\ClientType.cs" />
     <Compile Include="Enums\OneDriveErrorCode.cs" />
     <Compile Include="Exceptions\Error.cs" />
     <Compile Include="Exceptions\ErrorResponse.cs" />
@@ -271,13 +273,13 @@
     <Compile Include="Web\IWebAuthenticationUi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

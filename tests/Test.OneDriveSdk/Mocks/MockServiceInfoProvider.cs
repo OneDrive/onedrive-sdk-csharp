@@ -40,7 +40,8 @@ namespace Test.OneDriveSdk.Mocks
             this.Setup(provider => provider.GetServiceInfo(
                 It.IsAny<AppConfig>(),
                 It.IsAny<CredentialCache>(),
-                It.IsAny<IHttpProvider>())).Returns(Task.FromResult(this.serviceInfo));
+                It.IsAny<IHttpProvider>(),
+                It.IsAny<ClientType>())).Returns(Task.FromResult(this.serviceInfo));
         }
     }
 }

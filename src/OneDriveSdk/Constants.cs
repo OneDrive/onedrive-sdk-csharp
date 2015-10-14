@@ -30,11 +30,19 @@ namespace Microsoft.OneDrive.Sdk
         {
             public const string AccessTokenKeyName = "access_token";
 
+            public const string AuthenticationCancelled = "authentication_cancelled";
+
+            public const string AuthorizationServiceKey = "authorization_service";
+
             public const string ClientIdKeyName = "client_id";
 
             public const string ClientSecretKeyName = "client_secret";
 
             public const string CodeKeyName = "code";
+
+            public const string DiscoveryResourceKey = "discovery_resource";
+
+            public const string DiscoveryServiceKey = "discovery_service";
 
             public const string ErrorDescriptionKeyName = "error_description";
 
@@ -54,9 +62,21 @@ namespace Microsoft.OneDrive.Sdk
 
             public const string TokenResponseTypeValueName = "token";
 
+            public const string TokenServiceKey = "token_service";
+
             public const string TokenTypeKeyName = "token_type";
             
             public const string UserIdKeyName = "user_id";
+
+            internal const string ActiveDirectoryAuthenticationServiceUrl = "https://login.windows.net/common/oauth2/authorize";
+
+            internal const string ActiveDirectoryDiscoveryResource = "https://api.office.com/discovery/";
+
+            internal const string ActiveDirectoryDiscoveryServiceUrl = "https://api.office.com/discovery/v2.0/me/services";
+
+            //internal const string ActiveDirectorySignOutUrl = "https://login.live.com/oauth20_logout.srf";
+
+            internal const string ActiveDirectoryTokenServiceUrl = "https://login.windows.net/common/oauth2/token";
 
             internal const string MicrosoftAccountAuthenticationServiceUrl = "https://login.live.com/oauth20_authorize.srf";
 
@@ -69,7 +89,7 @@ namespace Microsoft.OneDrive.Sdk
 
         public static class Headers
         {
-            public const string Bearer = "bearer";
+            public const string Bearer = "Bearer";
 
             public const string FormUrlEncodedContentType = "application/x-www-form-urlencoded";
 

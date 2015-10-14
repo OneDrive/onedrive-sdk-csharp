@@ -25,6 +25,21 @@ namespace Microsoft.OneDrive.Sdk
     public class AppConfig
     {
         /// <summary>
+        /// Gets the application ID for Active Directory authentication.
+        /// </summary>
+        public string ActiveDirectoryAppId { get; set; }
+
+        /// <summary>
+        /// Gets the client secret for Active Directory authentication.
+        /// </summary>
+        public string ActiveDirectoryClientSecret { get; set; }
+
+        /// <summary>
+        /// Gets the application return URL for Active Directory authentication.
+        /// </summary>
+        public string ActiveDirectoryReturnUrl { get; set; }
+
+        /// <summary>
         /// Gets the application ID for Microsoft Account authentication.
         /// </summary>
         public string MicrosoftAccountAppId { get; set; }

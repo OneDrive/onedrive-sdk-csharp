@@ -42,5 +42,6 @@ namespace Microsoft.OneDrive.Sdk
         TooManyRedirects,
         QuotaLimitReached,
         Unauthenticated,
+        UserDoesNotHaveMyFilesService,
     }
 }

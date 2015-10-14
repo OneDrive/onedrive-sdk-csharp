@@ -20,8 +20,10 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WinStore
+namespace Microsoft.OneDrive.Sdk
 {
+    using WinStore;
+
     public static class OneDriveClientExtensions
     {
         public static IOneDriveClient GetClientUsingOnlineIdAuthenticator(
@@ -32,7 +34,7 @@ namespace Microsoft.OneDrive.Sdk.WinStore
             return new OneDriveClient(
                 new AppConfig { MicrosoftAccountScopes = scopes },
                 /* credentialCache */ null,
-                httpProvider ?? new HttpProvider(new Serializer()),
+                httpProvider ?? new HttpProvider(),
                 new OnlineIdServiceInfoProvider());
         }
 
@@ -45,7 +47,7 @@ namespace Microsoft.OneDrive.Sdk.WinStore
             return new OneDriveClient(
                 new AppConfig { MicrosoftAccountScopes = scopes },
                 /* credentialCache */ null,
-                httpProvider ?? new HttpProvider(new Serializer()),
+                httpProvider ?? new HttpProvider(),
                 new WebAuthenticationBrokerServiceInfoProvider());
         }
 
@@ -56,5 +58,24 @@ namespace Microsoft.OneDrive.Sdk.WinStore
         {
             return OneDriveClientExtensions.GetClientUsingOnlineIdAuthenticator(scopes, returnUrl, httpProvider);
         }
+
+#if WINRT
+        public static IOneDriveClient GetActiveDirectoryClient(
+            string appId,
+            string returnUrl = null,
+            IHttpProvider httpProvider = null)
+        {
+            return new OneDriveClient(
+                new AppConfig
+                {
+                    ActiveDirectoryAppId = appId,
+                    ActiveDirectoryReturnUrl = returnUrl,
+                },
+                /* credentialCache */ null,
+                new HttpProvider(),
+                new AdalServiceInfoProvider(),
+                ClientType.Business);
+        }
+#endif
     }
 }

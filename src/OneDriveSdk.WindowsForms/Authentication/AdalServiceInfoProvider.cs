@@ -20,41 +20,58 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WinStore
+namespace Microsoft.OneDrive.Sdk
 {
     using System.Threading.Tasks;
 
-    public class OnlineIdServiceInfoProvider : IServiceInfoProvider
-    {
-        public IAuthenticationProvider AuthenticationProvider { get; set; }
+    using WindowsForms;
 
-        public Task<ServiceInfo> GetServiceInfo(
+    public class AdalServiceInfoProvider : ServiceInfoProvider
+    {
+        public AdalServiceInfoProvider()
+            : this(null, new FormsWebAuthenticationUi())
+        {
+        }
+
+        public AdalServiceInfoProvider(IWebAuthenticationUi webAuthenticationUi)
+            : this(null, webAuthenticationUi)
+        {
+        }
+
+        public AdalServiceInfoProvider(IAuthenticationProvider authenticationProvider)
+            : this(authenticationProvider, new FormsWebAuthenticationUi())
+        {
+        }
+
+        public AdalServiceInfoProvider(IAuthenticationProvider authenticationProvider, IWebAuthenticationUi webAuthenticationUi)
+            : base(authenticationProvider, webAuthenticationUi)
+        {
+        }
+
+        public async override Task<ServiceInfo> GetServiceInfo(
             AppConfig appConfig,
             CredentialCache credentialCache,
             IHttpProvider httpProvider,
-            ClientType clientType = ClientType.Consumer)
+            ClientType clientType = ClientType.Business)
         {
-            if (clientType == ClientType.Business)
+            if (clientType == ClientType.Consumer)
             {
                 throw new OneDriveException(
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "OnlineIdServiceProvider only supports Microsoft Account authentication."
+                        Message = "AdalServiceInfoProvider only supports Active Directory authentication."
                     });
             }
 
-            var microsoftAccountServiceInfo = new MicrosoftAccountServiceInfo
-            {
-                AppId = appConfig.MicrosoftAccountAppId,
-                ClientSecret = appConfig.MicrosoftAccountClientSecret,
-                CredentialCache = credentialCache,
-                HttpProvider = httpProvider,
-                Scopes = appConfig.MicrosoftAccountScopes,
-            };
+            var serviceInfo = await base.GetServiceInfo(appConfig, null, httpProvider, clientType);
 
-            microsoftAccountServiceInfo.AuthenticationProvider = this.AuthenticationProvider ?? new OnlineIdAuthenticationProvider(microsoftAccountServiceInfo);
-            return Task.FromResult<ServiceInfo>(microsoftAccountServiceInfo);
+            if (serviceInfo.AuthenticationProvider == null)
+            {
+                serviceInfo.AuthenticationProvider = new AdalAuthenticationProvider(serviceInfo);
+            }
+
+            return serviceInfo;
         }
     }
 }

@@ -152,7 +152,10 @@ namespace Microsoft.OneDrive.Sdk
                 // Preserve headers for the next request
                 foreach (var header in initialResponse.RequestMessage.Headers)
                 {
-                    redirectRequest.Headers.Add(header.Key, header.Value);
+                    if (!header.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase))
+                    {
+                        redirectRequest.Headers.Add(header.Key, header.Value);
+                    }
                 }
 
                 var response = await this.httpClient.SendAsync(redirectRequest);

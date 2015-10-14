@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -47,10 +47,10 @@
   <ItemGroup>
     <Compile Include="Authentication\OnlineIdAuthenticationProvider.cs" />
     <Compile Include="Authentication\OnlineIdServiceInfoProvider.cs" />
-    <Compile Include="Extensions\OneDriveClientExtensions.cs" />
     <Compile Include="Authentication\WebAuthenticationBrokerAuthenticationProvider.cs" />
     <Compile Include="Authentication\WebAuthenticationBrokerServiceInfoProvider.cs" />
     <Compile Include="Authentication\WebAuthenticationBrokerWebAuthenticationUi.cs" />
+    <Compile Include="Extensions\OneDriveClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

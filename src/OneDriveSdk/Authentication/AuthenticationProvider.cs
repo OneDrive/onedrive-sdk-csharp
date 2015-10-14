@@ -59,6 +59,9 @@ namespace Microsoft.OneDrive.Sdk
 
             if (this.CurrentAccountSession != null && !string.IsNullOrEmpty(this.CurrentAccountSession.AccessToken))
             {
+                var tokenTypeString = string.IsNullOrEmpty(this.CurrentAccountSession.AccessTokenType)
+                    ? Constants.Headers.Bearer
+                    : this.CurrentAccountSession.AccessTokenType;
                 request.Headers.Authorization = new AuthenticationHeaderValue(Constants.Headers.Bearer, this.CurrentAccountSession.AccessToken);
             }
         }
