@@ -1,4 +1,4 @@
-# OneDrive SDK for C#
+# OneDrive SDK for CSharp
 
 [![Build status](https://ci.appveyor.com/api/projects/status/fs9ddrmdev37v012/branch/master?svg=true)](https://ci.appveyor.com/project/OneDrive/onedrive-sdk-csharp/branch/master)
 
