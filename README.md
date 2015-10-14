@@ -23,7 +23,7 @@ To install the OneDrive SDK via NuGet
 
 ### 1. Register your application
 
-Register your application for OneDrive or OneDrive for Business by following [these](https://dev.onedrive.com/app-registration.htm) steps.
+Register your application for OneDrive by following [these](https://dev.onedrive.com/app-registration.htm) steps.
 
 ### 2. Setting your application Id and scopes
 
