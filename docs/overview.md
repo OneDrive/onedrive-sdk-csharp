@@ -1,4 +1,4 @@
-OneDrive C# SDK
+OneDrive SDK for CSharp Overview
 =====
 
 The OneDrive C# SDK is designed to look just like the [OneDrive API](https://github.com/onedrive/onedrive-api-docs/).  
