@@ -81,9 +81,9 @@ To run the OneDrivePhotoBrowser sample app your machine will need to be configur
 
 ## Issues
 
-For view or log issues, see [issues](https://github.com/OneDrive/onedrive-sdk-csharp/issues).
+To view or log issues, see [issues](https://github.com/OneDrive/onedrive-sdk-csharp/issues).
 
-## Other Resources
+## Other resources
 
 * NuGet Package: [https://www.nuget.org/packages/Microsoft.OneDriveSDK](https://www.nuget.org/packages/Microsoft.OneDriveSDK)
 
