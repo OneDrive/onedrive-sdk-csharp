@@ -1,24 +1,24 @@
-OneDrive C# SDK
+OneDrive SDK for CSharp overview
 =====
 
 The OneDrive C# SDK is designed to look just like the [OneDrive API](https://github.com/onedrive/onedrive-api-docs/).  
 
 ## OneDriveClient
 
-When accessing the OneDrive APIs, all requests will be made through a OneDriveClient object. For a more detailed explanation, see [Authentication](/docs/auth.md).
+When accessing the OneDrive APIs, all requests will be made through a **OneDriveClient** object. For a more detailed explanation, see [Authentication](/docs/auth.md).
 
 ## Resource model
 
 
-Resources, like [items](/docs/items.md) or drives, are represented by `Item` and `Drive`, respectively. These objects contain properties that represent the properties of a resource. These objects are property bags and cannot make calls against the service.
+Resources, like [items](/docs/items.md) or drives, are represented by `Item` and `Drive`. These objects contain properties that represent the properties of a resource. These objects are property bags and cannot make calls against the service.
 
-To get the name of an item you would address the `Name` property. It is possible for any of these properties to be null at any time. To check if an item is a folder you can address the `Folder` property. If the item is a folder a `Folder` object will be returned, and it contains all of the properties described by the [folder](https://github.com/OneDrive/onedrive-api-docs/blob/master/facets/folder_facet.md) facet.
+To get the name of an item you would address the `Name` property. It is possible for any of these properties to be null at any time. To check if an item is a folder you can address the `Folder` property of the item. If the item is a folder, a `Folder` object that contains all of the properties described by the [folder](https://github.com/OneDrive/onedrive-api-docs/blob/master/facets/folder_facet.md) facet will be returned.
 
-See [Resource model](https://github.com/onedrive/onedrive-api-docs/#resource-model) for more info.
+See [Resource model](https://github.com/onedrive/onedrive-api-docs/#resource-model) for more information.
 
 ## Requests
 
-To make requests against the service, you construct request objects using a request builder objects. The type of the request builder will depend on the type of the object you are addressing. This is meant to mimic creating the URL for any of the OneDrive APIs.
+To make requests against the service, you construct request objects using a request builder object. The type of the request builder will depend on the type of the object you are addressing. This is meant to mimic creating the URL for any of the OneDrive APIs.
 
 ### 1. Request builders
 
@@ -28,7 +28,7 @@ To generate a request you chain together calls on request builder objects. You g
 |:---------------|:---------------------:|:--------------------------------|
 |Get a drive     | oneDriveClient.Drive  | GET api.onedrive.com/v1.0/drive/|
  
-The call will return an `IDriveRequestBuilder` object. From drive we can continue to chain the requests to get everything else in the API, like an item.
+The call will return an `IDriveRequestBuilder` object. From drive you can continue to chain the requests to get everything else in the API, like an item.
 
 |Task            | SDK                                  | URL                                       |
 |:---------------|:------------------------------------:|:------------------------------------------|
@@ -61,7 +61,7 @@ To return a thumbnail set, and to get a specific [thumbnail](https://github.com/
 
 ### 2. Request calls
 
-Once you have built the request you call the `Request` method on the request builder. This will construct the request object needed to make calls against the service.
+After you build the request you call the `Request` method on the request builder. This will construct the request object needed to make calls against the service.
 
 For an item you call:
 
@@ -82,7 +82,7 @@ var item = await oneDriveClient
 					 .GetAsync();
 ```
 
-See [items](/docs/items.md) for more info on items and [errors](/docs/errors.md) for more info on errors.
+For more info, see [items](/docs/items.md) and [errors](/docs/errors.md).
 
 ## Query options
 

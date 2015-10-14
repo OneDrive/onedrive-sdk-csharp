@@ -6,11 +6,13 @@ Integrate the [OneDrive API](https://dev.onedrive.com/README.htm) into your C#
 project!
 
 The OneDrive SDK is built as a Portable Class Library and targets the following
-frameworks: .NET 4.5.1, .NET for Windows Store apps, Windows Phone 8.0 and higher.
+frameworks: 
 
-## Installation
+* .NET 4.5.1 
+* .NET for Windows Store apps 
+* Windows Phone 8.1 and higher
 
-### Install via NuGet
+## Installation via Nuget
 
 To install the OneDrive SDK via NuGet
 
@@ -21,19 +23,21 @@ To install the OneDrive SDK via NuGet
 
 ### 1. Register your application
 
-Register your application by following [these](https://dev.onedrive.com/app-registration.htm) steps.
+Register your application for OneDrive by following [these](https://dev.onedrive.com/app-registration.htm) steps.
 
 ### 2. Setting your application Id and scopes
 
-For more info about scopes, see [Authentication scopes](https://dev.onedrive.com/auth/msa_oauth.htm#authentication-scopes).
+Your app must requests permissions in order to access a user's OneDrive. To do this, specify your app ID and scopes, or permission level.
+For more information, see [Authentication scopes](https://dev.onedrive.com/auth/msa_oauth.htm#authentication-scopes).
 
 ### 3. Getting an authenticated OneDriveClient object
 
-For more info about authentication, see [auth](docs/auth.md).
+The **OneDriveClient** object will handle authentication for you. You must get a **OneDriveClient** object in order for your app to make requests to the service. 
+For more information, see [Authenticate your C# app for OneDrive](docs/auth.md).
 
 ### 4. Making requests to the service
 
-Once you have an OneDriveClient that is authenticated you can begin to make calls against the service. The requests against the service look like our [REST API](https://dev.onedrive.com/README.htm).
+Once you have a OneDriveClient that is authenticated you can begin to make calls against the service. The requests against the service look like OneDrive's [REST API](https://dev.onedrive.com/README.htm).
 
 To retrieve a user's drive:
 
@@ -66,21 +70,20 @@ The following sample applications are also available:
 
 To run the OneDrivePhotoBrowser sample app your machine will need to be configured for [UWP app development](https://msdn.microsoft.com/en-us/library/windows/apps/dn609832.aspx) and the project must be associated with the Windows Store.
 
-## Documentation
-
-For more detailed documentation see:
+## Documentation and resources
 
 * [Overview](docs/overview.md)
 * [Auth](docs/auth.md)
 * [Items](docs/items.md)
 * [Collections](docs/collections.md)
 * [Errors](docs/errors.md)
+* [OneDrive API](http://dev.onedrive.com)
 
-## Known Issues
+## Issues
 
-For known issues, see [issues](https://github.com/OneDrive/onedrive-sdk-csharp/issues).
+To view or log issues, see [issues](https://github.com/OneDrive/onedrive-sdk-csharp/issues).
 
-## Other Resources
+## Other resources
 
 * NuGet Package: [https://www.nuget.org/packages/Microsoft.OneDriveSDK](https://www.nuget.org/packages/Microsoft.OneDriveSDK)
 

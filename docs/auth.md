@@ -1,10 +1,12 @@
 Authenticate your C# app for OneDrive
 =====
 
-To authenticate your app to use OneDrive, you need to get a `OneDriveClient`, which will handle all authentication for you, and call `AuthenticateAsync` on it. Note that if the user changes their password, you must re-authenticate.  If you see `401` error codes, this is most likely the case. See [Error codes for the OneDrive C# SDK](errors.md) for more info.
+To authenticate your app to use OneDrive, you need to get a `OneDriveClient`, which will handle all authentication for you, and call `AuthenticateAsync` on it. Note that if the user changes their password, your app must re-authenticate.  If you see `401` error codes, this is most likely the case. See [Error codes for the OneDrive C# SDK](errors.md) for more info.
+
+**Note** This topic assumes that you are familiar with app authentication. For more info about authentication in OneDrive, see [Authentication for the OneDrive API](https://dev.onedrive.com/auth/readme.htm).
 
 ## Simple authentication
-The easiest way to get an authenticated client is to use one of the `OneDriveClient` extensions and call `AuthenticateAsync` on the resulting client:
+The easiest way to get an authenticated client is to call `GetMicrosoftAccountClient`, which returns a `OneDriveClient` object, and then call `AuthenticateAsync` on the resulting object:
 
 ```csharp
 var oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
@@ -15,7 +17,14 @@ var oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
 await oneDriveClient.AuthenticateAsync();
 ```
 
-In addition to client ID, return URL, scopes, and client secret the method takes in implementations for a credential cache, HTTP provider, and a service info provider or web authentication UI. If not provided, the default implementations of each item will be used.
+| Paramater | Description |
+|:----------|:------------|
+| _clientId_ | The client ID of the app. Required. |
+| _returnUrl_ | A redirect URL. Required. |
+| _scopes_ | Permissions that your app requires from the user. Required. |
+| _client\_secret_ | The client secret created for your app. Optional. Not available for Windows Store 8.1, Windows Phone 8.1, and Universal Windows Platform (UWP) apps. |
+
+In addition to _clientId_, _returnURL_, _scopes_, and _client\_secret_ the method takes in implementations for a credential cache, HTTP provider, and a service info provider or web authentication UI. If not provided, the default implementations of each item will be used.
 
 ### CredentialCache
 
@@ -31,7 +40,7 @@ The service info provider is responsible for providing information for accessing
 
 ### IWebAuthenticationUi
 
-When using the default `IServiceInfoProvider` and `IAuthenticationProvider` implementations, an `IWebAuthenticationUi` implementation is required to display authentication UI to the user. Default implementations are available for WinForms, Windows 8.1, Windows Phone 8.1, and UWP applications. If no `IWebAuthenticationUi` implementation is present, only the silent authentication flow will be used.
+When you use the default `IServiceInfoProvider` and `IAuthenticationProvider` implementations, an `IWebAuthenticationUi` implementation is required to display authentication UI to the user. Default implementations are available for WinForms, Windows 8.1, Windows Phone 8.1, and UWP applications. If no `IWebAuthenticationUi` implementation is present, only the silent authentication flow will be used.
 
 ## Authentication for WinForms
 
@@ -47,15 +56,15 @@ await oneDriveClient.AuthenticateAsync();
 
 ## Windows 8.1, Windows Phone 8.1, and UWP
 
-The OneDriveClient extensions available vary based on the build flavor of the project. For Windows 8.1, Windows Phone 8.1, and UWP projects, there are 3 available methods depending on the Windows authentication API used to retrieve a client:
+The OneDriveClient extensions are available based on the build target of the project. For Windows 8.1, Windows Phone 8.1, and UWP projects, there are three available methods depending on which Windows authentication API is used to retrieve a client:
 
 * `GetClientUsingOnlineIdAuthenticator`
 * `GetClientUsingWebAuthenticationBroker`
 * `GetUniversalClient`
 
-`GetUniversalClient` calls `GetClientUsingOnlineIdAuthenticator` internally, using the [OnlineIdAuthenticator](https://msdn.microsoft.com/en-us/library/windows/apps/windows.security.authentication.onlineid.onlineidauthenticator.aspx) for authentication. `GetClientUsingWebAuthenticationBroker` uses the [WebAuthenticationBroker](https://msdn.microsoft.com/en-us/library/windows/apps/windows.security.authentication.web.webauthenticationbroker.aspx) in SSO mode for authentication.
+`GetUniversalClient` calls `GetClientUsingOnlineIdAuthenticator` internally, using the [OnlineIdAuthenticator](https://msdn.microsoft.com/en-us/library/windows/apps/windows.security.authentication.onlineid.onlineidauthenticator.aspx) for authentication. `GetClientUsingWebAuthenticationBroker` uses the [WebAuthenticationBroker](https://msdn.microsoft.com/en-us/library/windows/apps/windows.security.authentication.web.webauthenticationbroker.aspx) in SSO (single sign-on) mode for authentication.
 
-Authentication with both the OnlineIdAuthenticator and WebAuthenticationBroker requires your app be associated with the Windows Store first.
+Authentication with both the `OnlineIdAuthenticator` and `WebAuthenticationBroker` requires that your app is associated with the Windows Store first.
 
 ### Authentication using OnlineIdAuthenticator
 
