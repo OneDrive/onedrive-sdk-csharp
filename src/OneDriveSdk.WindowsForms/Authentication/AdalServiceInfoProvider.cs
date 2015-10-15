@@ -64,7 +64,7 @@ namespace Microsoft.OneDrive.Sdk
                     });
             }
 
-            var serviceInfo = await base.GetServiceInfo(appConfig, null, httpProvider, clientType);
+            var serviceInfo = await base.GetServiceInfo(appConfig, credentialCache, httpProvider, clientType);
 
             if (serviceInfo.AuthenticationProvider == null)
             {

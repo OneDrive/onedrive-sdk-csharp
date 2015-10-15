@@ -40,8 +40,8 @@ namespace Microsoft.OneDrive.Sdk
         private const int CacheVersion = 1;
 
         public CredentialCache(ISerializer serializer = null)
+            : this(null, serializer)
         {
-            this.Serializer = serializer ?? new Serializer();
         }
 
         public CredentialCache(byte[] blob, ISerializer serializer = null)
@@ -50,17 +50,17 @@ namespace Microsoft.OneDrive.Sdk
             this.InitializeCacheFromBlob(blob);
         }
 
-        public CredentialCacheNotification BeforeAccess { get; set; }
+        public virtual CredentialCacheNotification BeforeAccess { get; set; }
 
-        public CredentialCacheNotification BeforeWrite { get; set; }
+        public virtual CredentialCacheNotification BeforeWrite { get; set; }
 
-        public CredentialCacheNotification AfterAccess { get; set; }
+        public virtual CredentialCacheNotification AfterAccess { get; set; }
 
         public bool HasStateChanged { get; set; }
 
-        public ISerializer Serializer { get; private set; }
+        protected ISerializer Serializer { get; private set; }
 
-        public byte[] GetCacheBlob()
+        public virtual byte[] GetCacheBlob()
         {
             using (var stream = new MemoryStream())
             using (var binaryReader = new BinaryReader(stream))
@@ -81,7 +81,7 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
-        public void InitializeCacheFromBlob(byte[] cacheBytes)
+        public virtual void InitializeCacheFromBlob(byte[] cacheBytes)
         {
             if (cacheBytes == null)
             {
@@ -199,7 +199,7 @@ namespace Microsoft.OneDrive.Sdk
             };
         }
 
-        private void OnAfterAccess(CredentialCacheNotificationArgs args)
+        protected void OnAfterAccess(CredentialCacheNotificationArgs args)
         {
             if (this.AfterAccess != null)
             {
@@ -207,7 +207,7 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
-        private void OnBeforeAccess(CredentialCacheNotificationArgs args)
+        protected void OnBeforeAccess(CredentialCacheNotificationArgs args)
         {
             if (this.BeforeAccess != null)
             {
@@ -215,7 +215,7 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
-        private void OnBeforeWrite(CredentialCacheNotificationArgs args)
+        protected void OnBeforeWrite(CredentialCacheNotificationArgs args)
         {
             if (this.BeforeWrite != null)
             {

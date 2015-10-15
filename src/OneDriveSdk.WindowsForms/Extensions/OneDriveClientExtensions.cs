@@ -27,18 +27,22 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         public static IOneDriveClient GetActiveDirectoryClient(
             string appId,
             string returnUrl,
+            AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
             return OneDriveClientExtensions.GetActiveDirectoryClient(
                 appId,
                 /* clientSecret */ null,
-                returnUrl, httpProvider);
+                returnUrl,
+                credentialCache,
+                httpProvider);
         }
 
         public static IOneDriveClient GetActiveDirectoryClient(
             string appId,
             string clientSecret,
             string returnUrl,
+            AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
             return new OneDriveClient(
@@ -47,7 +51,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                     ActiveDirectoryAppId = appId,
                     ActiveDirectoryReturnUrl = returnUrl,
                 },
-                /* credentialCache */ null,
+                credentialCache ?? new AdalCredentialCache(),
                 new HttpProvider(),
                 new AdalServiceInfoProvider(),
                 ClientType.Business);

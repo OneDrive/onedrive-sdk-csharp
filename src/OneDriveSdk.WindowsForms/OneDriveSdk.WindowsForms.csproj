@@ -58,8 +58,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\OneDriveSdk.Common\Authentication\AdalAuthenticationProvider.cs">
-      <Link>Authentication\AdalAuthenticationProvider.cs</Link>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AdalAuthenticationProviderBase.cs">
+      <Link>Authentication\AdalAuthenticationProviderBase.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AdalCredentialCache.cs">
+      <Link>Authentication\AdalCredentialCache.cs</Link>
     </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryService.cs">
       <Link>Authentication\DiscoveryService.cs</Link>
@@ -67,6 +70,7 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryServiceResponse.cs">
       <Link>Authentication\DiscoveryServiceResponse.cs</Link>
     </Compile>
+    <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalServiceInfoProvider.cs" />
     <Compile Include="Extensions\OneDriveClientExtensions.cs" />
     <Compile Include="Web\FormsWebDialog.cs">
