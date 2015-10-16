@@ -29,6 +29,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 [assembly: InternalsVisibleTo("OneDriveSdk.WindowsForms")]
+[assembly: InternalsVisibleTo("OneDriveSdk.WinRT")]
 [assembly: InternalsVisibleTo("OneDriveSdk.WinStore")]
 [assembly: InternalsVisibleTo("Test.OneDriveSdk")]
 [assembly: InternalsVisibleTo("Test.OneDriveSdk.WinStore")]

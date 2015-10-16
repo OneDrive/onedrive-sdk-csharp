@@ -26,7 +26,7 @@ namespace Microsoft.OneDrive.Sdk
 
     public class AdalCredentialCache : CredentialCache
     {
-        internal TokenCache tokenCache;
+        private TokenCache tokenCache;
 
         public AdalCredentialCache()
             : this(null)
@@ -34,14 +34,38 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         public AdalCredentialCache(byte[] blob)
-            : base(blob, null)
+            : base()
         {
-            this.tokenCache = new TokenCache(blob)
+            this.TokenCache.Deserialize(blob);
+        }
+
+        internal TokenCache TokenCache
+        {
+            get
             {
-                AfterAccess = this.AfterAdalAccess,
-                BeforeAccess = this.BeforeAdalAccess,
-                BeforeWrite = this.BeforeAdalWrite,
-            };
+                if (this.tokenCache == null)
+                {
+                    this.tokenCache = new TokenCache();
+
+                    this.tokenCache.AfterAccess = this.AfterAdalAccess;
+                    this.tokenCache.BeforeAccess = this.BeforeAdalAccess;
+                    this.tokenCache.BeforeWrite = this.BeforeAdalWrite;
+                }
+
+                return this.tokenCache;
+            }
+        }
+
+        public override bool HasStateChanged
+        {
+            get
+            {
+                return this.tokenCache.HasStateChanged;
+            }
+            set
+            {
+                this.tokenCache.HasStateChanged = value;
+            }
         }
 
         public override byte[] GetCacheBlob()
@@ -65,6 +89,22 @@ namespace Microsoft.OneDrive.Sdk
         public override void Clear()
         {
             this.tokenCache.Clear();
+        }
+
+        internal override void AddToCache(AccountSession accountSession)
+        {
+            // Let ADAL handle the caching
+        }
+
+        internal override void DeleteFromCache(AccountSession accountSession)
+        {
+            // Let ADAL handle the caching
+        }
+
+        internal override AccountSession GetResultFromCache(AccountType accountType, string clientId, string userId)
+        {
+            // Let ADAL handle the caching
+            return null;
         }
 
         public void AfterAdalAccess(TokenCacheNotificationArgs args)

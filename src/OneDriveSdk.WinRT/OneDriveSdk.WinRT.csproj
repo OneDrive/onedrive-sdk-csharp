@@ -9,8 +9,8 @@
     <ProjectGuid>{9F6BB55B-3985-42E8-88DE-CE10A39C6389}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OneDriveSdk.WinStore81</RootNamespace>
-    <AssemblyName>OneDriveSdk.WinStore81</AssemblyName>
+    <RootNamespace>Microsoft.OneDrive.Sdk.WinRT</RootNamespace>
+    <AssemblyName>OneDriveSdk.WinRT</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>

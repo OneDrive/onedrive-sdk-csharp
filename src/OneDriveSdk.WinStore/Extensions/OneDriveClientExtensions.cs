@@ -63,6 +63,7 @@ namespace Microsoft.OneDrive.Sdk
         public static IOneDriveClient GetActiveDirectoryClient(
             string appId,
             string returnUrl = null,
+            AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
             return new OneDriveClient(
@@ -71,7 +72,7 @@ namespace Microsoft.OneDrive.Sdk
                     ActiveDirectoryAppId = appId,
                     ActiveDirectoryReturnUrl = returnUrl,
                 },
-                /* credentialCache */ null,
+                credentialCache ?? new AdalCredentialCache(),
                 new HttpProvider(),
                 new AdalServiceInfoProvider(),
                 ClientType.Business);

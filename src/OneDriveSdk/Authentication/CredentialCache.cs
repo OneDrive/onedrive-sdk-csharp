@@ -56,7 +56,7 @@ namespace Microsoft.OneDrive.Sdk
 
         public virtual CredentialCacheNotification AfterAccess { get; set; }
 
-        public bool HasStateChanged { get; set; }
+        public virtual bool HasStateChanged { get; set; }
 
         protected ISerializer Serializer { get; private set; }
 
@@ -138,6 +138,20 @@ namespace Microsoft.OneDrive.Sdk
             this.OnAfterAccess(cacheNotificationArgs);
         }
 
+        internal virtual void AddToCache(AccountSession accountSession)
+        {
+            var cacheNotificationArgs = new CredentialCacheNotificationArgs { CredentialCache = this };
+
+            this.OnBeforeAccess(cacheNotificationArgs);
+            this.OnBeforeWrite(cacheNotificationArgs);
+
+            var cacheKey = this.GetKeyForAuthResult(accountSession);
+            this.cacheDictionary[cacheKey] = accountSession;
+
+            this.HasStateChanged = true;
+            this.OnAfterAccess(cacheNotificationArgs);
+        }
+
         internal virtual void DeleteFromCache(AccountSession accountSession)
         {
             if (accountSession != null)
@@ -153,20 +167,6 @@ namespace Microsoft.OneDrive.Sdk
 
                 this.OnAfterAccess(cacheNotificationArgs);
             }
-        }
-
-        internal virtual void AddToCache(AccountSession accountSession)
-        {
-            var cacheNotificationArgs = new CredentialCacheNotificationArgs { CredentialCache = this };
-
-            this.OnBeforeAccess(cacheNotificationArgs);
-            this.OnBeforeWrite(cacheNotificationArgs);
-
-            var cacheKey = this.GetKeyForAuthResult(accountSession);
-            this.cacheDictionary[cacheKey] = accountSession;
-
-            this.HasStateChanged = true;
-            this.OnAfterAccess(cacheNotificationArgs);
         }
 
         internal virtual AccountSession GetResultFromCache(AccountType accountType, string clientId, string userId)

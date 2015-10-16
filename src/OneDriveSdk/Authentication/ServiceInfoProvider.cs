@@ -101,6 +101,7 @@ namespace Microsoft.OneDrive.Sdk
                 AppId = appConfig.ActiveDirectoryAppId,
                 AuthenticationProvider = this.AuthenticationProvider,
                 ClientSecret = appConfig.ActiveDirectoryClientSecret,
+                CredentialCache = credentialCache,
                 HttpProvider = httpProvider,
                 ReturnUrl = appConfig.ActiveDirectoryReturnUrl,
             };

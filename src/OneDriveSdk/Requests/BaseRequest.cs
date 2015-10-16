@@ -38,7 +38,7 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public class BaseRequest : IBaseRequest
     {
-        private readonly string requestStatsHeaderValue;
+        private readonly string sdkVersionHeaderValue;
 
         /// <summary>
         /// Constructs a new <see cref="BaseRequest"/>.
@@ -48,7 +48,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="options">The header and query options for the request.</param>
         public BaseRequest(
             string requestUrl,
-            IOneDriveClient oneDriveClient = null,
+            IOneDriveClient oneDriveClient,
             IEnumerable<Option> options = null)
         {
             this.Method = "GET";
@@ -73,8 +73,8 @@ namespace Microsoft.OneDrive.Sdk
                 }
             }
 
-            this.requestStatsHeaderValue = string.Format(
-                Constants.Headers.RequestStatsFormatString,
+            this.sdkVersionHeaderValue = string.Format(
+                Constants.Headers.SdkVersionHeaderValue,
                 this.GetType().GetTypeInfo().Assembly.GetName().Version);
         }
 
@@ -216,8 +216,12 @@ namespace Microsoft.OneDrive.Sdk
                 }
             }
 
-            // Append X-RequestStats header for telemetry
-            request.Headers.Add(Constants.Headers.RequestStatsName, this.requestStatsHeaderValue);
+            // Append SDK version header for telemetry
+            request.Headers.Add(
+                this.OneDriveClient.ClientType == ClientType.Business
+                    ? Constants.Headers.BusinessSdkVersionHeaderName
+                    : Constants.Headers.ConsumerSdkVersionHeaderName,
+                this.sdkVersionHeaderValue);
         }
 
         /// <summary>

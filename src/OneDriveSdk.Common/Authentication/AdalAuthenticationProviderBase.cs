@@ -71,7 +71,7 @@ namespace Microsoft.OneDrive.Sdk
 
                 this.authenticationContext = adalCredentialCache == null
                     ? new AuthenticationContext(serviceInfo.AuthenticationServiceUrl)
-                    : new AuthenticationContext(serviceInfo.AuthenticationServiceUrl, false, adalCredentialCache.tokenCache);
+                    : new AuthenticationContext(serviceInfo.AuthenticationServiceUrl, false, adalCredentialCache.TokenCache);
             }
         }
 

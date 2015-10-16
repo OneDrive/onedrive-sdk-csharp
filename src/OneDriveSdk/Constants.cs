@@ -90,12 +90,14 @@ namespace Microsoft.OneDrive.Sdk
         public static class Headers
         {
             public const string Bearer = "Bearer";
+            
+            public const string BusinessSdkVersionHeaderName = "X-ClientService-ClientTag";
+
+            public const string ConsumerSdkVersionHeaderName = "X-RequestStats";
 
             public const string FormUrlEncodedContentType = "application/x-www-form-urlencoded";
 
-            public const string RequestStatsName = "X-RequestStats";
-
-            public const string RequestStatsFormatString = "SDK-Version=CSharp-v{0}";
+            public const string SdkVersionHeaderValue = "SDK-Version=CSharp-v{0}";
         }
 
         public static class Url

@@ -84,8 +84,8 @@ namespace Test.OneDriveSdk.Requests
 
             var expectedVersionNumber = typeof(BaseRequest).GetTypeInfo().Assembly.GetName().Version;
             Assert.AreEqual(
-                string.Format(Constants.Headers.RequestStatsFormatString, expectedVersionNumber),
-                httpRequestMessage.Headers.GetValues(Constants.Headers.RequestStatsName).First(), "Unexpected request stats header.");
+                string.Format(Constants.Headers.SdkVersionHeaderValue, expectedVersionNumber),
+                httpRequestMessage.Headers.GetValues(Constants.Headers.ConsumerSdkVersionHeaderName).First(), "Unexpected request stats header.");
         }
 
         [TestMethod]
@@ -104,8 +104,8 @@ namespace Test.OneDriveSdk.Requests
 
             var expectedVersionNumber = typeof(BaseRequest).GetTypeInfo().Assembly.GetName().Version;
             Assert.AreEqual(
-                string.Format(Constants.Headers.RequestStatsFormatString, expectedVersionNumber),
-                httpRequestMessage.Headers.GetValues(Constants.Headers.RequestStatsName).First(), "Unexpected request stats header.");
+                string.Format(Constants.Headers.SdkVersionHeaderValue, expectedVersionNumber),
+                httpRequestMessage.Headers.GetValues(Constants.Headers.ConsumerSdkVersionHeaderName).First(), "Unexpected request stats header.");
         }
 
         [TestMethod]
