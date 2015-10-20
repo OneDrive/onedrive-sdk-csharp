@@ -39,7 +39,7 @@ namespace OneDrivePhotoBrowser
     {
         private ItemsController itemsController;
         
-        private readonly string[] scopes = new string[] { "onedrive.readwrite", "wl.offline_access", "wl.signin" };
+        private readonly string[] scopes = new string[] { "onedrive.read", "wl.offline_access", "wl.signin" };
 
         public MainPage()
         {
@@ -49,19 +49,6 @@ namespace OneDrivePhotoBrowser
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (((App)Application.Current).OneDriveClient == null)
-            {
-
-                /*((App)Application.Current).OneDriveClient = OneDriveClientExtensions.GetUniversalClient(
-                    this.scopes);*/
-
-                ((App)Application.Current).OneDriveClient = OneDriveClientExtensions.GetActiveDirectoryClient(
-                    "67b8454b-58df-4e6d-a688-c769bd327052",
-                    "https://localhost:777");
-
-                await ((App)Application.Current).OneDriveClient.AuthenticateAsync();
-            }
-
             if (this.itemsController == null)
             {
                 this.itemsController = new ItemsController(((App)Application.Current).OneDriveClient);

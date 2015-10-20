@@ -22,6 +22,9 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
+    using System.Linq;
+
     using IdentityModel.Clients.ActiveDirectory;
 
     public class AdalCredentialCache : CredentialCache
@@ -98,7 +101,22 @@ namespace Microsoft.OneDrive.Sdk
 
         internal override void DeleteFromCache(AccountSession accountSession)
         {
-            // Let ADAL handle the caching
+            if (this.tokenCache != null)
+            {
+                var cacheItems = this.tokenCache.ReadItems();
+                var currentUserItems = cacheItems.Where(
+                    cacheItem =>
+                        string.Equals(cacheItem.ClientId, accountSession.ClientId, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(cacheItem.UniqueId, accountSession.UserId, StringComparison.OrdinalIgnoreCase));
+
+                if (currentUserItems != null)
+                {
+                    foreach (var item in currentUserItems)
+                    {
+                        this.tokenCache.DeleteItem(item);
+                    }
+                }
+            }
         }
 
         internal override AccountSession GetResultFromCache(AccountType accountType, string clientId, string userId)

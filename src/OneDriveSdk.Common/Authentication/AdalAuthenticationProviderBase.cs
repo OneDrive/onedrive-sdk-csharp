@@ -103,21 +103,48 @@ namespace Microsoft.OneDrive.Sdk
             await this.RetrieveServiceResourceAsync(discoveryServiceToken);
             var authenticationResult = await this.AuthenticateResourceAsync(this.ServiceInfo.OneDriveServiceResource);
 
-            this.CurrentAccountSession = new AccountSession
+            this.CurrentAccountSession = new AdalAccountSession
             {
                 AccessToken = authenticationResult.AccessToken,
                 AccessTokenType = authenticationResult.AccessTokenType,
                 AccountType = AccountType.ActiveDirectory,
+                CanSignOut = true,
+                ClientId = this.ServiceInfo.AppId,
+                ExpiresOnUtc = authenticationResult.ExpiresOn,
+                UserId = authenticationResult.UserInfo.UniqueId,
             };
 
             return this.CurrentAccountSession;
         }
 
-        public Task SignOutAsync()
+        public async Task SignOutAsync()
         {
-            throw new NotImplementedException();
+            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
+            {
+                if (this.ServiceInfo.WebAuthenticationUi != null)
+                {
+                    var requestUri = new Uri(string.Format(
+                    "{0}?client_id={1}&redirect_uri={2}",
+                    this.ServiceInfo.SignOutUrl,
+                    this.ServiceInfo.AppId,
+                    this.ServiceInfo.ReturnUrl));
+
+                    await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(requestUri, new Uri(this.ServiceInfo.ReturnUrl));
+                }
+
+                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
+                this.CurrentAccountSession = null;
+            }
         }
-        
+
+        protected void DeleteUserCredentialsFromCache(AccountSession accountSession)
+        {
+            if (this.ServiceInfo.CredentialCache != null)
+            {
+                this.ServiceInfo.CredentialCache.DeleteFromCache(accountSession);
+            }
+        }
+
         private async Task<string> GetAuthenticationTokenForResourceAsync(string resource)
         {
             var authenticationResult = await this.AuthenticateResourceAsync(resource);

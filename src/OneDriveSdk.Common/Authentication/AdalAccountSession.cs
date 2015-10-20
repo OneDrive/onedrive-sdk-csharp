@@ -22,17 +22,23 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
-    public class ActiveDirectoryServiceInfo : ServiceInfo
+    using System.Collections.Generic;
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
+
+    internal class AdalAccountSession : AccountSession
     {
-        public ActiveDirectoryServiceInfo()
+        internal AdalAccountSession()
         {
-            this.AccountType = AccountType.ActiveDirectory;
-            this.AuthenticationServiceUrl = Constants.Authentication.ActiveDirectoryAuthenticationServiceUrl;
-            this.DiscoveryServiceResource = Constants.Authentication.ActiveDirectoryDiscoveryResource;
-            this.DiscoveryServiceUrl = Constants.Authentication.ActiveDirectoryDiscoveryServiceUrl;
-            this.OneDriveServiceEndpointVersion = "v2.0";
-            this.SignOutUrl = Constants.Authentication.ActiveDirectorySignOutUrl;
-            this.TokenServiceUrl = Constants.Authentication.ActiveDirectoryTokenServiceUrl;
         }
+
+        internal AdalAccountSession(
+            IDictionary<string, string> authenticationResponseValues,
+            string clientId = null,
+            AccountType accountType = AccountType.None)
+            : base(authenticationResponseValues, clientId, accountType)
+        {
+        }
+
+        internal TokenCacheItem TokenCacheItem { get; set; }
     }
 }

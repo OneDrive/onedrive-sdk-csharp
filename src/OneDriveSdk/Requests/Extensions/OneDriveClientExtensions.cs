@@ -22,7 +22,9 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
-    public partial class OneDriveClient
+    using System;
+
+    public partial class OneDriveClient : IDisposable
     {
         /// <summary>
         /// Creates a OneDrive client for use against OneDrive consumer.
@@ -102,6 +104,15 @@ namespace Microsoft.OneDrive.Sdk
             return new ItemRequestBuilder(
                 string.Format("{0}{1}:", this.BaseUrl, path),
                 this);
+        }
+
+        public void Dispose()
+        {
+            var httpProvider = this.HttpProvider as HttpProvider;
+            if (httpProvider != null)
+            {
+                httpProvider.Dispose();
+            }
         }
     }
 }

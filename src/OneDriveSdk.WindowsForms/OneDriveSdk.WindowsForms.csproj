@@ -58,6 +58,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AdalAccountSession.cs">
+      <Link>Authentication\AdalAccountSession.cs</Link>
+    </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\AdalAuthenticationProviderBase.cs">
       <Link>Authentication\AdalAuthenticationProviderBase.cs</Link>
     </Compile>

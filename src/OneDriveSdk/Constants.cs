@@ -74,7 +74,7 @@ namespace Microsoft.OneDrive.Sdk
 
             internal const string ActiveDirectoryDiscoveryServiceUrl = "https://api.office.com/discovery/v2.0/me/services";
 
-            //internal const string ActiveDirectorySignOutUrl = "https://login.live.com/oauth20_logout.srf";
+            internal const string ActiveDirectorySignOutUrl = "https://login.windows.net/common/oauth2/logout";
 
             internal const string ActiveDirectoryTokenServiceUrl = "https://login.windows.net/common/oauth2/token";
 
