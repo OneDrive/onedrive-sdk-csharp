@@ -33,7 +33,7 @@ namespace Microsoft.OneDrive.Sdk
     {
     
         /// <summary>
-        /// Gets the Item.
+        /// Gets the item.
         /// </summary>
         ChunkedUploadSessionDescriptor Item { get; }
     

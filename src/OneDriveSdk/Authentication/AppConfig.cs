@@ -25,22 +25,22 @@ namespace Microsoft.OneDrive.Sdk
     public class AppConfig
     {
         /// <summary>
-        /// Gets the application ID for Microsoft Account authentication.
+        /// Gets the application ID for Microsoft account authentication.
         /// </summary>
         public string MicrosoftAccountAppId { get; set; }
 
         /// <summary>
-        /// Gets the client secret for Microsoft Account authentication.
+        /// Gets the client secret for Microsoft account authentication.
         /// </summary>
         public string MicrosoftAccountClientSecret { get; set; }
 
         /// <summary>
-        /// Gets the application return URL for Microsoft Account authentication.
+        /// Gets the application return URL for Microsoft account authentication.
         /// </summary>
         public string MicrosoftAccountReturnUrl { get; set; }
 
         /// <summary>
-        /// Gets the requested scopes for Microsoft Account authentication.
+        /// Gets the requested scopes for Microsoft account authentication.
         /// </summary>
         public string[] MicrosoftAccountScopes { get; set; }
     }

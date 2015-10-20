@@ -46,7 +46,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Gets an <see cref="IItemRequestBuilder"/> for the specified Children.
         /// </summary>
-        /// <param name="id">The ID for the Children.</param>
+        /// <param name="id">The ID for the children.</param>
         /// <returns>The <see cref="IItemRequestBuilder"/>.</returns>
         IItemRequestBuilder this[string id] { get; }
     }

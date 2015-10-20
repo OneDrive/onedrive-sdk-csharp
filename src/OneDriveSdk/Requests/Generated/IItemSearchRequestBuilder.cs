@@ -33,7 +33,7 @@ namespace Microsoft.OneDrive.Sdk
     {
     
         /// <summary>
-        /// Gets the Q.
+        /// Gets the Query.
         /// </summary>
         string Q { get; }
     

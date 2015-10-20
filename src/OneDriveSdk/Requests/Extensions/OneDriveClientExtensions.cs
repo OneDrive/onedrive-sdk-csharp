@@ -27,9 +27,9 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Creates a OneDrive client for use against OneDrive consumer.
         /// </summary>
-        /// <param name="appId">The application ID for Microsoft Account authentication.</param>
-        /// <param name="returnUrl">The application return URL for Microsoft Account authentication.</param>
-        /// <param name="scopes">The requested scopes for Microsoft Account authentication.</param>
+        /// <param name="appId">The application ID for Microsoft account authentication.</param>
+        /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
+        /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <param name="webAuthenticationUi">The <see cref="IWebAuthenticationUi"/> for displaying authentication UI to the user.</param>
@@ -55,10 +55,10 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Creates a OneDrive client for use against OneDrive consumer.
         /// </summary>
-        /// <param name="appId">The application ID for Microsoft Account authentication.</param>
-        /// <param name="returnUrl">The application return URL for Microsoft Account authentication.</param>
-        /// <param name="scopes">The requested scopes for Microsoft Account authentication.</param>
-        /// <param name="clientSecret">The client secret for Microsoft Account authentication.</param>
+        /// <param name="appId">The application ID for Microsoft account authentication.</param>
+        /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
+        /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
+        /// <param name="clientSecret">The client secret for Microsoft account authentication.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
@@ -94,7 +94,7 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
-        /// Gets item request builder for the specified item path.
+        /// Gets the item request builder for the specified item path.
         /// <returns>The item request builder.</returns>
         /// </summary>
         public IItemRequestBuilder ItemWithPath(string path)

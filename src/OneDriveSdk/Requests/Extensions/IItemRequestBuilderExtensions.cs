@@ -23,12 +23,12 @@
 namespace Microsoft.OneDrive.Sdk
 {
     /// <summary>
-    /// The type  ItemRequestBuilder.
+    /// The type ItemRequestBuilder.
     /// </summary>
     public partial interface IItemRequestBuilder
     {
         /// <summary>
-        /// Gets item request builder for the specified item path.
+        /// Gets the item request builder for the specified item path.
         /// <returns>The item request builder.</returns>
         /// </summary>
         IItemRequestBuilder ItemWithPath(string path);

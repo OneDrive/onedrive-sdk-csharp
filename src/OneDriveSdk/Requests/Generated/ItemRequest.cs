@@ -47,10 +47,10 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
-        /// Creates the specified Item using PUT.
+        /// Creates the specified item using PUT.
         /// </summary>
-        /// <param name="item">The Item to create.</param>
-        /// <returns>The created Item.</returns>
+        /// <param name="item">The item to create.</param>
+        /// <returns>The created item.</returns>
         public async Task<Item> CreateAsync(Item item)
         {
             this.ContentType = "application/json";
@@ -61,7 +61,7 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
-        /// Deletes the specified Item.
+        /// Deletes the specified item.
         /// </summary>
         /// <returns>The task to await.</returns>
         public async Task DeleteAsync()
@@ -71,9 +71,9 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
-        /// Gets the Item.
+        /// Gets the item.
         /// </summary>
-        /// <returns>The Item.</returns>
+        /// <returns>The item.</returns>
         public async Task<Item> GetAsync()
         {
             this.Method = "GET";
@@ -83,10 +83,10 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
-        /// Updates the specified Item using PATCH.
+        /// Updates the specified item using PATCH.
         /// </summary>
-        /// <param name="item">The Item to update.</param>
-        /// <returns>The updated Item.</returns>
+        /// <param name="item">The item to update.</param>
+        /// <returns>The updated item.</returns>
         public async Task<Item> UpdateAsync(Item item)
         {
             this.ContentType = "application/json";
