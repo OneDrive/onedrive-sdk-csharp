@@ -33,7 +33,7 @@ using Microsoft.OneDrive.Sdk.WinStore;
 
 Register your application for OneDrive by following [these](https://dev.onedrive.com/app-registration.htm) steps.
 
-### 2. Setting your application Id and scopes
+### 2. Set your application Id and scopes
 
 Your app must requests permissions in order to access a user's OneDrive. To do this, specify your app ID and scopes, or permission level.
 For example:
@@ -44,12 +44,12 @@ private string scopes = new string[] { "onedrive.readwrite", "wl.signin" };
 
 For more information, see [Authentication scopes](https://dev.onedrive.com/auth/msa_oauth.htm#authentication-scopes).
 
-### 3. Getting an authenticated OneDriveClient object
+### 3. Get an authenticated OneDriveClient object
 
 The **OneDriveClient** object will handle authentication for you. You must get a **OneDriveClient** object in order for your app to make requests to the service. 
 For more information, see [Authenticate your C# app for OneDrive](docs/auth.md).
 
-### 4. Making requests to the service
+### 4. Make requests to the service
 
 Once you have a OneDriveClient that is authenticated you can begin to make calls against the service. The requests against the service look like OneDrive's [REST API](https://dev.onedrive.com/README.htm).
 
