@@ -39,7 +39,7 @@ Your app must requests permissions in order to access a user's OneDrive. To do t
 For example:
 
 ```csharp
-private string scopes = new string[] {"onedrive.readwrite', "wl.signin" };
+private string scopes = new string[] { "onedrive.readwrite", "wl.signin" };
 ```
 
 For more information, see [Authentication scopes](https://dev.onedrive.com/auth/msa_oauth.htm#authentication-scopes).
