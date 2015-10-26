@@ -1,6 +1,6 @@
 # OneDrive API Browser Sample
 
-The OneDriveAPIBroswer sample is a OneDrive SDK for CSharp sample that allows users to browse their files and folders on OneDrive, and view metadata. 
+The OneDriveAPIBroswer sample is a Windows Forms app sample that uses the OneDrive SDK for CSharp. In this sample, users can browse photos that are store on OneDrive.
 
 ## Prerequisites
 
