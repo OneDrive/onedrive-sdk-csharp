@@ -12,15 +12,15 @@ The OneDriveAPIBroswer sample is a [Windows Forms](https://msdn.microsoft.com/en
 
 ## Run the sample
 
-1. With the sample open in Visual Studio, press **F5** or click **Start** to run the sample. The sample looks like this: 
+With the sample open in Visual Studio, press **F5** or click **Start** to run the sample. The sample looks like this: 
 
 ![OneDriveAPIBrowser sample](https://github.com/mimisasouvanh/onedrive-sdk-csharp/blob/master/samples/OneDriveApiBrowser/images/OneDriveAPIBrowser.PNG)
 
-2. When the OneDrive API Browser app opens, choose **File** | **Sign in to MSA** to sign in to a personal OneDrive account. Once you have signed in to your Microsoft account, a dialog will appear, asking for permissions to access OneDrive files.
+When the OneDrive API Browser app opens, choose **File** | **Sign in to MSA** to sign in to a personal OneDrive account. Once you have signed in to your Microsoft account, a dialog will appear, asking for permissions to access OneDrive files.
 
 ![Let this app access your info](https://github.com/mimisasouvanh/onedrive-sdk-csharp/blob/master/samples/OneDriveApiBrowser/images/Permissions.PNG)
 
-3. Click **Yes**. 
+Click **Yes**. 
 
 Your OneDrive items will appear on the left pane, with each item represented by a thumbnail. On the right pane, the selected item's properties are displayed. You can choose how the item properties are displayed, whether its JSON or Tree View.
 
