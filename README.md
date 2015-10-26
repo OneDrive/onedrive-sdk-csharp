@@ -20,7 +20,7 @@ To install the OneDrive SDK via NuGet:
 * Search for `Microsoft.OneDriveSDK` in the NuGet Library, or
 * Type `Install-Package Microsoft.OneDriveSDK` into the **Package Manager Console** in Visual Studio. 
 
-Once the package is installed in your project, reference the OneDrive SDK extensions into your project:
+Once the package is installed in your project, references to the OneDrive SDK extensions will automatically appear in your project:
 
 ```csharp
 using Microsoft.OneDrive.Sdk;
