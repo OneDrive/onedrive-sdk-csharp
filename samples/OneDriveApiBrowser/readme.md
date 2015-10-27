@@ -1,11 +1,11 @@
 # OneDrive API Browser Sample
 
-The OneDriveAPIBroswer sample is a [Windows Forms](https://msdn.microsoft.com/en-us/library/dd30h2yb(v=vs.110).aspx) app sample that uses the OneDrive SDK for CSharp. In this sample, users can browse files and folders that are stored on OneDrive, and view metadata.
+The OneDriveAPIBroswer sample is a [Windows Forms](https://msdn.microsoft.com/en-us/library/dd30h2yb(v=vs.110).aspx) app sample that uses the [OneDrive SDK for CSharp](https://github.com/OneDrive/onedrive-sdk-csharp). In this sample, users can browse files and folders that are stored on OneDrive, and view metadata.
 
 ## Set up
 
 1. Install [Visual Studio](https://www.visualstudio.com/downloads/download-visual-studio-vs) and all available updates, if you don't already have it. 
-2. Download the OneDriveAPIBrowser sample from GitHub or create your own fork of the repository.
+2. Download the OneDriveAPIBrowser sample from [GitHub](https://github.com/OneDrive/onedrive-sdk-csharp) or create your own fork of the repository.
 3. From Visual Studio, open the **OneDriveApiBrowser.csproj** project.
 3. Choose **View** | **Other Windows**, and then choose **Package Manager Console** to open the **Package Manager Console**. 
 4. In the **Package Manager Console**, type `Install-Package Microsoft.OneDriveSDK`. This installs the OneDrive SDK via NuGet.
