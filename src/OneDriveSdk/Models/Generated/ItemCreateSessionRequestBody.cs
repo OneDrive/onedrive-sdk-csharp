@@ -24,6 +24,7 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -32,7 +33,6 @@ namespace Microsoft.OneDrive.Sdk
     [DataContract]
     public partial class ItemCreateSessionRequestBody
     {
-
     
         /// <summary>
         /// Gets or sets Item.

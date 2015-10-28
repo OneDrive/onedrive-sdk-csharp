@@ -22,7 +22,6 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
-    using WinStore;
     using System.Threading.Tasks;
     using Windows.Security.Authentication.Web;
 
@@ -65,6 +64,9 @@ namespace Microsoft.OneDrive.Sdk
             }
 
             var serviceInfo = await base.GetServiceInfo(appConfig, null, httpProvider, clientType);
+
+            serviceInfo.BaseUrl = appConfig.ActiveDirectoryServiceEndpointUrl;
+            serviceInfo.ServiceResource = appConfig.ActiveDirectoryServiceResource;
 
             if (string.IsNullOrEmpty(serviceInfo.ReturnUrl))
             {

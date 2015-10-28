@@ -24,6 +24,7 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -35,11 +36,11 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs a new ItemRequestBuilder.
         /// </summary>
         /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         public ItemRequestBuilder(
             string requestUrl,
-            IOneDriveClient oneDriveClient)
-            : base(requestUrl, oneDriveClient)
+            IBaseClient client)
+            : base(requestUrl, client)
         {
         }
 
@@ -59,7 +60,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The built request.</returns>
         public IItemRequest Request(IList<Option> options)
         {
-            return new ItemRequest(this.RequestUrl, this.OneDriveClient, options);
+            return new ItemRequest(this.RequestUrl, this.Client, options);
         }
 
     
@@ -71,7 +72,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             get
             {
-                return new PermissionsCollectionRequestBuilder(this.AppendSegmentToRequestUrl("permissions"), this.OneDriveClient);
+                return new PermissionsCollectionRequestBuilder(this.AppendSegmentToRequestUrl("permissions"), this.Client);
             }
         }
     
@@ -83,7 +84,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             get
             {
-                return new VersionsCollectionRequestBuilder(this.AppendSegmentToRequestUrl("versions"), this.OneDriveClient);
+                return new VersionsCollectionRequestBuilder(this.AppendSegmentToRequestUrl("versions"), this.Client);
             }
         }
     
@@ -95,7 +96,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             get
             {
-                return new ChildrenCollectionRequestBuilder(this.AppendSegmentToRequestUrl("children"), this.OneDriveClient);
+                return new ChildrenCollectionRequestBuilder(this.AppendSegmentToRequestUrl("children"), this.Client);
             }
         }
     
@@ -107,7 +108,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             get
             {
-                return new ThumbnailsCollectionRequestBuilder(this.AppendSegmentToRequestUrl("thumbnails"), this.OneDriveClient);
+                return new ThumbnailsCollectionRequestBuilder(this.AppendSegmentToRequestUrl("thumbnails"), this.Client);
             }
         }
     
@@ -119,7 +120,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             get
             {
-                return new ItemContentRequestBuilder(this.AppendSegmentToRequestUrl("content"), this.OneDriveClient);
+                return new ItemContentRequestBuilder(this.AppendSegmentToRequestUrl("content"), this.Client);
             }
         }
     
@@ -132,7 +133,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemCreateSessionRequestBuilder(
                 this.AppendSegmentToRequestUrl("upload.createSession"),
-                this.OneDriveClient,
+                this.Client,
                 item);
         }
     
@@ -146,7 +147,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemCopyRequestBuilder(
                 this.AppendSegmentToRequestUrl("action.copy"),
-                this.OneDriveClient,
+                this.Client,
                 name,
                 parentReference);
         }
@@ -160,7 +161,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemCreateLinkRequestBuilder(
                 this.AppendSegmentToRequestUrl("action.createLink"),
-                this.OneDriveClient,
+                this.Client,
                 type);
         }
     
@@ -172,7 +173,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemAllPhotosRequestBuilder(
                 this.AppendSegmentToRequestUrl("view.allPhotos"),
-                this.OneDriveClient);
+                this.Client);
         }
     
         /// <summary>
@@ -184,7 +185,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemDeltaRequestBuilder(
                 this.AppendSegmentToRequestUrl("view.delta"),
-                this.OneDriveClient,
+                this.Client,
                 token);
         }
     
@@ -197,7 +198,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemSearchRequestBuilder(
                 this.AppendSegmentToRequestUrl("view.search"),
-                this.OneDriveClient,
+                this.Client,
                 q);
         }
     

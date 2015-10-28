@@ -20,28 +20,15 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WindowsForms
+namespace Microsoft.OneDrive.Sdk
 {
-    public static class OneDriveClientExtensions
+    public static class BusinessClientExtensions
     {
         public static IOneDriveClient GetActiveDirectoryClient(
             string appId,
-            string returnUrl,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            return OneDriveClientExtensions.GetActiveDirectoryClient(
-                appId,
-                /* clientSecret */ null,
-                returnUrl,
-                credentialCache,
-                httpProvider);
-        }
-
-        public static IOneDriveClient GetActiveDirectoryClient(
-            string appId,
-            string clientSecret,
-            string returnUrl,
+            string returnUrl = null,
+            string serviceResource = null,
+            string serviceEndpointUrl = null,
             AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
@@ -50,6 +37,8 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                 {
                     ActiveDirectoryAppId = appId,
                     ActiveDirectoryReturnUrl = returnUrl,
+                    ActiveDirectoryServiceEndpointUrl = serviceEndpointUrl,
+                    ActiveDirectoryServiceResource = serviceResource,
                 },
                 credentialCache ?? new AdalCredentialCache(),
                 new HttpProvider(),

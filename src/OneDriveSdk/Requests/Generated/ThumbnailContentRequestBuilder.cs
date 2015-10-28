@@ -35,11 +35,11 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs a new ThumbnailContentRequestBuilder.
         /// </summary>
         /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         public ThumbnailContentRequestBuilder(
             string requestUrl,
-            IOneDriveClient oneDriveClient)
-            : base(requestUrl, oneDriveClient)
+            IBaseClient client)
+            : base(requestUrl, client)
         {
         }
 
@@ -49,7 +49,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The built request.</returns>
         public IThumbnailContentRequest Request()
         {
-            return new ThumbnailContentRequest(this.RequestUrl, this.OneDriveClient, null);
+            return new ThumbnailContentRequest(this.RequestUrl, this.Client, null);
         }
     }
 }

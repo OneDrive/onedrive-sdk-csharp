@@ -53,7 +53,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets signInRequired.
         /// </summary>
         [DataMember(Name = "signInRequired", EmitDefaultValue = false, IsRequired = false)]
-        public Boolean? SignInRequired { get; set; }
+        public bool? SignInRequired { get; set; }
     
         /// <summary>
         /// Gets or sets additional data.

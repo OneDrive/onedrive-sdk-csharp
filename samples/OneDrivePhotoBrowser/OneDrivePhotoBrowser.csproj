@@ -46,7 +46,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;WINRT</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -151,6 +151,10 @@
       <Project>{9f6bb55b-3985-42e8-88de-ce10a39c6389}</Project>
       <Name>OneDriveSdk.WinRT</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\OneDriveSdk.WinStore\OneDriveSdk.WinStore.csproj">
+      <Project>{a8c54259-542c-40ac-aeb6-eefc3aa79859}</Project>
+      <Name>OneDriveSdk.WinStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\OneDriveSdk\OneDriveSdk.csproj">
       <Project>{1368527b-d7b2-46ad-893d-6dc8c073d819}</Project>
       <Name>OneDriveSdk</Name>
@@ -159,6 +163,15 @@
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

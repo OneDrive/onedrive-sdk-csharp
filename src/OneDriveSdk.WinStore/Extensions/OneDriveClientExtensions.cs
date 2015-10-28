@@ -22,8 +22,6 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
-    using WinStore;
-
     public static class OneDriveClientExtensions
     {
         public static IOneDriveClient GetClientUsingOnlineIdAuthenticator(
@@ -58,25 +56,5 @@ namespace Microsoft.OneDrive.Sdk
         {
             return OneDriveClientExtensions.GetClientUsingOnlineIdAuthenticator(scopes, returnUrl, httpProvider);
         }
-
-#if WINRT
-        public static IOneDriveClient GetActiveDirectoryClient(
-            string appId,
-            string returnUrl = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            return new OneDriveClient(
-                new AppConfig
-                {
-                    ActiveDirectoryAppId = appId,
-                    ActiveDirectoryReturnUrl = returnUrl,
-                },
-                credentialCache ?? new AdalCredentialCache(),
-                new HttpProvider(),
-                new AdalServiceInfoProvider(),
-                ClientType.Business);
-        }
-#endif
     }
 }

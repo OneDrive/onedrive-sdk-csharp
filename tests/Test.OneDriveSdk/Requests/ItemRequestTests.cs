@@ -145,7 +145,7 @@ namespace Test.OneDriveSdk.Requests
             Assert.IsNotNull(itemRequest, "Unexpected request.");
             Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
             Assert.AreEqual(1, itemRequest.QueryOptions.Count, "Unexpected query options present.");
-            Assert.AreEqual("expand", itemRequest.QueryOptions[0].Name, "Unexpected expand query name.");
+            Assert.AreEqual("$expand", itemRequest.QueryOptions[0].Name, "Unexpected expand query name.");
             Assert.AreEqual("value", itemRequest.QueryOptions[0].Value, "Unexpected expand query value.");
         }
 
@@ -158,7 +158,7 @@ namespace Test.OneDriveSdk.Requests
             Assert.IsNotNull(itemRequest, "Unexpected request.");
             Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
             Assert.AreEqual(1, itemRequest.QueryOptions.Count, "Unexpected query options present.");
-            Assert.AreEqual("select", itemRequest.QueryOptions[0].Name, "Unexpected select query name.");
+            Assert.AreEqual("$select", itemRequest.QueryOptions[0].Name, "Unexpected select query name.");
             Assert.AreEqual("value", itemRequest.QueryOptions[0].Value, "Unexpected select query value.");
         }
 
@@ -171,7 +171,7 @@ namespace Test.OneDriveSdk.Requests
             Assert.IsNotNull(itemRequest, "Unexpected request.");
             Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
             Assert.AreEqual(1, itemRequest.QueryOptions.Count, "Unexpected query options present.");
-            Assert.AreEqual("top", itemRequest.QueryOptions[0].Name, "Unexpected top query name.");
+            Assert.AreEqual("$top", itemRequest.QueryOptions[0].Name, "Unexpected top query name.");
             Assert.AreEqual("1", itemRequest.QueryOptions[0].Value, "Unexpected top query value.");
         }
 

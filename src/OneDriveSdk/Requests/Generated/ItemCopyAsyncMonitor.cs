@@ -34,8 +34,8 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial class ItemCopyAsyncMonitor : AsyncMonitor<Item>, IItemCopyAsyncMonitor
     {
-        public ItemCopyAsyncMonitor(IOneDriveClient oneDriveClient, string monitorUrl)
-            : base(oneDriveClient, monitorUrl)
+        public ItemCopyAsyncMonitor(IBaseClient client, string monitorUrl)
+            : base(client, monitorUrl)
         {
         }
     

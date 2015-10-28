@@ -116,29 +116,16 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryServiceResponse.cs">
       <Link>Authentication\DiscoveryServiceResponse.cs</Link>
     </Compile>
-    <Compile Include="..\OneDriveSdk.WinStore\Authentication\OnlineIdAuthenticationProvider.cs">
-      <Link>Authentication\OnlineIdAuthenticationProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\OneDriveSdk.WinStore\Authentication\OnlineIdServiceInfoProvider.cs">
-      <Link>Authentication\OnlineIdServiceInfoProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\OneDriveSdk.WinStore\Authentication\WebAuthenticationBrokerAuthenticationProvider.cs">
-      <Link>Authentication\WebAuthenticationBrokerAuthenticationProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\OneDriveSdk.WinStore\Authentication\WebAuthenticationBrokerServiceInfoProvider.cs">
-      <Link>Authentication\WebAuthenticationBrokerServiceInfoProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\OneDriveSdk.WinStore\Authentication\WebAuthenticationBrokerWebAuthenticationUi.cs">
-      <Link>Authentication\WebAuthenticationBrokerWebAuthenticationUi.cs</Link>
-    </Compile>
-    <Compile Include="..\OneDriveSdk.WinStore\Extensions\OneDriveClientExtensions.cs">
-      <Link>Extensions\OneDriveClientExtensions.cs</Link>
-    </Compile>
     <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalServiceInfoProvider.cs" />
+    <Compile Include="Extensions\BusinessClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OneDriveSdk.WinStore\OneDriveSdk.WinStore.csproj">
+      <Project>{a8c54259-542c-40ac-aeb6-eefc3aa79859}</Project>
+      <Name>OneDriveSdk.WinStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OneDriveSdk\OneDriveSdk.csproj">
       <Project>{1368527b-d7b2-46ad-893d-6dc8c073d819}</Project>
       <Name>OneDriveSdk</Name>
@@ -155,6 +142,15 @@
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

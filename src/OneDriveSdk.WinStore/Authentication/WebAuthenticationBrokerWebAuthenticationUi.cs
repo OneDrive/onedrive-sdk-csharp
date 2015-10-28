@@ -20,7 +20,7 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WinStore
+namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;

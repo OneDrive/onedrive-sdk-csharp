@@ -36,14 +36,14 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Constructs a new ItemContentRequest.
         /// <param name="requestUrl">The request URL.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         /// <param name="options">Query option name value pairs for the request.</param>
         /// </summary>
         public ItemContentRequest(
             string requestUrl,
-            IOneDriveClient oneDriveClient,
+            IBaseClient client,
             IList<Option> options)
-            : base(requestUrl, oneDriveClient, options)
+            : base(requestUrl, client, options)
         {
         }
 

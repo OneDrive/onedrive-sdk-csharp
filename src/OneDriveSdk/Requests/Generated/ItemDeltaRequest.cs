@@ -24,7 +24,9 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -38,10 +40,10 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         public ItemDeltaRequest(
             string requestUrl,
-            IOneDriveClient oneDriveClient,
+            IBaseClient client,
             IList<Option> options,
             string token = null)
-            : base(requestUrl, oneDriveClient, options)
+            : base(requestUrl, client, options)
         {
     
             this.Method = "GET";
@@ -74,7 +76,7 @@ namespace Microsoft.OneDrive.Sdk
                     if (!string.IsNullOrEmpty(nextPageLinkString))
                     {
                         response.Value.InitializeNextPageRequest(
-                            this.OneDriveClient,
+                            this.Client,
                             nextPageLinkString);
                     }
                 }
@@ -89,7 +91,7 @@ namespace Microsoft.OneDrive.Sdk
             return null;
     
         }
-
+    
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -97,7 +99,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IItemDeltaRequest Expand(string value)
         {
-            this.QueryOptions.Add(new QueryOption("expand", value));
+            this.QueryOptions.Add(new QueryOption("$expand", value));
             return this;
         }
 
@@ -108,7 +110,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IItemDeltaRequest Select(string value)
         {
-            this.QueryOptions.Add(new QueryOption("select", value));
+            this.QueryOptions.Add(new QueryOption("$select", value));
             return this;
         }
 
@@ -119,9 +121,9 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IItemDeltaRequest Top(int value)
         {
-            this.QueryOptions.Add(new QueryOption("top", value.ToString()));
+            this.QueryOptions.Add(new QueryOption("$top", value.ToString()));
             return this;
         }
-
+    
     }
 }

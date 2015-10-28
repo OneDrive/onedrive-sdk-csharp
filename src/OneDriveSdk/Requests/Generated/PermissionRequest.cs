@@ -24,7 +24,9 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -36,13 +38,13 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs a new PermissionRequest.
         /// </summary>
         /// <param name="requestUrl">The request URL.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         /// <param name="options">Query option name value pairs for the request.</param>
         public PermissionRequest(
             string requestUrl,
-            IOneDriveClient oneDriveClient,
+            IBaseClient client,
             IList<Option> options)
-            : base(requestUrl, oneDriveClient, options)
+            : base(requestUrl, client, options)
         {
         }
 
@@ -103,7 +105,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IPermissionRequest Expand(string value)
         {
-            this.QueryOptions.Add(new QueryOption("expand", value));
+            this.QueryOptions.Add(new QueryOption("$expand", value));
             return this;
         }
 
@@ -114,7 +116,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IPermissionRequest Select(string value)
         {
-            this.QueryOptions.Add(new QueryOption("select", value));
+            this.QueryOptions.Add(new QueryOption("$select", value));
             return this;
         }
         
@@ -125,7 +127,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IPermissionRequest Top(int value)
         {
-            this.QueryOptions.Add(new QueryOption("top", value.ToString()));
+            this.QueryOptions.Add(new QueryOption("$top", value.ToString()));
             return this;
         }
 

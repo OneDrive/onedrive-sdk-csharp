@@ -35,7 +35,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemRequestBuilder(
                 string.Format("{0}:/{1}:", this.RequestUrl, path),
-                this.OneDriveClient);
+                this.Client);
         }
     }
 }

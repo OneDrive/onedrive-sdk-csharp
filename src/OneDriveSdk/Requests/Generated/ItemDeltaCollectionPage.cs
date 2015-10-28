@@ -47,13 +47,13 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Initializes the NextPageRequest property.
         /// </summary>
-        public void InitializeNextPageRequest(IOneDriveClient oneDriveClient, string nextPageLinkString)
+        public void InitializeNextPageRequest(IBaseClient client, string nextPageLinkString)
         {
             if (!string.IsNullOrEmpty(nextPageLinkString))
             {
                 this.NextPageRequest = new ItemDeltaRequest(
                     nextPageLinkString,
-                    oneDriveClient,
+                    client,
                     null);
             }
         }

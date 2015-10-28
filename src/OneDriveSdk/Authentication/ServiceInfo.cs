@@ -82,7 +82,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Gets or sets the service resource for OneDrive for Active Directory authentication.
         /// </summary>
-        public string OneDriveServiceResource { get; set; }
+        public string ServiceResource { get; set; }
 
         /// <summary>
         /// Gets or sets the application's sign out URL.

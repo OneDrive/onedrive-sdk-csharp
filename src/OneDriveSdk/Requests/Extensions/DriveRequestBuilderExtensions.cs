@@ -30,7 +30,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         public IItemRequestBuilder Root
         {
-            get { return new ItemRequestBuilder(this.AppendSegmentToRequestUrl(Constants.Url.Root), this.OneDriveClient); }
+            get { return new ItemRequestBuilder(this.AppendSegmentToRequestUrl(Constants.Url.Root), this.Client); }
         }
     }
 }

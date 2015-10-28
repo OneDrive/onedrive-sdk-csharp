@@ -20,11 +20,10 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WinStore
+namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Linq;
-    using System.Net;
     using System.Threading.Tasks;
     using Windows.Security.Authentication.OnlineId;
 

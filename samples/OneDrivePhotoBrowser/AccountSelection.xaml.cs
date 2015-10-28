@@ -86,7 +86,7 @@ namespace OneDrivePhotoBrowser
             {
                 var client = clientType == ClientType.Consumer
                     ? OneDriveClientExtensions.GetUniversalClient(this.scopes) as OneDriveClient
-                    : OneDriveClientExtensions.GetActiveDirectoryClient(
+                    : BusinessClientExtensions.GetActiveDirectoryClient(
                         oneDriveForBusinessAppId,
                         oneDriveForBusinessReturnUrl) as OneDriveClient;
 

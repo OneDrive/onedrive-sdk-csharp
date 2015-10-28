@@ -31,11 +31,11 @@ namespace Microsoft.OneDrive.Sdk
     public class AsyncMonitor<T>
     {
         private AsyncOperationStatus asyncOperationStatus;
-        private IOneDriveClient client;
+        private IBaseClient client;
 
         internal string monitorUrl;
 
-        public AsyncMonitor(IOneDriveClient client, string monitorUrl)
+        public AsyncMonitor(IBaseClient client, string monitorUrl)
         {
             this.client = client;
             this.monitorUrl = monitorUrl;

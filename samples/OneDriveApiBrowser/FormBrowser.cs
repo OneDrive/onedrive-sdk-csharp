@@ -294,7 +294,7 @@ namespace OneDriveApiBrowser
                         "https://login.live.com/oauth20_desktop.srf",
                         FormBrowser.Scopes,
                         webAuthenticationUi: new FormsWebAuthenticationUi())
-                    : OneDriveClientExtensions.GetActiveDirectoryClient("67b8454b-58df-4e6d-a688-c769bd327052", "https://localhost:777");
+                    : BusinessClientExtensions.GetActiveDirectoryClient("67b8454b-58df-4e6d-a688-c769bd327052", "https://localhost:777", "https://graph.microsoft.com/", "https://graph.microsoft.com/beta");
             }
 
             try
@@ -337,6 +337,8 @@ namespace OneDriveApiBrowser
             if (this.oneDriveClient != null)
             {
                 await this.oneDriveClient.SignOutAsync();
+                ((OneDriveClient)this.oneDriveClient).Dispose();
+                this.oneDriveClient = null;
             }
 
             UpdateConnectedStateUx(false);

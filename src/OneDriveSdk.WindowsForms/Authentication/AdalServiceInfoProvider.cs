@@ -66,6 +66,9 @@ namespace Microsoft.OneDrive.Sdk
 
             var serviceInfo = await base.GetServiceInfo(appConfig, credentialCache, httpProvider, clientType);
 
+            serviceInfo.BaseUrl = appConfig.ActiveDirectoryServiceEndpointUrl;
+            serviceInfo.ServiceResource = appConfig.ActiveDirectoryServiceResource;
+
             if (serviceInfo.AuthenticationProvider == null)
             {
                 serviceInfo.AuthenticationProvider = new AdalAuthenticationProvider(serviceInfo);

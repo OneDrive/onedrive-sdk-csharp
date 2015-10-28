@@ -24,6 +24,7 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -34,8 +35,8 @@ namespace Microsoft.OneDrive.Sdk
     
         public DriveSharedWithMeRequestBuilder(
             string requestUrl,
-            IOneDriveClient oneDriveClient)
-            : base(requestUrl, oneDriveClient)
+            IBaseClient client)
+            : base(requestUrl, client)
         {
         }
     
@@ -48,7 +49,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new DriveSharedWithMeRequest(
                 this.RequestUrl,
-                this.OneDriveClient,
+                this.Client,
                 options);
         }
 

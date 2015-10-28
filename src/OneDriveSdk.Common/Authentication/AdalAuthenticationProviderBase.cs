@@ -99,9 +99,13 @@ namespace Microsoft.OneDrive.Sdk
                 return this.CurrentAccountSession;
             }
 
-            var discoveryServiceToken = await this.GetAuthenticationTokenForResourceAsync(this.serviceInfo.DiscoveryServiceResource);
-            await this.RetrieveServiceResourceAsync(discoveryServiceToken);
-            var authenticationResult = await this.AuthenticateResourceAsync(this.ServiceInfo.OneDriveServiceResource);
+            if (string.IsNullOrEmpty(this.ServiceInfo.ServiceResource) || string.IsNullOrEmpty(this.ServiceInfo.BaseUrl))
+            {
+                var discoveryServiceToken = await this.GetAuthenticationTokenForResourceAsync(this.serviceInfo.DiscoveryServiceResource);
+                await this.RetrieveMyFilesServiceResourceAsync(discoveryServiceToken);
+            }
+
+            var authenticationResult = await this.AuthenticateResourceAsync(this.ServiceInfo.ServiceResource);
 
             this.CurrentAccountSession = new AdalAccountSession
             {
@@ -152,7 +156,7 @@ namespace Microsoft.OneDrive.Sdk
             return authenticationResult.AccessToken;
         }
 
-        private async Task RetrieveServiceResourceAsync(string discoveryServiceToken)
+        private async Task RetrieveMyFilesServiceResourceAsync(string discoveryServiceToken)
         {
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.ServiceInfo.DiscoveryServiceUrl))
             {
@@ -185,7 +189,7 @@ namespace Microsoft.OneDrive.Sdk
                                 });
                         }
 
-                        this.ServiceInfo.OneDriveServiceResource = service.ServiceResourceId;
+                        this.ServiceInfo.ServiceResource = service.ServiceResourceId;
                         this.ServiceInfo.BaseUrl = service.ServiceEndpointUri;
                     }
                 }

@@ -24,6 +24,7 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -36,13 +37,13 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs a new ThumbnailsCollectionRequest.
         /// </summary>
         /// <param name="requestUrl">The request URL.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         /// <param name="options">Query option name value pairs for the request.</param>
         public ThumbnailsCollectionRequest(
             string requestUrl,
-            IOneDriveClient oneDriveClient,
+            IBaseClient client,
             IList<Option> options)
-            : base(requestUrl, oneDriveClient, options)
+            : base(requestUrl, client, options)
         {
         }
 
@@ -67,7 +68,7 @@ namespace Microsoft.OneDrive.Sdk
                     if (!string.IsNullOrEmpty(nextPageLinkString))
                     {
                         response.Value.InitializeNextPageRequest(
-                            this.OneDriveClient,
+                            this.Client,
                             nextPageLinkString);
                     }
                 }

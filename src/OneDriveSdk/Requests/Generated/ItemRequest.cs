@@ -24,7 +24,9 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -36,13 +38,13 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs a new ItemRequest.
         /// </summary>
         /// <param name="requestUrl">The request URL.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         /// <param name="options">Query option name value pairs for the request.</param>
         public ItemRequest(
             string requestUrl,
-            IOneDriveClient oneDriveClient,
+            IBaseClient client,
             IList<Option> options)
-            : base(requestUrl, oneDriveClient, options)
+            : base(requestUrl, client, options)
         {
         }
 
@@ -103,7 +105,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IItemRequest Expand(string value)
         {
-            this.QueryOptions.Add(new QueryOption("expand", value));
+            this.QueryOptions.Add(new QueryOption("$expand", value));
             return this;
         }
 
@@ -114,7 +116,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IItemRequest Select(string value)
         {
-            this.QueryOptions.Add(new QueryOption("select", value));
+            this.QueryOptions.Add(new QueryOption("$select", value));
             return this;
         }
         
@@ -125,7 +127,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IItemRequest Top(int value)
         {
-            this.QueryOptions.Add(new QueryOption("top", value.ToString()));
+            this.QueryOptions.Add(new QueryOption("$top", value.ToString()));
             return this;
         }
 
@@ -150,7 +152,7 @@ namespace Microsoft.OneDrive.Sdk
                     if (!string.IsNullOrEmpty(nextPageLinkString))
                     {
                         item.Permissions.InitializeNextPageRequest(
-                            this.OneDriveClient,
+                            this.Client,
                             nextPageLinkString);
                     }
                 }
@@ -166,7 +168,7 @@ namespace Microsoft.OneDrive.Sdk
                     if (!string.IsNullOrEmpty(nextPageLinkString))
                     {
                         item.Versions.InitializeNextPageRequest(
-                            this.OneDriveClient,
+                            this.Client,
                             nextPageLinkString);
                     }
                 }
@@ -182,7 +184,7 @@ namespace Microsoft.OneDrive.Sdk
                     if (!string.IsNullOrEmpty(nextPageLinkString))
                     {
                         item.Children.InitializeNextPageRequest(
-                            this.OneDriveClient,
+                            this.Client,
                             nextPageLinkString);
                     }
                 }
@@ -198,7 +200,7 @@ namespace Microsoft.OneDrive.Sdk
                     if (!string.IsNullOrEmpty(nextPageLinkString))
                     {
                         item.Thumbnails.InitializeNextPageRequest(
-                            this.OneDriveClient,
+                            this.Client,
                             nextPageLinkString);
                     }
                 }
