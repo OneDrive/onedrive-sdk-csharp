@@ -42,42 +42,57 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="serializer">A serializer for serializing and deserializing JSON objects.</param>
         public HttpProvider(ISerializer serializer = null)
-            : this(
-                  new TimeSpan(10, 0, 0, 0, 0), // TimeSpan.MaxValue throws, set to 10 days as default
-                  serializer)
         {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="HttpProvider"/>.
-        /// </summary>
-        /// <param name="serializer">A serializer for serializing and deserializing JSON objects.</param>
-        /// <param name="timeout">The timeout for requests.</param>
-        public HttpProvider(TimeSpan timeout, ISerializer serializer)
-            : this(
-                  new CacheControlHeaderValue { NoCache = true, NoStore = true },
-                  timeout,
-                  serializer)
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="HttpProvider"/>.
-        /// </summary>
-        /// <param name="serializer">A serializer for serializing and deserializing JSON objects.</param>
-        /// <param name="cacheControlHeader">The header for handling request caching.</param>
-        /// <param name="timeout">The timeout for requests.</param>
-        public HttpProvider(CacheControlHeaderValue cacheControlHeader, TimeSpan timeout, ISerializer serializer)
-        {
-            this.Serializer = serializer ?? new Serializer();
-
             var clientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-            this.httpClient = new HttpClient(clientHandler, /* disposeHandler */ true)
+            this.httpClient = new HttpClient(clientHandler, /* disposeHandler */ true);
+
+            this.CacheControlHeader = new CacheControlHeaderValue { NoCache = true, NoStore = true };
+            this.Serializer = serializer ?? new Serializer();
+        }
+
+        /// <summary>
+        /// Gets or sets the cache control header for requests;
+        /// </summary>
+        public CacheControlHeaderValue CacheControlHeader
+        {
+            get
             {
-                Timeout = timeout
-            };
-            
-            this.httpClient.DefaultRequestHeaders.CacheControl = cacheControlHeader;
+                return this.httpClient.DefaultRequestHeaders.CacheControl;
+            }
+
+            set
+            {
+                this.httpClient.DefaultRequestHeaders.CacheControl = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the overall request timeout.
+        /// </summary>
+        public TimeSpan OverallTimeout
+        {
+            get
+            {
+                return this.httpClient.Timeout;
+            }
+
+            set
+            {
+                try
+                {
+                    this.httpClient.Timeout = value;
+                }
+                catch (InvalidOperationException exception)
+                {
+                    throw new OneDriveException(
+                        new Error
+                        {
+                            Code = OneDriveErrorCode.NotAllowed.ToString(),
+                            Message = "Overall timeout cannot be set after the first request is sent."
+                        },
+                        exception);
+                }
+            }
         }
 
         /// <summary>
@@ -103,7 +118,6 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The <see cref="HttpResponseMessage"/>.</returns>
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
-
             var response = await this.SendRequestAsync(request);
 
             if (this.IsRedirect(response.StatusCode))

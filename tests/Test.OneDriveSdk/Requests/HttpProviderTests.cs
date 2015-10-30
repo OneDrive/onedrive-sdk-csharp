@@ -61,29 +61,14 @@ namespace Test.OneDriveSdk.Requests
         }
 
         [TestMethod]
-        public void HttpProvider_CustomCacheHeader()
+        public void HttpProvider_CustomCacheHeaderAndTimeout()
         {
-            var timeout = new TimeSpan(100);
+            var timeout = TimeSpan.FromSeconds(200);
             var cacheHeader = new CacheControlHeaderValue();
-            using (var defaultHttpProvider = new HttpProvider(cacheHeader, timeout, null))
+            using (var defaultHttpProvider = new HttpProvider(null) { CacheControlHeader = cacheHeader, OverallTimeout = timeout })
             {
                 Assert.IsFalse(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache, "NoCache true.");
                 Assert.IsFalse(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore, "NoStore true.");
-
-                Assert.AreEqual(timeout, defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
-                Assert.IsNotNull(defaultHttpProvider.Serializer, "Serializer not initialized.");
-                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initilaized.");
-            }
-        }
-
-        [TestMethod]
-        public void HttpProvider_CustomTimeout()
-        {
-            var timeout = new TimeSpan(100);
-            using (var defaultHttpProvider = new HttpProvider(timeout, null))
-            {
-                Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache, "NoCache false.");
-                Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore, "NoStore false.");
 
                 Assert.AreEqual(timeout, defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
                 Assert.IsNotNull(defaultHttpProvider.Serializer, "Serializer not initialized.");
@@ -99,7 +84,7 @@ namespace Test.OneDriveSdk.Requests
                 Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache, "NoCache false.");
                 Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore, "NoStore false.");
 
-                Assert.AreEqual(new TimeSpan(10, 0, 0, 0, 0), defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
+                Assert.AreEqual(TimeSpan.FromSeconds(100), defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
 
                 Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initilaized.");
             }
