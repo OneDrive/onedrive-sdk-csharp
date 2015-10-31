@@ -23,12 +23,13 @@
 namespace Test.OneDriveSdk.WinRT
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Microsoft.OneDrive.Sdk;
     using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-    using WinStore.Mocks;
-    using System.Collections.Generic;
+    using Mocks;
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
     [TestClass]
     public class AdalAuthenticationProviderTests
@@ -58,6 +59,13 @@ namespace Test.OneDriveSdk.WinRT
             };
 
             this.authenticationProvider = new AdalAuthenticationProvider(this.serviceInfo);
+        }
+
+        [TestMethod]
+        public void AuthenticateResourceAsync()
+        {
+            //var authenticationResult = new AuthenticationResult();
+           // this.authenticationProvider.authenticationContext = new MockAuthenticationContext();
         }
     }
 }

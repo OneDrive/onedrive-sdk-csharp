@@ -45,7 +45,7 @@ namespace Microsoft.OneDrive.Sdk
 
             try
             {
-                authenticationResult = await this.authenticationContext.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId);
+                authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId);
             }
             catch (Exception)
             {
@@ -57,7 +57,7 @@ namespace Microsoft.OneDrive.Sdk
                 return authenticationResult;
             }
 
-            authenticationResult = await this.authenticationContext.AcquireTokenAsync(
+            authenticationResult = await this.authenticationContextWrapper.AcquireTokenAsync(
                 resource,
                 this.ServiceInfo.AppId,
                 new Uri(this.ServiceInfo.ReturnUrl));

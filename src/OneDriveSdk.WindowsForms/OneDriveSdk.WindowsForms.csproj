@@ -84,6 +84,8 @@
     </Compile>
     <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalServiceInfoProvider.cs" />
+    <Compile Include="Authentication\AuthenticationContextWrapper.cs" />
+    <Compile Include="Authentication\IAuthenticationContextWrapper.cs" />
     <Compile Include="Extensions\BusinessClientExtensions.cs" />
     <Compile Include="Web\FormsWebDialog.cs">
       <SubType>form</SubType>

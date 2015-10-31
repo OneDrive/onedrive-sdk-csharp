@@ -48,11 +48,11 @@ namespace Microsoft.OneDrive.Sdk
                 if (!string.IsNullOrEmpty(this.serviceInfo.ClientSecret))
                 {
                     var clientCredential = new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
-                    authenticationResult = await this.authenticationContext.AcquireTokenSilentAsync(resource, clientCredential, UserIdentifier.AnyUser);
+                    authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, UserIdentifier.AnyUser);
                 }
                 else
                 {
-                    authenticationResult = await this.authenticationContext.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId);
+                    authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId);
                 }
             }
             catch (Exception)
@@ -67,7 +67,7 @@ namespace Microsoft.OneDrive.Sdk
 
             try
             {
-                authenticationResult = this.authenticationContext.AcquireToken(
+                authenticationResult = this.authenticationContextWrapper.AcquireToken(
                     resource,
                     this.ServiceInfo.AppId,
                     new Uri(this.ServiceInfo.ReturnUrl),

@@ -27,7 +27,7 @@ namespace Test.OneDriveSdk.WinRT
 
     using Microsoft.OneDrive.Sdk;
     using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-    using WinStore.Mocks;
+    using Mocks;
     using System.Collections.Generic;
 
     [TestClass]

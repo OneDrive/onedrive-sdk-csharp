@@ -34,7 +34,7 @@ namespace Microsoft.OneDrive.Sdk
     {
         protected ServiceInfo serviceInfo;
         
-        protected AuthenticationContext authenticationContext;
+        internal IAuthenticationContextWrapper authenticationContextWrapper;
 
         /// <summary>
         /// Constructs an <see cref="AdalAuthenticationProviderBase"/>.
@@ -69,9 +69,9 @@ namespace Microsoft.OneDrive.Sdk
 
                 var adalCredentialCache = this.serviceInfo.CredentialCache as AdalCredentialCache;
 
-                this.authenticationContext = adalCredentialCache == null
-                    ? new AuthenticationContext(serviceInfo.AuthenticationServiceUrl)
-                    : new AuthenticationContext(serviceInfo.AuthenticationServiceUrl, false, adalCredentialCache.TokenCache);
+                this.authenticationContextWrapper = adalCredentialCache == null
+                    ? new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl)
+                    : new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl, false, adalCredentialCache.TokenCache);
             }
         }
 
