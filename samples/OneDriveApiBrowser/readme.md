@@ -32,7 +32,7 @@ The **Picker** menu opens up the signed-in user's OneDrive from a web browser.
 
 ### OneDrive sign-in
 
-This sample gets a **OneDriveClient** object and calls **GetMicrosoftAccountClient** to sign the user in with the specified scopes:
+This sample gets an **IOneDriveClient** instance using **GetMicrosoftAccountClient**, and calls **AuthenticateAsync** to sign the user in with the specified scopes:
 
 ```csharp
 private IOneDriveClient oneDriveClient { get; set; }
