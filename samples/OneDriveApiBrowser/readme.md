@@ -1,6 +1,6 @@
 # OneDrive API Browser Sample
 
-The OneDriveAPIBroswer sample is a [Windows Forms](https://msdn.microsoft.com/en-us/library/dd30h2yb(v=vs.110).aspx) app sample that uses the [OneDrive SDK for CSharp](https://github.com/OneDrive/onedrive-sdk-csharp). In this sample, users can browse files and folders that are stored on OneDrive, and view metadata.
+The OneDriveAPIBrowser sample is a [Windows Forms](https://msdn.microsoft.com/en-us/library/dd30h2yb(v=vs.110).aspx) app sample that uses the [OneDrive SDK for C#](https://github.com/OneDrive/onedrive-sdk-csharp). In this sample, users can browse files and folders that are stored on OneDrive, and view metadata.
 
 ## Set up
 
@@ -34,7 +34,7 @@ The **Picker** menu opens up the signed-in user's OneDrive from a web browser.
 
 ### OneDrive sign-in
 
-This app uses the **IOneDriveClient** object to get a **OneDriveClient** object and sign the user in with the specified scopes:
+This app uses the **IOneDriveClient** interface to get a **OneDriveClient** object and sign the user in with the specified scopes:
 
 ```csharp
 private IOneDriveClient oneDriveClient { get; set; }
@@ -42,25 +42,25 @@ private static readonly string[] Scopes = { "onedrive.readwrite", "wl.offline_ac
 ...
 private async void signInToolStripMenuItem_Click(object sender, EventArgs e) 
 { 
-   if (this.oneDriveClient == null) 
-   { 
-     this.oneDriveClient = OneDriveClient.GetMicrosoftAccountClient( 
-     FormBrowser.MsaClientId, 
-     "https://login.live.com/oauth20_desktop.srf", 
-     FormBrowser.Scopes, 
-     webAuthenticationUi: new FormsWebAuthenticationUi()); 
-   } 
-
-   try 
-   { 
-     if (!this.oneDriveClient.IsAuthenticated) 
+     if (this.oneDriveClient == null) 
      { 
-       await this.oneDriveClient.AuthenticateAsync(); 
+         this.oneDriveClient = OneDriveClient.GetMicrosoftAccountClient( 
+             FormBrowser.MsaClientId, 
+             "https://login.live.com/oauth20_desktop.srf", 
+             FormBrowser.Scopes, 
+             webAuthenticationUi: new FormsWebAuthenticationUi()); 
      } 
+
+     try 
+     { 
+         if (!this.oneDriveClient.IsAuthenticated) 
+         { 
+             await this.oneDriveClient.AuthenticateAsync(); 
+         } 
 ...
 ```
 
-As you can see, the three scopes specified for `Scopes` invokes the Permissions window to appear. The OneDrive SDK also provides a **SignOutAsync** method to easily sign the user out:
+As you can see, the three scopes specified for `Scopes` invokes the Permissions window. The OneDrive SDK also provides a **SignOutAsync** method to easily sign the user out:
 
 ```csharp
 await this.oneDriveClient.SignOutAsync();
@@ -78,6 +78,7 @@ folder = await this.oneDriveClient.Drive.Root.Request().Expand(expandValue).GetA
 
 This sample makes use of the OneDrive API's ability to upload items by path or by id. 
 Here, you upload an item by path:
+
 ```csharp
 // Specify the folder path of the item to upload.
 string folderPath = targetFolder.ParentReference == null 
