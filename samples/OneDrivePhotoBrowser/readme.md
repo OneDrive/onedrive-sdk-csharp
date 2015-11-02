@@ -9,28 +9,22 @@ The sample app displays only items that are images from a user's OneDrive. Note 
 
 To run the sample, you will need: 
 
-* Visual Studio 2013 or 2015, with Universal Windows App Development Tools **Note:** If you don't have Universal Windows App Development Tools installed, open **Control Panel** | **Uninstall a program**. Then right-click **Microsoft Visual Studio** and click **Change**. Select **Modify** and then choose **Universal Windows App Development Tools**. Click **Update**.
+* Visual Studio 2013 or 2015, with Universal Windows App Development Tools **Note:** If you don't have Universal Windows App Development Tools installed, open **Control Panel** | **Uninstall a program**. Then right-click **Microsoft Visual Studio** and click **Change**. Select **Modify** and then choose **Universal Windows App Development Tools**. Click **Update**. For more info about setting up your machine for Universal Windows Platform development, see [Build UWP apps with Visual Studio](https://msdn.microsoft.com/en-us/library/windows/apps/dn609832.aspx).
 * A Microsoft account
 * Knowledge of Windows Universal app development
 
 ### Download the sample
 
 1. Download the sample from [GitHub](https://github.com/OneDrive/onedrive-sdk-csharp) by choosing **Clone in Desktop** or **Download Zip**. 
-2. Once you have the files on your local machine, copy the folder **OneDrivePhotoBrowser** into a new location. This prevents Visual Studio from creating dependencies on the other sample and SDK files in the repo.
 3. In Visual Studio, open the **OneDrivePhotoBrowser.csproj** project file.
-
-### Install the OneDrive SDK
-
-1. Open the **Package Manager Console** in Visual Studio by choosing **View** | **Other Windows** | **Package Manager Console**.
-2. In the **Package Manager Console**, type `Install-Package Microsoft.OneDriveSDK`. This installs the OneDrive SDK via Nuget and adds references to it from the sample app.
 
 ### Associate the sample app with the Windows Store
 
-Before you can run the sample, you must associate the app with the Windows Store. To do this, right-click the project and choose **Store** | **Associate app with store**.
+Before you can run the sample, you must associate the app with the Windows Store. To do this, right-click the project and choose **Store** | **Associate app with store**. Associating the app with the Windows store is reqiured for authentication to succeed.
 
 ## Run the sample
 
-1. With the sample open in Visual Studio, at the top, select **Debug** for Solution Configurations and **x86** for Solution Platforms. 
+1. With the sample open in Visual Studio, at the top, select **Debug** for Solution Configurations and **x86** or **x64** for Solution Platforms. 
 2. Check that you are running the sample on the **Local Machine**.
 3. Press **F5** or click **Start** to run the sample.
 
