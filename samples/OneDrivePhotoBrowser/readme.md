@@ -1,6 +1,6 @@
 # OneDrive Photo Browser sample
 
-The OneDrive Photo Browser sample is a Windows Universal app that uses the OneDrive SDK for CSharp/.NET. 
+The OneDrive Photo Browser sample is a Windows Universal app that uses the OneDrive SDK for C#/.NET. 
 The sample app displays only items that are images from a user's OneDrive. Note that this sample does not work with OneDrive for Business.
 
 ## Set up
@@ -43,10 +43,12 @@ The OneDrive Photo Browser sample app will open the signed-in user's personal On
 In this sample app, authentication and sign in occurs when the app starts. If the user is not already signed in, the app will invoke the Microsoft account sign-in window.
 
 In App.xaml.cs, an `IOneDriveClient` object is initialized.
+
 ```csharp
 public IOneDriveClient OneDriveClient { get; set}
 ```
 In MainPage.xaml.cs, sign-in is verified. If no user is signed in, a Microsoft account sign-in dialog appears. The `GetUniversalClient` is called on the `OneDriveClientExtensions` object to get a `OneDriveClient` object. Once a `OneDriveClient` object is returned, `AuthenticateAsync` completes the client authentication for the Windows Universal sample app.
+
 ```csharp
 private readonly string[] scopes = new string[] { "onedrive.readwrite", "wl.offline_access", "wl.signin" };
 ...
@@ -64,6 +66,7 @@ private async void MainPage_Loaded(object sender, RoutedEventArgs e)
 ### Get thumbnails for an image in OneDrive
 
 In this example, thumbnails are returned for an item, if it is an image. `GetAsync()` is used to get the item's properties.
+
 ```csharp
 var childrenPage = await this.oneDriveClient.Drive.Items[id].Children.Request().Expand("thumbnails").GetAsync();
 items = childrenPage == null
