@@ -6,11 +6,11 @@ The OneDriveAPIBrowser sample is a [Windows Forms](https://msdn.microsoft.com/en
 
 1. Install [Visual Studio](https://www.visualstudio.com/downloads/download-visual-studio-vs) and all available updates, if you don't already have it. 
 2. Download the OneDriveAPIBrowser sample from [GitHub](https://github.com/OneDrive/onedrive-sdk-csharp) or create your own fork of the repository.
-3. From Visual Studio, open the **OneDriveApiBrowser.csproj** project.
+3. From Visual Studio, open the **OneDriveSdk.sln** project and build it.
 
 ## Run the sample
 
-With the sample open in Visual Studio, press **F5** or click **Start** to run the sample. The sample looks like this: 
+In Visual Studio, select the sample OneDriveAPIBrowser from the Startup project list, and then press **F5** or click **Start** to run the sample. The sample looks like this: 
 
 ![OneDriveAPIBrowser sample](https://github.com/mimisasouvanh/onedrive-sdk-csharp/blob/master/samples/OneDriveApiBrowser/images/OneDriveAPIBrowser.PNG)
 
