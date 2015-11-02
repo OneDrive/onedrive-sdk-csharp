@@ -16,15 +16,15 @@ To run the sample, you will need:
 ### Download the sample
 
 1. Download the sample from [GitHub](https://github.com/OneDrive/onedrive-sdk-csharp) by choosing **Clone in Desktop** or **Download Zip**. 
-3. In Visual Studio, open the **OneDrivePhotoBrowser.csproj** project file.
+3. In Visual Studio, open the **OneDriveSdk.sln** file and build it.
 
 ### Associate the sample app with the Windows Store
 
-Before you can run the sample, you must associate the app with the Windows Store. To do this, right-click the project and choose **Store** | **Associate app with store**. Associating the app with the Windows store is reqiured for authentication to succeed.
+Before you can run the sample, you must associate the app with the Windows Store. To do this, right-click the OneDrivePhotoBrowser project and choose **Store** | **Associate app with store**. Associating the app with the Windows store is reqiured for authentication to succeed.
 
 ## Run the sample
 
-1. With the sample open in Visual Studio, at the top, select **Debug** for Solution Configurations and **x86** or **x64** for Solution Platforms. 
+1. With the sample open in Visual Studio, at the top, select **Debug** for Solution Configurations and **x86** or **x64** for Solution Platforms, and **OneDrivePhotoBrowser** for Startup project. 
 2. Check that you are running the sample on the **Local Machine**.
 3. Press **F5** or click **Start** to run the sample.
 
