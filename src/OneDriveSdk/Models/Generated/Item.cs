@@ -56,7 +56,7 @@ namespace Microsoft.OneDrive.Sdk
         public DateTimeOffset? CreatedDateTime { get; set; }
     
         /// <summary>
-        /// Gets or sets c tag.
+        /// Gets or sets ctag.
         /// </summary>
         [DataMember(Name = "cTag", EmitDefaultValue = false, IsRequired = false)]
         public string CTag { get; set; }
@@ -68,7 +68,7 @@ namespace Microsoft.OneDrive.Sdk
         public string Description { get; set; }
     
         /// <summary>
-        /// Gets or sets e tag.
+        /// Gets or sets etag.
         /// </summary>
         [DataMember(Name = "eTag", EmitDefaultValue = false, IsRequired = false)]
         public string ETag { get; set; }

@@ -25,7 +25,7 @@ namespace Microsoft.OneDrive.Sdk
     public partial class SpecialCollectionRequestBuilder
     {
         /// <summary>
-        /// Gets app root special folder item request builder.
+        /// Gets the app root special folder item request builder.
         /// <returns>The item request builder.</returns>
         /// </summary>
         public IItemRequestBuilder AppRoot

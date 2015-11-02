@@ -31,7 +31,7 @@ namespace Microsoft.OneDrive.Sdk
         IDriveRequestBuilder Drive { get; }
 
         /// <summary>
-        /// Gets item request builder for the specified item path.
+        /// Gets the item request builder for the specified item path.
         /// <returns>The item request builder.</returns>
         /// </summary>
         IItemRequestBuilder ItemWithPath(string path);

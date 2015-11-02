@@ -25,7 +25,7 @@ namespace Microsoft.OneDrive.Sdk
     public partial class DriveRequestBuilder
     {
         /// <summary>
-        /// Gets root item request builder.
+        /// Gets the root item request builder.
         /// <returns>The item request builder.</returns>
         /// </summary>
         public IItemRequestBuilder Root

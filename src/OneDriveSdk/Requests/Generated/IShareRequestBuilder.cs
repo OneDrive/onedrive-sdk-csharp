@@ -46,7 +46,7 @@ namespace Microsoft.OneDrive.Sdk
 
     
         /// <summary>
-        /// Gets the request builder for Items.
+        /// Gets the request builder for items.
         /// </summary>
         /// <returns>The <see cref="IItemsCollectionRequestBuilder"/>.</returns>
         IItemsCollectionRequestBuilder Items { get; }

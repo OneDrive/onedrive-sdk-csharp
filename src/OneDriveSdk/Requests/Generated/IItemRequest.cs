@@ -32,30 +32,30 @@ namespace Microsoft.OneDrive.Sdk
     public partial interface IItemRequest : IBaseRequest
     {
         /// <summary>
-        /// Creates the specified Item using PUT.
+        /// Creates the specified item using PUT.
         /// </summary>
-        /// <param name="item">The Item to create.</param>
-        /// <returns>The created Item.</returns>
+        /// <param name="item">The item to create.</param>
+        /// <returns>The created item.</returns>
         Task<Item> CreateAsync(Item item);
 
         /// <summary>
-        /// Deletes the specified Item.
+        /// Deletes the specified item.
         /// </summary>
-        /// <param name="item">The Item to delete.</param>
+        /// <param name="item">The item to delete.</param>
         /// <returns>The task to await.</returns>
         Task DeleteAsync();
 
         /// <summary>
-        /// Gets the Item.
+        /// Gets the item.
         /// </summary>
-        /// <returns>The Item.</returns>
+        /// <returns>The item.</returns>
         Task<Item> GetAsync();
 
         /// <summary>
-        /// Updates the specified Item using PATCH.
+        /// Updates the specified item using PATCH.
         /// </summary>
-        /// <param name="item">The Item to update.</param>
-        /// <returns>The updated Item.</returns>
+        /// <param name="item">The item to update.</param>
+        /// <returns>The updated item.</returns>
         Task<Item> UpdateAsync(Item item);
 
         /// <summary>

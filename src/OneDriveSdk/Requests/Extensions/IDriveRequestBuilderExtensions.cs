@@ -25,7 +25,7 @@ namespace Microsoft.OneDrive.Sdk
     public partial interface IDriveRequestBuilder
     {
         /// <summary>
-        /// Gets root item request builder.
+        /// Gets the root item request builder.
         /// <returns>The item request builder.</returns>
         /// </summary>
         IItemRequestBuilder Root { get; }

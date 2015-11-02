@@ -14,10 +14,18 @@ frameworks:
 
 ## Installation via Nuget
 
-To install the OneDrive SDK via NuGet
+Before you install the OneDrive SDK, you must have Visual Studio installed, and an app to use the OneDrive SDK.
+To install the OneDrive SDK via NuGet:
 
 * Search for `Microsoft.OneDriveSDK` in the NuGet Library, or
-* Type `Install-Package Microsoft.OneDriveSDK` into the Package Manager Console.
+* Type `Install-Package Microsoft.OneDriveSDK` into the **Package Manager Console** in Visual Studio. 
+
+Once the package is installed in your project, references to the OneDrive SDK extensions will automatically appear in your project:
+
+```csharp
+using Microsoft.OneDrive.Sdk;
+using Microsoft.OneDrive.Sdk.WinStore;
+```
 
 ## Getting started
 
@@ -25,17 +33,23 @@ To install the OneDrive SDK via NuGet
 
 Register your application for OneDrive by following [these](https://dev.onedrive.com/app-registration.htm) steps.
 
-### 2. Setting your application Id and scopes
+### 2. Set your application Id and scopes
 
 Your app must requests permissions in order to access a user's OneDrive. To do this, specify your app ID and scopes, or permission level.
+For example:
+
+```csharp
+private string scopes = new string[] { "onedrive.readwrite", "wl.signin" };
+```
+
 For more information, see [Authentication scopes](https://dev.onedrive.com/auth/msa_oauth.htm#authentication-scopes).
 
-### 3. Getting an authenticated OneDriveClient object
+### 3. Get an authenticated OneDriveClient object
 
 The **OneDriveClient** object will handle authentication for you. You must get a **OneDriveClient** object in order for your app to make requests to the service. 
 For more information, see [Authenticate your C# app for OneDrive](docs/auth.md).
 
-### 4. Making requests to the service
+### 4. Make requests to the service
 
 Once you have a OneDriveClient that is authenticated you can begin to make calls against the service. The requests against the service look like OneDrive's [REST API](https://dev.onedrive.com/README.htm).
 

@@ -40,7 +40,7 @@ namespace Microsoft.OneDrive.Sdk
         }
     
         /// <summary>
-        /// Polls until the async operation is complete and returns the resulting Item.
+        /// Polls until the async operation is complete and returns the resulting item.
         /// </summary>
         public  Task<Item> CompleteOperationAsync(IProgress<AsyncOperationStatus> progress, CancellationToken cancellationToken)
         {

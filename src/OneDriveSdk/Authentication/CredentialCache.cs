@@ -102,7 +102,7 @@ namespace Microsoft.OneDrive.Sdk
 
                     if (version != CredentialCache.CacheVersion)
                     {
-                        // If the cache version doesn't match, skip deserialization
+                        // If the cache version doesn't match, skip deserialization.
                         return;
                     }
 

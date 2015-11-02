@@ -44,9 +44,9 @@ namespace Microsoft.OneDrive.Sdk
         IItemsCollectionRequest Request(IList<Option> options);
 
         /// <summary>
-        /// Gets an <see cref="IItemRequestBuilder"/> for the specified Items.
+        /// Gets an <see cref="IItemRequestBuilder"/> for the specified items.
         /// </summary>
-        /// <param name="id">The ID for the Items.</param>
+        /// <param name="id">The ID for the items.</param>
         /// <returns>The <see cref="IItemRequestBuilder"/>.</returns>
         IItemRequestBuilder this[string id] { get; }
     }

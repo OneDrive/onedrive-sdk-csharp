@@ -33,9 +33,9 @@ namespace Microsoft.OneDrive.Sdk
     {
         
         /// <summary>
-        /// Adds the specified Item to the collection via POST.
+        /// Adds the specified item to the collection via POST.
         /// </summary>
-        /// <param name="item">The Item to add.</param>
+        /// <param name="item">The item to add.</param>
         /// <returns>The created Item.</returns>
         Task<Item> AddAsync(Item item);
         
