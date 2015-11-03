@@ -20,16 +20,12 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk
+namespace Test.OneDriveSdk.WindowsForms.Authentication
 {
-    public class DiscoveryService
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    [TestClass]
+    public class AdalAuthenticationProviderTests
     {
-        public string Capability { get; set; }
-
-        public string ServiceApiVersion { get; set; }
-
-        public string ServiceEndpointUri { get; set; }
-
-        public string ServiceResourceId { get; set; }
     }
 }

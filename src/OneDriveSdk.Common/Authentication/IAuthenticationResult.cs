@@ -20,41 +20,41 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Test.OneDriveSdk.WinRT.Mocks
+namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using Windows.Foundation;
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
-    public class MockAsyncOperation<AuthenticationResult> : IAsyncOperation<AuthenticationResult>
+    public interface IAuthenticationResult
     {
-        private AuthenticationResult authenticationResult;
+        string AccessToken { get; }
 
-        public MockAsyncOperation(AuthenticationResult authenticationResult)
-        {
-            this.authenticationResult = authenticationResult;
-        }
-            
-        public AsyncOperationCompletedHandler<AuthenticationResult> Completed { get; set; }
+        string AccessTokenType { get; }
+        
+        DateTimeOffset ExpiresOn { get; }
 
-        public Exception ErrorCode { get; set; }
+        string IdToken { get; }
 
-        public uint Id { get; set; }
+        bool IsMultipleResourceRefreshToken { get; }
 
-        public AsyncStatus Status { get; set; }
+        string RefreshToken { get; }
 
-        public void Cancel()
-        {
-            throw new NotImplementedException();
-        }
+        string TenantId { get; }
 
-        public void Close()
-        {
-            throw new NotImplementedException();
-        }
+        UserInfo UserInfo { get; }
 
-        public AuthenticationResult GetResults()
-        {
-            return this.authenticationResult;
-        }
+#if !WINFORMS
+        string Error { get; }
+
+        string ErrorDescription { get; }
+
+        AuthenticationStatus Status { get; }
+
+        int StatusCode { get; set; }
+#endif
+        
+        string CreateAuthorizationHeader();
+
+        string Serialize();
     }
 }

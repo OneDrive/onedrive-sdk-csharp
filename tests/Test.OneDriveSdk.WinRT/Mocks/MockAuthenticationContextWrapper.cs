@@ -20,16 +20,28 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk
+namespace Test.OneDriveSdk.WinRT.Mocks
 {
-    public class DiscoveryService
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.OneDrive.Sdk;
+
+    public class MockAuthenticationContextWrapper : IAuthenticationContextWrapper
     {
-        public string Capability { get; set; }
+        public delegate IAuthenticationResult AuthenticationResultCallback(string resource, string clientId, Uri redirectUri);
+        public delegate IAuthenticationResult AuthenticationResultSilentCallback(string resource, string clientId);
 
-        public string ServiceApiVersion { get; set; }
+        public AuthenticationResultCallback AcquireTokenAsyncCallback { get; set; }
+        public AuthenticationResultSilentCallback AcquireTokenSilentAsyncCallback { get; set; }
 
-        public string ServiceEndpointUri { get; set; }
+        public Task<IAuthenticationResult> AcquireTokenAsync(string resource, string clientId, Uri redirectUri)
+        {
+            return Task.FromResult(this.AcquireTokenAsyncCallback(resource, clientId, redirectUri));
+        }
 
-        public string ServiceResourceId { get; set; }
+        public Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId)
+        {
+            return Task.FromResult(this.AcquireTokenSilentAsyncCallback(resource, clientId));
+        }
     }
 }

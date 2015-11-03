@@ -23,9 +23,9 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
+    using System.Threading.Tasks;
 
     using Microsoft.IdentityModel.Clients.ActiveDirectory;
-    using Windows.Foundation;
 
     public class AuthenticationContextWrapper : IAuthenticationContextWrapper
     {
@@ -41,14 +41,18 @@ namespace Microsoft.OneDrive.Sdk
             this.authenticationContext = new AuthenticationContext(serviceUrl, validateAuthority, tokenCache);
         }
 
-        public IAsyncOperation<AuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId)
+        public async Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId)
         {
-            return this.authenticationContext.AcquireTokenSilentAsync(resource, clientId);
+            var result = await this.authenticationContext.AcquireTokenSilentAsync(resource, clientId);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
         }
 
-        public IAsyncOperation<AuthenticationResult> AcquireTokenAsync(string resource, string clientId, Uri redirectUri)
+        public async Task<IAuthenticationResult> AcquireTokenAsync(string resource, string clientId, Uri redirectUri)
         {
-            return this.authenticationContext.AcquireTokenAsync(resource, clientId, redirectUri);
+            var result = await this.authenticationContext.AcquireTokenAsync(resource, clientId, redirectUri);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
         }
     }
 }

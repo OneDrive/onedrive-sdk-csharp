@@ -20,16 +20,47 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk
+namespace Test.OneDriveSdk.WinRT.Mocks
 {
-    public class DiscoveryService
+    using System;
+
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
+    using Microsoft.OneDrive.Sdk;
+
+    public class MockAuthenticationResult : IAuthenticationResult
     {
-        public string Capability { get; set; }
+        public string AccessToken { get; set; }
 
-        public string ServiceApiVersion { get; set; }
+        public string AccessTokenType { get; set; }
 
-        public string ServiceEndpointUri { get; set; }
+        public string Error { get; set; }
 
-        public string ServiceResourceId { get; set; }
+        public string ErrorDescription { get; set; }
+
+        public DateTimeOffset ExpiresOn { get; set; }
+
+        public string IdToken { get; set; }
+
+        public bool IsMultipleResourceRefreshToken { get; set; }
+
+        public string RefreshToken { get; set; }
+
+        public AuthenticationStatus Status { get; set; }
+
+        public int StatusCode { get; set; }
+
+        public string TenantId { get; set; }
+
+        public UserInfo UserInfo { get; set; }
+
+        public string CreateAuthorizationHeader()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Serialize()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

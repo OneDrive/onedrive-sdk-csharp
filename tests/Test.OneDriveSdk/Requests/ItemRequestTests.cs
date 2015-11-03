@@ -46,7 +46,7 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = streamContent;
 
-                var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
@@ -87,7 +87,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemById_BuildRequest()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id");
             var itemRequestBuilder = this.oneDriveClient.Drive.Items["id"] as ItemRequestBuilder;
 
             Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
@@ -101,7 +101,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemByPath_BuildRequest()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/root:/item/with/path:");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/root:/item/with/path:");
             var itemRequestBuilder = this.oneDriveClient.Drive.Root.ItemWithPath("item/with/path") as ItemRequestBuilder;
 
             Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
@@ -123,7 +123,7 @@ namespace Test.OneDriveSdk.Requests
         {
             using (var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.NoContent))
             {
-                var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
@@ -139,7 +139,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemRequest_Expand()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id");
             var itemRequest = this.oneDriveClient.Drive.Items["id"].Request().Expand("value") as ItemRequest;
 
             Assert.IsNotNull(itemRequest, "Unexpected request.");
@@ -152,7 +152,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemRequest_Select()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id");
             var itemRequest = this.oneDriveClient.Drive.Items["id"].Request().Select("value") as ItemRequest;
 
             Assert.IsNotNull(itemRequest, "Unexpected request.");
@@ -165,7 +165,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemRequest_Top()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id");
             var itemRequest = this.oneDriveClient.Drive.Items["id"].Request().Top(1) as ItemRequest;
 
             Assert.IsNotNull(itemRequest, "Unexpected request.");
@@ -189,7 +189,7 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = streamContent;
 
-                var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
                 this.httpProvider.Setup(
                         provider => provider.SendAsync(
                             It.Is<HttpRequestMessage>(

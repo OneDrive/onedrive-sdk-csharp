@@ -41,19 +41,25 @@ namespace Microsoft.OneDrive.Sdk
             this.authenticationContext = new AuthenticationContext(serviceUrl, validateAuthority, tokenCache);
         }
 
-        public Task<AuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId)
+        public async Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId)
         {
-            return this.authenticationContext.AcquireTokenSilentAsync(resource, clientId);
+            var result = await this.authenticationContext.AcquireTokenSilentAsync(resource, clientId);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
         }
 
-        public Task<AuthenticationResult> AcquireTokenSilentAsync(string resource, ClientCredential clientCredential, UserIdentifier userIdentifier)
+        public async Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, ClientCredential clientCredential, UserIdentifier userIdentifier)
         {
-            return this.authenticationContext.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier);
+            var result = await this.authenticationContext.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
         }
 
-        public AuthenticationResult AcquireToken(string resource, string clientId, Uri redirectUri, PromptBehavior promptBehavior)
+        public IAuthenticationResult AcquireToken(string resource, string clientId, Uri redirectUri, PromptBehavior promptBehavior)
         {
-            return this.authenticationContext.AcquireToken(resource, clientId, redirectUri, promptBehavior);
+            var result = this.authenticationContext.AcquireToken(resource, clientId, redirectUri, promptBehavior);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
         }
     }
 }

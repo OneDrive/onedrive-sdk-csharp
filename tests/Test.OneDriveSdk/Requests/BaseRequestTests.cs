@@ -40,7 +40,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void BaseRequest_InitializeWithQueryStringAndOptions()
         {
-            var baseUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+            var baseUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
             var requestUrl = baseUrl + "?key=value";
 
             var options = new List<Option>
@@ -62,7 +62,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void BaseRequest_GetWebRequestWithHeadersAndQueryOptions()
         {
-            var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+            var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
 
             var options = new List<Option>
             {
@@ -91,7 +91,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void BaseRequest_GetWebRequestNoOptions()
         {
-            var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+            var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
 
             var baseRequest = new BaseRequest(requestUrl, this.oneDriveClient) { Method = "DELETE" };
 
@@ -111,7 +111,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public async Task BaseRequest_SendAsync()
         {
-            var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+            var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
 
             var baseRequest = new BaseRequest(requestUrl, this.oneDriveClient) { ContentType = "application/json" };
 

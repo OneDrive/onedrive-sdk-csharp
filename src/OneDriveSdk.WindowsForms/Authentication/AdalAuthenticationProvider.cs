@@ -39,9 +39,9 @@ namespace Microsoft.OneDrive.Sdk
         {
         }
 
-        protected override async Task<AuthenticationResult> AuthenticateResourceAsync(string resource)
+        protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
-            AuthenticationResult authenticationResult = null;
+            IAuthenticationResult authenticationResult = null;
 
             try
             {
@@ -90,7 +90,7 @@ namespace Microsoft.OneDrive.Sdk
             return authenticationResult;
         }
 
-        private OneDriveException GetAuthenticationException(bool isCancelled = false, Exception innerException = null)
+        internal OneDriveException GetAuthenticationException(bool isCancelled = false, Exception innerException = null)
         {
             if (isCancelled)
             {

@@ -33,6 +33,7 @@ namespace Microsoft.OneDrive.Sdk
         InvalidRequest,
         ItemNotFound,
         MalwareDetected,
+        MyFilesCapabilityNotFound,
         NameAlreadyExists,
         NotAllowed,
         NotSupported,

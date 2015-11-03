@@ -57,6 +57,11 @@ namespace Microsoft.OneDrive.Sdk
 
                 return this.tokenCache;
             }
+
+            set
+            {
+                this.tokenCache = value;
+            }
         }
 
         public override bool HasStateChanged

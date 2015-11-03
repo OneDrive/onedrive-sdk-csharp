@@ -23,14 +23,12 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-
-    using Microsoft.IdentityModel.Clients.ActiveDirectory;
-    using Windows.Foundation;
+    using System.Threading.Tasks;
 
     public interface IAuthenticationContextWrapper
     {
-        IAsyncOperation<AuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId);
+        Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId);
 
-        IAsyncOperation<AuthenticationResult> AcquireTokenAsync(string resource, string clientId, Uri redirectUri);
+        Task<IAuthenticationResult> AcquireTokenAsync(string resource, string clientId, Uri redirectUri);
     }
 }

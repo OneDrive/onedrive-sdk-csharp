@@ -68,7 +68,7 @@ namespace Test.OneDriveSdk.Requests
                 this.httpProvider.Object,
                 this.serviceInfoProvider.Object)
             {
-                BaseUrl = Constants.Authentication.OneDriveConsumerBaseUrl,
+                BaseUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0"),
                 ServiceInfo = this.serviceInfo,
             };
         }

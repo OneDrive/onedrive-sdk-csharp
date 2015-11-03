@@ -22,29 +22,32 @@
 
 namespace Test.OneDriveSdk.WinRT.Mocks
 {
-    using System;
-    using Microsoft.IdentityModel.Clients.ActiveDirectory;
     using Microsoft.OneDrive.Sdk;
-    using Windows.Foundation;
 
-    public class MockAuthenticationContext : IAuthenticationContextWrapper
+    public class MockAdalCredentialCache : AdalCredentialCache
     {
-        private AuthenticationResult expectedAuthenticationResult;
+        public bool AddToCacheCalled { get; set; }
 
-        public MockAuthenticationContext(AuthenticationResult expectedAuthenticationResult)
+        public bool DeleteFromCacheCalled { get; set; }
+
+        public bool GetResultFromCacheCalled { get; set; }
+
+        internal override void AddToCache(AccountSession accountSession)
         {
-            this.expectedAuthenticationResult = expectedAuthenticationResult;
+            this.AddToCacheCalled = true;
+            base.AddToCache(accountSession);
         }
 
-        public IAsyncOperation<AuthenticationResult> AcquireTokenAsync(string resource, string clientId, Uri redirectUri)
+        internal override void DeleteFromCache(AccountSession accountSession)
         {
-            //return new MockAsyncOperation<AuthenticationResult>();
-            throw new NotImplementedException();
+            this.DeleteFromCacheCalled = true;
+            base.DeleteFromCache(accountSession);
         }
 
-        public IAsyncOperation<AuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId)
+        internal override AccountSession GetResultFromCache(AccountType accountType, string clientId, string userId)
         {
-            throw new NotImplementedException();
+            this.GetResultFromCacheCalled = true;
+            return base.GetResultFromCache(accountType, clientId, userId);
         }
     }
 }

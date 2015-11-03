@@ -40,7 +40,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ThumbnailContentRequest_BuildRequest()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id/thumbnails/0/id/content");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/thumbnails/0/id/content");
             var thumbnailContentRequestBuilder = this.oneDriveClient.Drive.Items["id"].Thumbnails["0"]["id"].Content as ThumbnailContentRequestBuilder;
 
             Assert.IsNotNull(thumbnailContentRequestBuilder, "Unexpected request builder.");
@@ -59,7 +59,7 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = stringContent;
 
-                var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id/thumbnails/0/id/content";
+                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/thumbnails/0/id/content";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
@@ -89,7 +89,7 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = streamContent;
 
-                var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id/thumbnails/0/id/content";
+                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/thumbnails/0/id/content";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(

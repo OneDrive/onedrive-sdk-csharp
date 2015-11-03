@@ -84,7 +84,9 @@ namespace Microsoft.OneDrive.Sdk
 
             internal const string MicrosoftAccountTokenServiceUrl = "https://login.live.com/oauth20_token.srf";
 
-            internal const string OneDriveConsumerBaseUrl = "https://api.onedrive.com/v1.0";
+            internal const string MyFilesCapability = "MyFiles";
+
+            internal const string OneDriveConsumerBaseUrlFormatString = "https://api.onedrive.com/{0}";
         }
 
         public static class Headers

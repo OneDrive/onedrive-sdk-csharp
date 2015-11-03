@@ -76,11 +76,17 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\AdalCredentialCache.cs">
       <Link>Authentication\AdalCredentialCache.cs</Link>
     </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AuthenticationResultWrapper.cs">
+      <Link>Authentication\AuthenticationResultWrapper.cs</Link>
+    </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryService.cs">
       <Link>Authentication\DiscoveryService.cs</Link>
     </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryServiceResponse.cs">
       <Link>Authentication\DiscoveryServiceResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\IAuthenticationResult.cs">
+      <Link>Authentication\IAuthenticationResult.cs</Link>
     </Compile>
     <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalServiceInfoProvider.cs" />

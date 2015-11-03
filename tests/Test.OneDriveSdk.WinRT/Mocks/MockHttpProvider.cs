@@ -20,16 +20,28 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk
+namespace Test.OneDriveSdk.WinRT.Mocks
 {
-    public class DiscoveryService
+    using System.Net.Http;
+    using System.Threading.Tasks;
+
+    using Microsoft.OneDrive.Sdk;
+
+    public class MockHttpProvider : IHttpProvider
     {
-        public string Capability { get; set; }
+        private HttpResponseMessage httpResponseMessage;
 
-        public string ServiceApiVersion { get; set; }
+        public MockHttpProvider(HttpResponseMessage httpResponseMessage, ISerializer serializer = null)
+        {
+            this.httpResponseMessage = httpResponseMessage;
+            this.Serializer = serializer;
+        }
 
-        public string ServiceEndpointUri { get; set; }
+        public ISerializer Serializer { get; private set; }
 
-        public string ServiceResourceId { get; set; }
+        public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+        {
+            return Task.FromResult(this.httpResponseMessage);
+        }
     }
 }

@@ -39,9 +39,9 @@ namespace Microsoft.OneDrive.Sdk
         {
         }
 
-        protected override async Task<AuthenticationResult> AuthenticateResourceAsync(string resource)
+        protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
-            AuthenticationResult authenticationResult = null;
+            IAuthenticationResult authenticationResult = null;
 
             try
             {

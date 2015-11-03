@@ -29,10 +29,10 @@ namespace Microsoft.OneDrive.Sdk
 
     public interface IAuthenticationContextWrapper
     {
-        Task<AuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId);
+        Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId);
 
-        Task<AuthenticationResult> AcquireTokenSilentAsync(string resource, ClientCredential clientCredential, UserIdentifier userIdentifier);
+        Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, ClientCredential clientCredential, UserIdentifier userIdentifier);
 
-        AuthenticationResult AcquireToken(string resource, string clientId, Uri redirectUri, PromptBehavior promptBehavior);
+        IAuthenticationResult AcquireToken(string resource, string clientId, Uri redirectUri, PromptBehavior promptBehavior);
     }
 }

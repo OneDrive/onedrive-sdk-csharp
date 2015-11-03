@@ -53,6 +53,7 @@ namespace Microsoft.OneDrive.Sdk
             {
                 return this.serviceInfo;
             }
+
             set
             {
                 this.serviceInfo = value;
@@ -69,6 +70,16 @@ namespace Microsoft.OneDrive.Sdk
 
                 var adalCredentialCache = this.serviceInfo.CredentialCache as AdalCredentialCache;
 
+                if (adalCredentialCache == null && this.serviceInfo.CredentialCache != null)
+                {
+                    throw new OneDriveException(
+                        new Error
+                        {
+                            Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                            Message = "Invalid credential cache type for authentication using ADAL.",
+                        });
+                }
+
                 this.authenticationContextWrapper = adalCredentialCache == null
                     ? new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl)
                     : new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl, false, adalCredentialCache.TokenCache);
@@ -77,7 +88,7 @@ namespace Microsoft.OneDrive.Sdk
 
         public AccountSession CurrentAccountSession { get; private set; }
 
-        protected abstract Task<AuthenticationResult> AuthenticateResourceAsync(string resource);
+        protected abstract Task<IAuthenticationResult> AuthenticateResourceAsync(string resource);
 
         public async Task AppendAuthHeaderAsync(HttpRequestMessage request)
         {
@@ -107,6 +118,12 @@ namespace Microsoft.OneDrive.Sdk
 
             var authenticationResult = await this.AuthenticateResourceAsync(this.ServiceInfo.ServiceResource);
 
+            if (authenticationResult == null)
+            {
+                this.CurrentAccountSession = null;
+                return this.CurrentAccountSession;
+            }
+
             this.CurrentAccountSession = new AdalAccountSession
             {
                 AccessToken = authenticationResult.AccessToken,
@@ -115,7 +132,7 @@ namespace Microsoft.OneDrive.Sdk
                 CanSignOut = true,
                 ClientId = this.ServiceInfo.AppId,
                 ExpiresOnUtc = authenticationResult.ExpiresOn,
-                UserId = authenticationResult.UserInfo.UniqueId,
+                UserId = authenticationResult.UserInfo == null ? null : authenticationResult.UserInfo.UniqueId,
             };
 
             return this.CurrentAccountSession;
@@ -156,7 +173,12 @@ namespace Microsoft.OneDrive.Sdk
             return authenticationResult.AccessToken;
         }
 
-        private async Task RetrieveMyFilesServiceResourceAsync(string discoveryServiceToken)
+        private Task RetrieveMyFilesServiceResourceAsync(string discoveryServiceToken)
+        {
+            return this.RetrieveServiceResourceAsync(discoveryServiceToken, Constants.Authentication.MyFilesCapability);
+        }
+
+        private async Task RetrieveServiceResourceAsync(string discoveryServiceToken, string capability)
         {
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.ServiceInfo.DiscoveryServiceUrl))
             {
@@ -167,25 +189,27 @@ namespace Microsoft.OneDrive.Sdk
                     {
                         var responseValues = this.ServiceInfo.HttpProvider.Serializer.DeserializeObject<DiscoveryServiceResponse>(responseStream);
 
-                        if (responseValues == null)
+                        if (responseValues == null || responseValues.Value == null)
                         {
                             throw new OneDriveException(
                                 new Error
                                 {
-                                    Code = OneDriveErrorCode.ItemNotFound.ToString(),
-                                    Message = "MyFiles service not found for the current user."
+                                    Code = OneDriveErrorCode.MyFilesCapabilityNotFound.ToString(),
+                                    Message = "MyFiles capability not found for the current user."
                                 });
                         }
 
-                        var service = responseValues.Value.FirstOrDefault(value => value.ServiceApiVersion.Equals(this.ServiceInfo.OneDriveServiceEndpointVersion));
+                        var service = responseValues.Value.FirstOrDefault(value =>
+                            string.Equals(value.ServiceApiVersion, this.ServiceInfo.OneDriveServiceEndpointVersion, StringComparison.OrdinalIgnoreCase) &&
+                            string.Equals(value.Capability, capability, StringComparison.OrdinalIgnoreCase));
 
                         if (service == null)
                         {
                             throw new OneDriveException(
                                 new Error
                                 {
-                                    Code = OneDriveErrorCode.ItemNotFound.ToString(),
-                                    Message = "MyFiles service not found for the current user."
+                                    Code = OneDriveErrorCode.MyFilesCapabilityNotFound.ToString(),
+                                    Message = string.Format("{0} capability with version {1} not found for the current user.", capability, this.ServiceInfo.OneDriveServiceEndpointVersion),
                                 });
                         }
 

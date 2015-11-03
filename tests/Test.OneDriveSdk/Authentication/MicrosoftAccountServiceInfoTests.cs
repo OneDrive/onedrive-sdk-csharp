@@ -35,7 +35,7 @@ namespace Test.OneDriveSdk.Authentication
 
             Assert.AreEqual(AccountType.MicrosoftAccount, serviceInfo.AccountType, "Unexpected account type.");
             Assert.AreEqual(Constants.Authentication.MicrosoftAccountAuthenticationServiceUrl, serviceInfo.AuthenticationServiceUrl, "Unexpected authentication service URL.");
-            Assert.AreEqual(Constants.Authentication.OneDriveConsumerBaseUrl, serviceInfo.BaseUrl, "Unexpected base URL.");
+            Assert.AreEqual(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0"), serviceInfo.BaseUrl, "Unexpected base URL.");
             Assert.AreEqual(Constants.Authentication.MicrosoftAccountSignOutUrl, serviceInfo.SignOutUrl, "Unexpected sign out URL.");
             Assert.AreEqual(Constants.Authentication.MicrosoftAccountTokenServiceUrl, serviceInfo.TokenServiceUrl, "Unexpected token service URL.");
         }

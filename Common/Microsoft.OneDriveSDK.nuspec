@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
   <metadata>
     <id>Microsoft.OneDriveSDK</id>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
     <title>OneDrive C# SDK</title>
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
@@ -32,6 +32,7 @@
     
     <!-- Windows 8.1 -->
     <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\netcore451\OneDriveSdk.dll" />
+    <file src="..\src\OneDriveSdk.WinStore\bin\Release\OneDriveSdk.WinRT.dll" target="lib\netcore451\OneDriveSdk.WinRT.dll" />
     <file src="..\src\OneDriveSdk.WinStore\bin\Release\OneDriveSdk.WinStore.dll" target="lib\netcore451\OneDriveSdk.WinStore.dll" />
   </files>
 </package>
