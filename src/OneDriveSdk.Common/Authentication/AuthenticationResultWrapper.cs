@@ -139,7 +139,7 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
-#if !WINFORMS
+#if WINRT
         public string Error
         {
             get

@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneDriveSdk.WinRT", "src\On
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.OneDriveSdk.WinRT", "tests\Test.OneDriveSdk.WinRT\Test.OneDriveSdk.WinRT.csproj", "{61BCEAD9-36D4-49B6-9B0F-1999CDCD149F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.OneDriveSdk.WindowsForms", "Test.OneDriveSdk.WindowsForms\Test.OneDriveSdk.WindowsForms.csproj", "{6C0D57DC-89C6-4313-BB2C-2CCB662AFDFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.OneDriveSdk.WindowsForms", "tests\Test.OneDriveSdk.WindowsForms\Test.OneDriveSdk.WindowsForms.csproj", "{6C0D57DC-89C6-4313-BB2C-2CCB662AFDFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
