@@ -43,7 +43,7 @@ namespace Microsoft.OneDrive.Sdk
 
         UserInfo UserInfo { get; }
 
-#if !WINFORMS
+#if WINRT
         string Error { get; }
 
         string ErrorDescription { get; }
