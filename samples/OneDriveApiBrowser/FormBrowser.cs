@@ -32,7 +32,11 @@ namespace OneDriveApiBrowser
 
     public partial class FormBrowser : Form
     {
+        private const string AadClientId = "67b8454b-58df-4e6d-a688-c769bd327052";
+        private const string AadReturnUrl = "https://localhost:777";
+
         private const string MsaClientId = "0000000044128B55";
+        private const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
 
         private static readonly string[] Scopes = { "onedrive.readwrite", "wl.offline_access", "wl.signin" };
 
@@ -291,10 +295,10 @@ namespace OneDriveApiBrowser
                 this.oneDriveClient = clientType == ClientType.Consumer
                     ? OneDriveClient.GetMicrosoftAccountClient(
                         FormBrowser.MsaClientId,
-                        "https://login.live.com/oauth20_desktop.srf",
+                        FormBrowser.MsaReturnUrl,
                         FormBrowser.Scopes,
                         webAuthenticationUi: new FormsWebAuthenticationUi())
-                    : BusinessClientExtensions.GetActiveDirectoryClient("67b8454b-58df-4e6d-a688-c769bd327052", "https://localhost:777");
+                    : BusinessClientExtensions.GetActiveDirectoryClient(FormBrowser.AadClientId, FormBrowser.AadReturnUrl);
             }
 
             try
