@@ -20,31 +20,18 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Test.OneDriveSdk.Mocks
+namespace Test.OneDriveSdk.WindowsForms.Mocks
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.OneDrive.Sdk;
     using Moq;
 
-    public class MockWebUi : Mock<IWebAuthenticationUi>
+    public class MockAuthenticationContextWrapper : Mock<IAuthenticationContextWrapper>
     {
-        private IDictionary<string, string> responseValues;
-
-        public MockWebUi()
-            : this(new Dictionary<string, string>())
-        {
-        }
-
-        public MockWebUi(IDictionary<string, string> responseValues)
+        public MockAuthenticationContextWrapper()
             : base(MockBehavior.Strict)
         {
-            this.responseValues = responseValues;
-
-            this.Setup(
-                webUi => webUi.AuthenticateAsync(It.IsAny<Uri>(), It.IsAny<Uri>()))
-                    .Returns(Task.FromResult(this.responseValues));
         }
     }
 }

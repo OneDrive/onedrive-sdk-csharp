@@ -42,18 +42,13 @@ namespace Microsoft.OneDrive.Sdk
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;
+            var clientCredential = string.IsNullOrEmpty(this.serviceInfo.ClientSecret) ? null : new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
 
             try
             {
-                if (!string.IsNullOrEmpty(this.serviceInfo.ClientSecret))
-                {
-                    var clientCredential = new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
-                    authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, UserIdentifier.AnyUser);
-                }
-                else
-                {
-                    authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId);
-                }
+                authenticationResult = clientCredential == null
+                    ? await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId)
+                    : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, UserIdentifier.AnyUser);
             }
             catch (Exception)
             {
@@ -67,11 +62,13 @@ namespace Microsoft.OneDrive.Sdk
 
             try
             {
-                authenticationResult = this.authenticationContextWrapper.AcquireToken(
-                    resource,
-                    this.ServiceInfo.AppId,
-                    new Uri(this.ServiceInfo.ReturnUrl),
-                    PromptBehavior.Always);
+                authenticationResult = clientCredential == null
+                    ? this.authenticationContextWrapper.AcquireToken(
+                        resource,
+                        this.ServiceInfo.AppId,
+                        new Uri(this.ServiceInfo.ReturnUrl),
+                        PromptBehavior.Always)
+                    : await this.authenticationContextWrapper.AcquireTokenAsync(resource, clientCredential);
             }
             catch (AdalException adalException)
             {

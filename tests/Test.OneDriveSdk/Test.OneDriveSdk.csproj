@@ -76,7 +76,7 @@
     <Compile Include="Mocks\MockProgress.cs" />
     <Compile Include="Mocks\MockSerializer.cs" />
     <Compile Include="Mocks\MockServiceInfoProvider.cs" />
-    <Compile Include="Mocks\MockWebUi.cs" />
+    <Compile Include="Mocks\MockWebAuthenticationUi.cs" />
     <Compile Include="Mocks\TestHttpMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\AsyncMonitorTests.cs" />

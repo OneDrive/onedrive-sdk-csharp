@@ -20,21 +20,17 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk
+namespace Test.OneDriveSdk.WindowsForms.Mocks
 {
-    using System;
-    using System.Threading.Tasks;
+    using Microsoft.OneDrive.Sdk;
+    using Moq;
 
-    using Microsoft.IdentityModel.Clients.ActiveDirectory;
-
-    public interface IAuthenticationContextWrapper
+    public class MockAuthenticationResult : Mock<IAuthenticationResult>
     {
-        Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId);
-
-        Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, ClientCredential clientCredential, UserIdentifier userIdentifier);
-
-        IAuthenticationResult AcquireToken(string resource, string clientId, Uri redirectUri, PromptBehavior promptBehavior);
-
-        Task<IAuthenticationResult> AcquireTokenAsync(string resource, ClientCredential clientCredential);
+        public MockAuthenticationResult()
+            : base(MockBehavior.Strict)
+        {
+            this.SetupAllProperties();
+        }
     }
 }

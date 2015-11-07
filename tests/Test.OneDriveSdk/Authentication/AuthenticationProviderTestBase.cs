@@ -42,7 +42,7 @@ namespace Test.OneDriveSdk
         protected HttpResponseMessage httpResponseMessage;
         protected MockSerializer serializer;
         protected ServiceInfo serviceInfo;
-        protected MockWebUi webUi;
+        protected MockWebAuthenticationUi webUi;
 
         [TestInitialize]
         public virtual void Setup()
@@ -51,7 +51,7 @@ namespace Test.OneDriveSdk
             this.credentialCache = new MockCredentialCache();
             this.serializer = new MockSerializer();
             this.httpProvider = new MockHttpProvider(this.httpResponseMessage, this.serializer.Object);
-            this.webUi = new MockWebUi();
+            this.webUi = new MockWebAuthenticationUi();
 
             this.serviceInfo = new ServiceInfo
             {

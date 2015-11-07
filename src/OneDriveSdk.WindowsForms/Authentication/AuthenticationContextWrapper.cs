@@ -41,6 +41,12 @@ namespace Microsoft.OneDrive.Sdk
             this.authenticationContext = new AuthenticationContext(serviceUrl, validateAuthority, tokenCache);
         }
 
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenSilentAsync(string, string)"/>.
+        /// </summary>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <param name="clientId">The client ID of the application.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
         public async Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId)
         {
             var result = await this.authenticationContext.AcquireTokenSilentAsync(resource, clientId);
@@ -48,6 +54,13 @@ namespace Microsoft.OneDrive.Sdk
             return result == null ? null : new AuthenticationResultWrapper(result);
         }
 
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenSilentAsync(string, ClientCredential, UserIdentifier)"/>.
+        /// </summary>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <param name="clientCredential">The client credential of the application.</param>
+        /// <param name="userIdentifier">The <see cref="UserIdentifier"/> of the user.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
         public async Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, ClientCredential clientCredential, UserIdentifier userIdentifier)
         {
             var result = await this.authenticationContext.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier);
@@ -55,9 +68,30 @@ namespace Microsoft.OneDrive.Sdk
             return result == null ? null : new AuthenticationResultWrapper(result);
         }
 
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireToken(string, string, Uri, PromptBehavior)"/>.
+        /// </summary>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <param name="clientId">The client ID of the application.</param>
+        /// <param name="redirectUri">The redirect URI of the application.</param>
+        /// <param name="promptBehavior">The <see cref="PromptBehavior"/> for authentication.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
         public IAuthenticationResult AcquireToken(string resource, string clientId, Uri redirectUri, PromptBehavior promptBehavior)
         {
             var result = this.authenticationContext.AcquireToken(resource, clientId, redirectUri, promptBehavior);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
+        }
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenAsync(string, ClientCredential)"/>.
+        /// </summary>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <param name="clientCredential">The client credential of the application.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        public async Task<IAuthenticationResult> AcquireTokenAsync(string resource, ClientCredential clientCredential)
+        {
+            var result = await this.authenticationContext.AcquireTokenAsync(resource, clientCredential);
 
             return result == null ? null : new AuthenticationResultWrapper(result);
         }

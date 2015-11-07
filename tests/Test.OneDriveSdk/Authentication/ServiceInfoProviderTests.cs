@@ -38,7 +38,7 @@ namespace Test.OneDriveSdk.Authentication
         private MockHttpProvider httpProvider;
         private HttpResponseMessage httpResponseMessage;
         private ServiceInfoProvider serviceInfoProvider;
-        private MockWebUi webAuthenticationUi;
+        private MockWebAuthenticationUi webAuthenticationUi;
 
         [TestInitialize]
         public void Setup()
@@ -54,7 +54,7 @@ namespace Test.OneDriveSdk.Authentication
             this.credentialCache = new MockCredentialCache();
             this.httpResponseMessage = new HttpResponseMessage();
             this.httpProvider = new MockHttpProvider(this.httpResponseMessage);
-            this.webAuthenticationUi = new MockWebUi();
+            this.webAuthenticationUi = new MockWebAuthenticationUi();
             this.serviceInfoProvider = new ServiceInfoProvider(this.webAuthenticationUi.Object);
         }
 

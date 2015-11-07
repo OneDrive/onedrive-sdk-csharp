@@ -28,8 +28,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
 
-    using IdentityModel.Clients.ActiveDirectory;
-
     public abstract class AdalAuthenticationProviderBase : IAuthenticationProvider
     {
         protected ServiceInfo serviceInfo;
@@ -86,7 +84,7 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
-        public AccountSession CurrentAccountSession { get; private set; }
+        public AccountSession CurrentAccountSession { get; internal set; }
 
         protected abstract Task<IAuthenticationResult> AuthenticateResourceAsync(string resource);
 
