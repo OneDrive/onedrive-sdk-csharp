@@ -29,26 +29,33 @@ namespace Microsoft.OneDrive.Sdk
 
     public class AdalCredentialCache : CredentialCache
     {
-        private TokenCache tokenCache;
+        private ITokenCache tokenCache;
 
+        /// <summary>
+        /// Instantiates a new, empty <see cref="AdalCredentialCache"/>.
+        /// </summary>
         public AdalCredentialCache()
             : this(null)
         {
         }
 
+        /// <summary>
+        /// Instantiates a new <see cref="AdalCredentialCache"/>.
+        /// </summary>
+        /// <param name="blob">The cache contents for initialization.</param>
         public AdalCredentialCache(byte[] blob)
             : base()
         {
             this.TokenCache.Deserialize(blob);
         }
 
-        internal TokenCache TokenCache
+        internal ITokenCache TokenCache
         {
             get
             {
                 if (this.tokenCache == null)
                 {
-                    this.tokenCache = new TokenCache();
+                    this.tokenCache = new TokenCacheWrapper();
 
                     this.tokenCache.AfterAccess = this.AfterAdalAccess;
                     this.tokenCache.BeforeAccess = this.BeforeAdalAccess;
@@ -64,39 +71,55 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether or not the cache state has changed.
+        /// </summary>
         public override bool HasStateChanged
         {
             get
             {
-                return this.tokenCache.HasStateChanged;
+                return this.TokenCache.HasStateChanged;
             }
             set
             {
-                this.tokenCache.HasStateChanged = value;
+                this.TokenCache.HasStateChanged = value;
             }
         }
 
+        /// <summary>
+        /// Gets the contents of the cache.
+        /// </summary>
+        /// <returns>The cache contents.</returns>
         public override byte[] GetCacheBlob()
         {
-            if (this.tokenCache != null)
-            {
-                return this.tokenCache.Serialize();
-            }
-
-            return null;
+            return this.TokenCache.Serialize();
         }
 
+        /// <summary>
+        /// Initializes the cache from the specified contents.
+        /// </summary>
+        /// <param name="cacheBytes">The cache contents.</param>
         public override void InitializeCacheFromBlob(byte[] cacheBytes)
         {
-            if (this.tokenCache != null)
-            {
-                this.tokenCache.Deserialize(cacheBytes);
-            }
+            this.TokenCache.Deserialize(cacheBytes);
         }
 
+        /// <summary>
+        /// Clears the cache contents.
+        /// </summary>
         public override void Clear()
         {
-            this.tokenCache.Clear();
+            // ADAL caching doesn't notify the delegates of access on Clear(). Call them explicitly
+            // for consistency with CredentialCache behavior since the cache is being accessed and written.
+            var cacheNotificationArgs = new CredentialCacheNotificationArgs { CredentialCache = this };
+
+            this.OnBeforeAccess(cacheNotificationArgs);
+            this.OnBeforeWrite(cacheNotificationArgs);
+
+            this.TokenCache.Clear();
+
+            this.OnAfterAccess(cacheNotificationArgs);
+            this.HasStateChanged = true;
         }
 
         internal override void AddToCache(AccountSession accountSession)
@@ -106,20 +129,18 @@ namespace Microsoft.OneDrive.Sdk
 
         internal override void DeleteFromCache(AccountSession accountSession)
         {
-            if (this.tokenCache != null)
-            {
-                var cacheItems = this.tokenCache.ReadItems();
-                var currentUserItems = cacheItems.Where(
-                    cacheItem =>
-                        string.Equals(cacheItem.ClientId, accountSession.ClientId, StringComparison.OrdinalIgnoreCase)
-                        && string.Equals(cacheItem.UniqueId, accountSession.UserId, StringComparison.OrdinalIgnoreCase));
+            var cacheItems = this.TokenCache.ReadItems();
 
-                if (currentUserItems != null)
+            var currentUserItems = cacheItems.Where(
+                cacheItem =>
+                    string.Equals(cacheItem.ClientId, accountSession.ClientId, StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(cacheItem.UniqueId, accountSession.UserId, StringComparison.OrdinalIgnoreCase));
+
+            if (currentUserItems != null)
+            {
+                foreach (var item in currentUserItems)
                 {
-                    foreach (var item in currentUserItems)
-                    {
-                        this.tokenCache.DeleteItem(item);
-                    }
+                    this.TokenCache.DeleteItem(item);
                 }
             }
         }
@@ -130,17 +151,17 @@ namespace Microsoft.OneDrive.Sdk
             return null;
         }
 
-        public void AfterAdalAccess(TokenCacheNotificationArgs args)
+        private void AfterAdalAccess(TokenCacheNotificationArgs args)
         {
             this.OnAfterAccess(new CredentialCacheNotificationArgs { CredentialCache = this });
         }
 
-        public void BeforeAdalAccess(TokenCacheNotificationArgs args)
+        private void BeforeAdalAccess(TokenCacheNotificationArgs args)
         {
             this.OnBeforeAccess(new CredentialCacheNotificationArgs { CredentialCache = this });
         }
 
-        public void BeforeAdalWrite(TokenCacheNotificationArgs args)
+        private void BeforeAdalWrite(TokenCacheNotificationArgs args)
         {
             this.OnBeforeWrite(new CredentialCacheNotificationArgs { CredentialCache = this });
         }

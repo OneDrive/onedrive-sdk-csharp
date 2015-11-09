@@ -70,9 +70,12 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Authentication\AdalAuthenticationProviderTests.cs" />
+    <Compile Include="Authentication\AdalCredentialCacheTests.cs" />
     <Compile Include="Mocks\MockAdalCredentialCache.cs" />
     <Compile Include="Mocks\MockAuthenticationContextWrapper.cs" />
     <Compile Include="Mocks\MockAuthenticationResult.cs" />
+    <Compile Include="Mocks\MockTokenCache.cs" />
+    <Compile Include="Mocks\MockTokenCacheItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

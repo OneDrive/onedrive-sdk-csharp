@@ -26,6 +26,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Threading.Tasks;
 
     using IdentityModel.Clients.ActiveDirectory;
+    using Windows.Security.Authentication.Web;
 
     public class AdalAuthenticationProvider : AdalAuthenticationProviderBase
     {
@@ -37,6 +38,23 @@ namespace Microsoft.OneDrive.Sdk
         public AdalAuthenticationProvider(ServiceInfo serviceInfo, AccountSession currentAccountSession = null)
             : base(serviceInfo, currentAccountSession)
         {
+        }
+
+        /// <summary>
+        /// Signs the current user out.
+        /// </summary>
+        public override async Task SignOutAsync()
+        {
+            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
+            {
+                if (this.ServiceInfo.WebAuthenticationUi != null)
+                {
+                    await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(new Uri(this.ServiceInfo.SignOutUrl), null);
+                }
+
+                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
+                this.CurrentAccountSession = null;
+            }
         }
 
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)

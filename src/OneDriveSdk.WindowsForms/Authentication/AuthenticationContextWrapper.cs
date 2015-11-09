@@ -31,11 +31,21 @@ namespace Microsoft.OneDrive.Sdk
     {
         private AuthenticationContext authenticationContext;
 
+        /// <summary>
+        /// Instantiates a new <see cref="AuthenticationContext"/>.
+        /// </summary>
+        /// <param name="serviceUrl">The service URL for authentication.</param>
         public AuthenticationContextWrapper(string serviceUrl)
         {
             this.authenticationContext = new AuthenticationContext(serviceUrl);
         }
 
+        /// <summary>
+        /// Instantiates a new <see cref="AuthenticationContext"/>.
+        /// </summary>
+        /// <param name="serviceUrl">The service URL for authentication.</param>
+        /// <param name="validateAuthority">Whether or not to enable address validation.</param>
+        /// <param name="tokenCache">Cache for storing authentication sessions.</param>
         public AuthenticationContextWrapper(string serviceUrl, bool validateAuthority, TokenCache tokenCache)
         {
             this.authenticationContext = new AuthenticationContext(serviceUrl, validateAuthority, tokenCache);

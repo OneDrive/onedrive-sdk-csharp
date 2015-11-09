@@ -35,6 +35,9 @@ namespace Microsoft.OneDrive.Sdk
             this.authenticationResult = authenticationResult;
         }
 
+        /// <summary>
+        /// Gets the access token.
+        /// </summary>
         public string AccessToken
         {
             get
@@ -48,6 +51,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets the type of the access token.
+        /// </summary>
         public string AccessTokenType
         {
             get
@@ -61,6 +67,10 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets the point in time in which the access token expires.
+        /// This value is calculated based on current UTC time.
+        /// </summary>
         public DateTimeOffset ExpiresOn
         {
             get
@@ -74,6 +84,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets the ID token.
+        /// </summary>
         public string IdToken
         {
             get
@@ -87,6 +100,10 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether or not the refresh token can be used for requesting
+        /// access tokens for other resources.
+        /// </summary>
         public bool IsMultipleResourceRefreshToken
         {
             get
@@ -100,6 +117,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets the refresh token for the current access token.
+        /// </summary>
         public string RefreshToken
         {
             get
@@ -113,6 +133,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets an identifier for the tenant from which the access token was acquired.
+        /// </summary>
         public string TenantId
         {
             get
@@ -126,6 +149,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets user information, such as user ID.
+        /// </summary>
         public UserInfo UserInfo
         {
             get
@@ -140,6 +166,9 @@ namespace Microsoft.OneDrive.Sdk
         }
 
 #if WINRT
+        /// <summary>
+        /// Gets the error code if authentication failed.
+        /// </summary>
         public string Error
         {
             get
@@ -153,6 +182,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets the error description if authentication failed.
+        /// </summary>
         public string ErrorDescription
         {
             get
@@ -167,6 +199,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="AuthenticationStatus"/> of authentication.
+        /// </summary>
         public AuthenticationStatus Status
         {
             get
@@ -180,6 +215,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets the authentication status code.
+        /// </summary>
         public int StatusCode
         {
             get
@@ -201,25 +239,5 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 #endif
-
-        public string CreateAuthorizationHeader()
-        {
-            if (this.authenticationResult != null)
-            {
-                return this.authenticationResult.CreateAuthorizationHeader();
-            }
-
-            return null;
-        }
-
-        public string Serialize()
-        {
-            if (this.authenticationResult != null)
-            {
-                return this.authenticationResult.Serialize();
-            }
-
-            return null;
-        }
     }
 }

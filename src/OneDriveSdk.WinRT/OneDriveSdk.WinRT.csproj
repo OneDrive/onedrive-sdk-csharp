@@ -122,6 +122,18 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\IAuthenticationResult.cs">
       <Link>Authentication\IAuthenticationResult.cs</Link>
     </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\ITokenCache.cs">
+      <Link>Authentication\ITokenCache.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\ITokenCacheItem.cs">
+      <Link>Authentication\ITokenCacheItem.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\TokenCacheItemWrapper.cs">
+      <Link>Authentication\TokenCacheItemWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\TokenCacheWrapper.cs">
+      <Link>Authentication\TokenCacheWrapper.cs</Link>
+    </Compile>
     <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalServiceInfoProvider.cs" />
     <Compile Include="Authentication\IAuthenticationContextWrapper.cs" />

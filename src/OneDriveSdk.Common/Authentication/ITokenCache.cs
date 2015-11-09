@@ -22,73 +22,64 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
-    using System;
+    using System.Collections.Generic;
+
     using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
-    public interface IAuthenticationResult
+    public interface ITokenCache
     {
         /// <summary>
-        /// Gets the access token.
+        /// Gets or sets the notification delegate for aftere accessing the cache.
         /// </summary>
-        string AccessToken { get; }
+        TokenCacheNotification AfterAccess { get; set; }
 
         /// <summary>
-        /// Gets the type of the access token.
+        /// Gets or sets the notification delegate for before accessing the cache.
         /// </summary>
-        string AccessTokenType { get; }
+        TokenCacheNotification BeforeAccess { get; set; }
 
         /// <summary>
-        /// Gets the point in time in which the access token expires.
-        /// This value is calculated based on current UTC time.
+        /// Gets or sets the notification delegate for before writing to the cache.
         /// </summary>
-        DateTimeOffset ExpiresOn { get; }
+        TokenCacheNotification BeforeWrite { get; set; }
 
         /// <summary>
-        /// Gets the ID token.
+        /// Gets or sets whether or not the cache state has changed.
         /// </summary>
-        string IdToken { get; }
+        bool HasStateChanged { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether or not the refresh token can be used for requesting
-        /// access tokens for other resources.
+        /// Gets the inner <see cref="TokenCache"/>.
         /// </summary>
-        bool IsMultipleResourceRefreshToken { get; }
+        TokenCache InnerTokenCache { get; }
 
         /// <summary>
-        /// Gets the refresh token for the current access token.
+        /// Clears the cache contents.
         /// </summary>
-        string RefreshToken { get; }
+        void Clear();
 
         /// <summary>
-        /// Gets an identifier for the tenant from which the access token was acquired.
+        /// Deletes the specified <see cref="ITokenCacheItem"/> from the cache.
         /// </summary>
-        string TenantId { get; }
+        /// <param name="tokenCacheItem">The <see cref="ITokenCacheItem"/> to delete.</param>
+        void DeleteItem(ITokenCacheItem tokenCacheItem);
 
         /// <summary>
-        /// Gets user information, such as user ID.
+        /// Initializes the cache from the specified contents.
         /// </summary>
-        UserInfo UserInfo { get; }
-
-#if WINRT
-        /// <summary>
-        /// Gets the error code if authentication failed.
-        /// </summary>
-        string Error { get; }
+        /// <param name="blob">The cache contents.</param>
+        void Deserialize(byte[] blob);
 
         /// <summary>
-        /// Gets the error description if authentication failed.
+        /// Returns the collection of <see cref="ITokenCacheItem"/>s in the cache.
         /// </summary>
-        string ErrorDescription { get; }
+        /// <returns>The collection of <see cref="ITokenCacheItem"/>s.</returns>
+        IEnumerable<ITokenCacheItem> ReadItems();
 
         /// <summary>
-        /// Gets the <see cref="AuthenticationStatus"/> of authentication.
+        /// Gets the contents of the cache.
         /// </summary>
-        AuthenticationStatus Status { get; }
-
-        /// <summary>
-        /// Gets the authentication status code.
-        /// </summary>
-        int StatusCode { get; set; }
-#endif
+        /// <returns>The cache contents.</returns>
+        byte[] Serialize();
     }
 }

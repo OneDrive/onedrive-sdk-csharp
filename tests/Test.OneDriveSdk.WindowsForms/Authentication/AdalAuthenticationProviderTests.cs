@@ -46,7 +46,6 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
         private HttpResponseMessage httpResponseMessage;
         private ISerializer serializer;
         private ServiceInfo serviceInfo;
-        private MockWebAuthenticationUi webAuthenticationUi;
 
         [TestInitialize]
         public void Setup()
@@ -55,7 +54,6 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             this.httpResponseMessage = new HttpResponseMessage();
             this.serializer = new Serializer();
             this.httpProvider = new MockHttpProvider(this.httpResponseMessage, this.serializer);
-            this.webAuthenticationUi = new MockWebAuthenticationUi();
 
             this.serviceInfo = new ActiveDirectoryServiceInfo
             {
@@ -65,11 +63,30 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 HttpProvider = this.httpProvider.Object,
                 ReturnUrl = "https://login.live.com/return",
                 SignOutUrl = "https://login.live.com/signout",
-                TokenServiceUrl = "https://login.live.com/token",
-                WebAuthenticationUi = this.webAuthenticationUi.Object
+                TokenServiceUrl = "https://login.live.com/token"
             };
 
             this.authenticationProvider = new AdalAuthenticationProvider(this.serviceInfo);
+        }
+
+        [TestMethod]
+        public async Task AppendAuthenticationHeader()
+        {
+            var cachedAccountSession = new AccountSession
+            {
+                AccessToken = "token",
+            };
+
+            this.authenticationProvider.CurrentAccountSession = cachedAccountSession;
+
+            using (var httpRequestMessage = new HttpRequestMessage())
+            {
+                await this.authenticationProvider.AppendAuthHeaderAsync(httpRequestMessage);
+                Assert.AreEqual(
+                    string.Format("{0} {1}", Constants.Headers.Bearer, cachedAccountSession.AccessToken),
+                    httpRequestMessage.Headers.Authorization.ToString(),
+                    "Unexpected authorization header set.");
+            }
         }
 
         [TestMethod]
@@ -517,6 +534,30 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
 
                 throw;
             }
+        }
+
+        [TestMethod]
+        public async Task SignOutAsync()
+        {
+            var accountSession = new AccountSession
+            {
+                AccessToken = "accessToken",
+                CanSignOut = true,
+                ClientId = "12345",
+            };
+
+            this.authenticationProvider.CurrentAccountSession = accountSession;
+
+            await this.authenticationProvider.SignOutAsync();
+
+            this.httpProvider.Verify(
+                provider => provider.SendAsync(
+                    It.Is<HttpRequestMessage>(message => message.RequestUri.ToString().Equals(this.serviceInfo.SignOutUrl))),
+                Times.Once);
+
+            Assert.IsNull(this.authenticationProvider.CurrentAccountSession, "Current account session not cleared.");
+
+            this.credentialCache.Verify(cache => cache.OnDeleteFromCache(), Times.Once);
         }
 
         public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService(

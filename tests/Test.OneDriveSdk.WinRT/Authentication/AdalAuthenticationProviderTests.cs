@@ -68,6 +68,26 @@ namespace Test.OneDriveSdk.WinRT
         }
 
         [TestMethod]
+        public async Task AppendAuthenticationHeader()
+        {
+            var cachedAccountSession = new AccountSession
+            {
+                AccessToken = "token",
+            };
+
+            this.authenticationProvider.CurrentAccountSession = cachedAccountSession;
+
+            using (var httpRequestMessage = new HttpRequestMessage())
+            {
+                await this.authenticationProvider.AppendAuthHeaderAsync(httpRequestMessage);
+                Assert.AreEqual(
+                    string.Format("{0} {1}", Constants.Headers.Bearer, cachedAccountSession.AccessToken),
+                    httpRequestMessage.Headers.Authorization.ToString(),
+                    "Unexpected authorization header set.");
+            }
+        }
+
+        [TestMethod]
         public async Task AuthenticateAsync_AuthenticateSilentlyWithDiscoveryService()
         {
             const string serviceResourceId = "https://localhost/resource/";
@@ -478,7 +498,26 @@ namespace Test.OneDriveSdk.WinRT
                 }
             });
         }
-        
+
+        [TestMethod]
+        public async Task SignOutAsync()
+        {
+            var accountSession = new AccountSession
+            {
+                AccessToken = "accessToken",
+                CanSignOut = true,
+                ClientId = "12345",
+            };
+
+            this.authenticationProvider.CurrentAccountSession = accountSession;
+            this.webAuthenticationUi.OnAuthenticateAsync = this.OnAuthenticateAsync_SignOut;
+
+            await this.authenticationProvider.SignOutAsync();
+
+            Assert.IsNull(this.authenticationProvider.CurrentAccountSession, "Current account session not cleared.");
+            Assert.IsTrue(this.credentialCache.DeleteFromCacheCalled, "DeleteFromCache not called.");
+        }
+
         public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService(
             IAuthenticationResult authenticationResult,
             MockAuthenticationContextWrapper.AuthenticationResultCallback authenticationResultCallback,
@@ -583,6 +622,14 @@ namespace Test.OneDriveSdk.WinRT
             }
 
             return accountSession;
+        }
+
+        private void OnAuthenticateAsync_SignOut(Uri requestUri, Uri callbackUri)
+        {
+            Assert.IsNull(callbackUri, "Unexpected callbackUri set.");
+
+            Assert.IsTrue(requestUri.ToString().Equals(this.serviceInfo.SignOutUrl), "Unexpected request URI.");
+            Assert.IsNull(callbackUri, "Unexpected callback URI.");
         }
     }
 }

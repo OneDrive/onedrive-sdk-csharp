@@ -80,14 +80,22 @@ namespace Microsoft.OneDrive.Sdk
 
                 this.authenticationContextWrapper = adalCredentialCache == null
                     ? new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl)
-                    : new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl, false, adalCredentialCache.TokenCache);
+                    : new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl, false, adalCredentialCache.TokenCache.InnerTokenCache);
             }
         }
 
+        /// <summary>
+        /// Gets the current account session.
+        /// </summary>
         public AccountSession CurrentAccountSession { get; internal set; }
 
         protected abstract Task<IAuthenticationResult> AuthenticateResourceAsync(string resource);
 
+        /// <summary>
+        /// Appends the authentication header to the specified web request.
+        /// </summary>
+        /// <param name="request">The <see cref="HttpRequestMessage"/> to authenticate.</param>
+        /// <returns>The task to await.</returns>
         public async Task AppendAuthHeaderAsync(HttpRequestMessage request)
         {
             if (this.CurrentAccountSession == null)
@@ -101,6 +109,10 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Retrieves the authentication token.
+        /// </summary>
+        /// <returns>The authentication token.</returns>
         public async Task<AccountSession> AuthenticateAsync()
         {
             if (this.CurrentAccountSession != null && !this.CurrentAccountSession.IsExpiring())
@@ -136,25 +148,10 @@ namespace Microsoft.OneDrive.Sdk
             return this.CurrentAccountSession;
         }
 
-        public async Task SignOutAsync()
-        {
-            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
-            {
-                if (this.ServiceInfo.WebAuthenticationUi != null)
-                {
-                    var requestUri = new Uri(string.Format(
-                    "{0}?client_id={1}&redirect_uri={2}",
-                    this.ServiceInfo.SignOutUrl,
-                    this.ServiceInfo.AppId,
-                    this.ServiceInfo.ReturnUrl));
-
-                    await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(requestUri, new Uri(this.ServiceInfo.ReturnUrl));
-                }
-
-                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
-                this.CurrentAccountSession = null;
-            }
-        }
+        /// <summary>
+        /// Signs the current user out.
+        /// </summary>
+        public abstract Task SignOutAsync();
 
         protected void DeleteUserCredentialsFromCache(AccountSession accountSession)
         {

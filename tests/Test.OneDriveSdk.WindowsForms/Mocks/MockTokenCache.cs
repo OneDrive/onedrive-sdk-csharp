@@ -20,31 +20,23 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk
+namespace Test.OneDriveSdk.WindowsForms.Mocks
 {
-    /// <summary>
-    /// Class for deserializing discovery service objects returned from calls to the discovery service.
-    /// </summary>
-    public class DiscoveryService
+    using System.Collections.Generic;
+    
+    using Microsoft.OneDrive.Sdk;
+    using Moq;
+
+    public class MockTokenCache : Mock<ITokenCache>
     {
-        /// <summary>
-        /// Gets or sets the capability for the service.
-        /// </summary>
-        public string Capability { get; set; }
+        public MockTokenCache()
+            : base(MockBehavior.Strict)
+        {
+            this.SetupAllProperties();
 
-        /// <summary>
-        /// Gets or sets the service API version.
-        /// </summary>
-        public string ServiceApiVersion { get; set; }
-
-        /// <summary>
-        /// Gets or sets the URL for the service endpoint.
-        /// </summary>
-        public string ServiceEndpointUri { get; set; }
-
-        /// <summary>
-        /// Gets or sets the resource for the service.
-        /// </summary>
-        public string ServiceResourceId { get; set; }
+            this.Setup(cache => cache.Clear());
+            this.Setup(cache => cache.Deserialize(It.IsAny<byte[]>()));
+            this.Setup(cache => cache.Serialize()).Returns(new byte[0]);
+        }
     }
 }

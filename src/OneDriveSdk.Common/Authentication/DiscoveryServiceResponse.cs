@@ -24,8 +24,14 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Class for deserializing responses from the discovery service.
+    /// </summary>
     public class DiscoveryServiceResponse
     {
+        /// <summary>
+        /// The list of <see cref="DiscoveryService"/> objects returned from the discovery service.
+        /// </summary>
         public IEnumerable<DiscoveryService> Value { get; set; }
     }
 }

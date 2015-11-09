@@ -23,9 +23,10 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
+
     using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
-    public interface IAuthenticationResult
+    public interface ITokenCacheItem
     {
         /// <summary>
         /// Gets the access token.
@@ -33,62 +34,74 @@ namespace Microsoft.OneDrive.Sdk
         string AccessToken { get; }
 
         /// <summary>
-        /// Gets the type of the access token.
+        /// Gets the authority.
         /// </summary>
-        string AccessTokenType { get; }
+        string Authority { get; }
 
         /// <summary>
-        /// Gets the point in time in which the access token expires.
-        /// This value is calculated based on current UTC time.
+        /// Gets the client ID.
+        /// </summary>
+        string ClientId { get; }
+
+        /// <summary>
+        /// Gets the user's displayable ID.
+        /// </summary>
+        string DisplayableId { get; }
+
+        /// <summary>
+        /// Gets the expiration.
         /// </summary>
         DateTimeOffset ExpiresOn { get; }
 
         /// <summary>
-        /// Gets the ID token.
+        /// Gets the family name.
+        /// </summary>
+        string FamilyName { get; }
+
+        /// <summary>
+        /// Gets the given name.
+        /// </summary>
+        string GivenName { get; }
+
+        /// <summary>
+        /// Gets the identity provider name.
+        /// </summary>
+        string IdentityProvider { get; }
+
+        /// <summary>
+        /// Gets the entire ID token if returned by the service or null if no ID token is returned.
         /// </summary>
         string IdToken { get; }
 
         /// <summary>
-        /// Gets a value indicating whether or not the refresh token can be used for requesting
-        /// access tokens for other resources.
+        /// Gets the inner <see cref="TokenCacheItem"/>.
+        /// </summary>
+        TokenCacheItem InnerCacheItem { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the refresh token applies to multiple resources.
         /// </summary>
         bool IsMultipleResourceRefreshToken { get; }
 
         /// <summary>
-        /// Gets the refresh token for the current access token.
+        /// Gets the refresh token associated with the requested access token. Note: not
+        /// all operations will return a refresh token.
         /// </summary>
         string RefreshToken { get; }
 
         /// <summary>
-        /// Gets an identifier for the tenant from which the access token was acquired.
+        /// Gets the resource.
+        /// </summary>
+        string Resource { get; }
+
+        /// <summary>
+        /// Get's the user's tenant ID.
         /// </summary>
         string TenantId { get; }
 
         /// <summary>
-        /// Gets user information, such as user ID.
+        /// Gets the user's unique ID.
         /// </summary>
-        UserInfo UserInfo { get; }
-
-#if WINRT
-        /// <summary>
-        /// Gets the error code if authentication failed.
-        /// </summary>
-        string Error { get; }
-
-        /// <summary>
-        /// Gets the error description if authentication failed.
-        /// </summary>
-        string ErrorDescription { get; }
-
-        /// <summary>
-        /// Gets the <see cref="AuthenticationStatus"/> of authentication.
-        /// </summary>
-        AuthenticationStatus Status { get; }
-
-        /// <summary>
-        /// Gets the authentication status code.
-        /// </summary>
-        int StatusCode { get; set; }
-#endif
+        string UniqueId { get; }
     }
 }

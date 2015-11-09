@@ -23,6 +23,7 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
+    using System.Net.Http;
     using System.Threading.Tasks;
 
     using IdentityModel.Clients.ActiveDirectory;
@@ -37,6 +38,26 @@ namespace Microsoft.OneDrive.Sdk
         public AdalAuthenticationProvider(ServiceInfo serviceInfo, AccountSession currentAccountSession = null)
             : base(serviceInfo, currentAccountSession)
         {
+        }
+
+        /// <summary>
+        /// Signs the current user out.
+        /// </summary>
+        public override async Task SignOutAsync()
+        {
+            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
+            {
+                if (this.ServiceInfo.HttpProvider != null)
+                {
+                    using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.ServiceInfo.SignOutUrl))
+                    {
+                        await this.ServiceInfo.HttpProvider.SendAsync(httpRequestMessage);
+                    }
+                }
+
+                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
+                this.CurrentAccountSession = null;
+            }
         }
 
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)

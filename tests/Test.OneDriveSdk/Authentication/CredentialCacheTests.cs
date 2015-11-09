@@ -33,20 +33,16 @@ namespace Test.OneDriveSdk
     [TestClass]
     public class CredentialCacheTests
     {
-        private CredentialCache credentialCache;
-
         private bool afterAccessCalled;
         private bool beforeAccessCalled;
         private bool beforeWriteCalled;
 
+        private CredentialCache credentialCache;
+        
         [TestInitialize]
         public void Setup()
         {
             this.credentialCache = new CredentialCache();
-
-            this.afterAccessCalled = false;
-            this.beforeAccessCalled = false;
-            this.beforeWriteCalled = false;
         }
 
         [TestMethod]
