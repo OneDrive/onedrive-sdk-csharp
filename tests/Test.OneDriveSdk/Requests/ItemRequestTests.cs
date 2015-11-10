@@ -113,6 +113,20 @@ namespace Test.OneDriveSdk.Requests
         }
 
         [TestMethod]
+        public void ItemByPath_BuildRequestWithLeadingSlash()
+        {
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/root:/item/with/path:");
+            var itemRequestBuilder = this.oneDriveClient.Drive.Root.ItemWithPath("/item/with/path") as ItemRequestBuilder;
+
+            Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequestBuilder.RequestUrl), "Unexpected request URL.");
+
+            var itemRequest = itemRequestBuilder.Request() as ItemRequest;
+            Assert.IsNotNull(itemRequest, "Unexpected request.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
+        }
+
+        [TestMethod]
         public async Task ItemRequest_CreateAsync()
         {
             await this.RequestWithItemInBody(false);

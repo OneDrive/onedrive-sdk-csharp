@@ -40,6 +40,7 @@ namespace Microsoft.OneDrive.Sdk
         ResourceModified,
         ResyncRequired,
         ServiceNotAvailable,
+        Timeout,
         TooManyRedirects,
         QuotaLimitReached,
         Unauthenticated,
