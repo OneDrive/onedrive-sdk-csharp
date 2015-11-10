@@ -60,10 +60,12 @@
     <Compile Include="Authentication\CredentialCacheTests.cs" />
     <Compile Include="Authentication\AuthenticationProviderTests.cs" />
     <Compile Include="Authentication\AccountSessionTests.cs" />
+    <Compile Include="Authentication\MicrosoftAccountAuthenticationProviderTests.cs" />
     <Compile Include="Authentication\MicrosoftAccountServiceInfoTests.cs" />
     <Compile Include="Authentication\OAuthErrorHandlerTests.cs" />
     <Compile Include="Authentication\ServiceInfoProviderTests.cs" />
     <Compile Include="Helpers\UrlHelperTests.cs" />
+    <Compile Include="Mocks\ExceptionHttpMessageHandler.cs" />
     <Compile Include="Mocks\MockAuthenticationProvider.cs" />
     <Compile Include="Mocks\MockCredentialCache.cs" />
     <Compile Include="Mocks\MockHttpProvider.cs" />
@@ -71,7 +73,6 @@
     <Compile Include="Mocks\MockSerializer.cs" />
     <Compile Include="Mocks\MockServiceInfoProvider.cs" />
     <Compile Include="Mocks\MockWebUi.cs" />
-    <Compile Include="Authentication\MicrosoftAccountAuthenticationProviderTests.cs" />
     <Compile Include="Mocks\TestHttpMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\AsyncMonitorTests.cs" />
