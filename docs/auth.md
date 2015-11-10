@@ -16,7 +16,12 @@ Various helper methods are available for constructing a client. All of them take
 | _scopes_ | Permissions that your app requires from the user. Required. |
 | _client\_secret_ | The client secret created for your app. Optional. Not available for Windows Store 8.1, Windows Phone 8.1, and Universal Windows Platform (UWP) apps. |
 
-In addition to _clientId_, _returnURL_, _scopes_, and _client\_secret_ the method takes in implementations for a credential cache, HTTP provider, and a service info provider or web authentication UI. If not provided, the default implementations of each item will be used.
+In addition to _clientId_, _returnURL_, _scopes_, and _client\_secret_ the method takes in implementations for a client type, credential cache, HTTP provider, and a service info provider or web authentication UI. If not provided, the default implementations of each item will be used.
+
+### ClientType
+A single client can only call OneDrive for Consumer or OneDrive for Business, not both. The service type is specified via passing ClientType `Personal` or `Business` to the client. The default client type is `Personal`.
+
+If the application would like to interact with both OneDrive for Consumer and OneDrive for Business a client should be created for each.
 
 ### CredentialCache
 
