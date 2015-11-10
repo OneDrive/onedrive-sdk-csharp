@@ -92,9 +92,11 @@ The SDK uses [ADAL](https://github.com/AzureAD/azure-activedirectory-library-for
 
 ## Caching credentials
 
-Since ADAL has its own caching model, AAD authentication has its own CredentialCache implementation for caching, the AdalCredentialCache, that wraps the ADAL caching functionality. The mechanisms for interacting with the cache are the same as with Credential Cache but it can only be used for AAD credential caching.
+Since ADAL has its own caching model, AAD authentication has its own CredentialCache implementation for caching, the AdalCredentialCache, that wraps the ADAL caching functionality. The mechanisms for interacting with the cache are the same as with Credential Cache but it can only be used for AAD credential caching. If a CredentialCache is provided that is not an AdalCredentialCache operations will bypass writing to it.
 
-## Authentication for WinForms
+## Authentication using the discovery service
+
+In the case where the OneDrive for Business API endpoint and resource ID aren't known it is possible to authenticate using the [discovery service](https://msdn.microsoft.com/en-us/office/office365/howto/discover-service-endpoints).
 
 ```csharp
 var oneDriveClient = BusinessClientExtensions.GetActiveDirectoryClient(clientId, returnUrl);
@@ -102,12 +104,16 @@ var oneDriveClient = BusinessClientExtensions.GetActiveDirectoryClient(clientId,
 await oneDriveClient.AuthenticateAsync();
 ```
 
-## Windows 8.1 and UWP
+## Authentication using the OneDrive for Business API endpoint and resource ID
+
+If the OneDrive for Business API endpoint and resource ID are already known they can be provided to the client and authentication will not route through the discovery service.
 
 ```csharp
 var oneDriveClient = BusinessClientExtensions.GetActiveDirectoryClient(
-                        oneDriveForBusinessAppId,
-                        oneDriveForBusinessReturnUrl)
+                        clientId,
+                        returnUrl,
+                        oneDriveApiEndpoint,
+                        serviceResourceId)
 
 await oneDriveClient.AuthenticateAsync();
 ```
