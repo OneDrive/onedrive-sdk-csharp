@@ -60,6 +60,16 @@ namespace Microsoft.OneDrive.Sdk
         public CredentialCache CredentialCache { get; set; }
 
         /// <summary>
+        /// Gets or sets the discovery service resource for Active Directory authentication.
+        /// </summary>
+        public string DiscoveryServiceResource { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base URL for the discovery service for Active Directory authentication.
+        /// </summary>
+        public string DiscoveryServiceUrl { get; set; }
+
+        /// <summary>
         /// Gets or sets the <see cref="IHttpProvider"/> for sending HTTP requests.
         /// </summary>
         public IHttpProvider HttpProvider { get; set; }
@@ -68,6 +78,11 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets the application's return URL for authentication.
         /// </summary>
         public string ReturnUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the service resource for OneDrive for Active Directory authentication.
+        /// </summary>
+        public string ServiceResource { get; set; }
 
         /// <summary>
         /// Gets or sets the application's sign out URL.
@@ -88,6 +103,11 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets the ID of the current user.
         /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the version of the OneDrive service endpoint.
+        /// </summary>
+        public string OneDriveServiceEndpointVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="IWebAuthenticationUi"/> for displaying authentication UI to the user.

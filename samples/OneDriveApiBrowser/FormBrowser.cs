@@ -32,7 +32,11 @@ namespace OneDriveApiBrowser
 
     public partial class FormBrowser : Form
     {
+        private const string AadClientId = "67b8454b-58df-4e6d-a688-c769bd327052";
+        private const string AadReturnUrl = "https://localhost:777";
+
         private const string MsaClientId = "0000000044128B55";
+        private const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
 
         private static readonly string[] Scopes = { "onedrive.readwrite", "wl.offline_access", "wl.signin" };
 
@@ -65,8 +69,12 @@ namespace OneDriveApiBrowser
 
             try
             {
+                var expandString = this.oneDriveClient.ClientType == ClientType.Consumer
+                    ? "thumbnails,children(expand=thumbnails)"
+                    : "thumbnails,children";
+
                 var folder =
-                    await this.oneDriveClient.Drive.Items[id].Request().Expand("thumbnails,children(expand=thumbnails)").GetAsync();
+                    await this.oneDriveClient.Drive.Items[id].Request().Expand(expandString).GetAsync();
 
                 ProcessFolder(folder);
             }
@@ -90,7 +98,9 @@ namespace OneDriveApiBrowser
             {
                 Item folder;
 
-                var expandValue = "thumbnails,children(expand=thumbnails)";
+                var expandValue = this.oneDriveClient.ClientType == ClientType.Consumer
+                    ? "thumbnails,children(expand=thumbnails)"
+                    : "thumbnails,children";
 
                 if (path == null)
                 {
@@ -261,21 +271,34 @@ namespace OneDriveApiBrowser
 
         private void UpdateConnectedStateUx(bool connected)
         {
-            signInToolStripMenuItem.Visible = !connected;
+            signInAadToolStripMenuItem.Visible = !connected;
+            signInMsaToolStripMenuItem.Visible = !connected;
             signOutToolStripMenuItem.Visible = connected;
             flowLayoutPanelBreadcrumb.Visible = connected;
             flowLayoutContents.Visible = connected;
         }
 
-        private async void signInToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void signInAadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await this.SignIn(ClientType.Business);
+        }
+
+        private async void signInMsaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await this.SignIn(ClientType.Consumer);
+        }
+
+        private async Task SignIn(ClientType clientType)
         {
             if (this.oneDriveClient == null)
             {
-                this.oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
-                    FormBrowser.MsaClientId,
-                    "https://login.live.com/oauth20_desktop.srf",
-                    FormBrowser.Scopes,
-                    webAuthenticationUi: new FormsWebAuthenticationUi());
+                this.oneDriveClient = clientType == ClientType.Consumer
+                    ? OneDriveClient.GetMicrosoftAccountClient(
+                        FormBrowser.MsaClientId,
+                        FormBrowser.MsaReturnUrl,
+                        FormBrowser.Scopes,
+                        webAuthenticationUi: new FormsWebAuthenticationUi())
+                    : BusinessClientExtensions.GetActiveDirectoryClient(FormBrowser.AadClientId, FormBrowser.AadReturnUrl);
             }
 
             try
@@ -300,6 +323,10 @@ namespace OneDriveApiBrowser
                             "Authentication failed",
                             "Authentication failed",
                             MessageBoxButtons.OK);
+
+                        var httpProvider = this.oneDriveClient.HttpProvider as HttpProvider;
+                        httpProvider.Dispose();
+                        this.oneDriveClient = null;
                     }
                     else
                     {
@@ -314,6 +341,8 @@ namespace OneDriveApiBrowser
             if (this.oneDriveClient != null)
             {
                 await this.oneDriveClient.SignOutAsync();
+                ((OneDriveClient)this.oneDriveClient).Dispose();
+                this.oneDriveClient = null;
             }
 
             UpdateConnectedStateUx(false);

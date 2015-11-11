@@ -40,7 +40,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void BaseRequest_InitializeWithQueryStringAndOptions()
         {
-            var baseUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+            var baseUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
             var requestUrl = baseUrl + "?key=value";
 
             var options = new List<Option>
@@ -62,7 +62,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void BaseRequest_GetWebRequestWithHeadersAndQueryOptions()
         {
-            var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+            var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
 
             var options = new List<Option>
             {
@@ -84,14 +84,14 @@ namespace Test.OneDriveSdk.Requests
 
             var expectedVersionNumber = typeof(BaseRequest).GetTypeInfo().Assembly.GetName().Version;
             Assert.AreEqual(
-                string.Format(Constants.Headers.RequestStatsFormatString, expectedVersionNumber),
-                httpRequestMessage.Headers.GetValues(Constants.Headers.RequestStatsName).First(), "Unexpected request stats header.");
+                string.Format(Constants.Headers.SdkVersionHeaderValue, expectedVersionNumber),
+                httpRequestMessage.Headers.GetValues(Constants.Headers.ConsumerSdkVersionHeaderName).First(), "Unexpected request stats header.");
         }
 
         [TestMethod]
         public void BaseRequest_GetWebRequestNoOptions()
         {
-            var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+            var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
 
             var baseRequest = new BaseRequest(requestUrl, this.oneDriveClient) { Method = "DELETE" };
 
@@ -104,14 +104,14 @@ namespace Test.OneDriveSdk.Requests
 
             var expectedVersionNumber = typeof(BaseRequest).GetTypeInfo().Assembly.GetName().Version;
             Assert.AreEqual(
-                string.Format(Constants.Headers.RequestStatsFormatString, expectedVersionNumber),
-                httpRequestMessage.Headers.GetValues(Constants.Headers.RequestStatsName).First(), "Unexpected request stats header.");
+                string.Format(Constants.Headers.SdkVersionHeaderValue, expectedVersionNumber),
+                httpRequestMessage.Headers.GetValues(Constants.Headers.ConsumerSdkVersionHeaderName).First(), "Unexpected request stats header.");
         }
 
         [TestMethod]
         public async Task BaseRequest_SendAsync()
         {
-            var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+            var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
 
             var baseRequest = new BaseRequest(requestUrl, this.oneDriveClient) { ContentType = "application/json" };
 

@@ -20,7 +20,7 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WinStore
+namespace Microsoft.OneDrive.Sdk
 {
     public static class OneDriveClientExtensions
     {
@@ -32,7 +32,7 @@ namespace Microsoft.OneDrive.Sdk.WinStore
             return new OneDriveClient(
                 new AppConfig { MicrosoftAccountScopes = scopes },
                 /* credentialCache */ null,
-                httpProvider ?? new HttpProvider(new Serializer()),
+                httpProvider ?? new HttpProvider(),
                 new OnlineIdServiceInfoProvider());
         }
 
@@ -45,7 +45,7 @@ namespace Microsoft.OneDrive.Sdk.WinStore
             return new OneDriveClient(
                 new AppConfig { MicrosoftAccountScopes = scopes },
                 /* credentialCache */ null,
-                httpProvider ?? new HttpProvider(new Serializer()),
+                httpProvider ?? new HttpProvider(),
                 new WebAuthenticationBrokerServiceInfoProvider());
         }
 

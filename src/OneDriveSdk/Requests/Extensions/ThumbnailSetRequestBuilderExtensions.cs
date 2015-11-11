@@ -33,7 +33,7 @@ namespace Microsoft.OneDrive.Sdk
             {
                 return new ThumbnailRequestBuilder(
                     this.AppendSegmentToRequestUrl(size),
-                    this.OneDriveClient);
+                    this.Client);
             }
         }
     }

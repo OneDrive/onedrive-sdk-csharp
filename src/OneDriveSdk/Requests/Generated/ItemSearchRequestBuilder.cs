@@ -24,6 +24,7 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -34,9 +35,9 @@ namespace Microsoft.OneDrive.Sdk
     
         public ItemSearchRequestBuilder(
             string requestUrl,
-            IOneDriveClient oneDriveClient,
+            IBaseClient client,
             string q = null)
-            : base(requestUrl, oneDriveClient)
+            : base(requestUrl, client)
         {
             
                 this.Q = q;
@@ -57,7 +58,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemSearchRequest(
                 this.RequestUrl,
-                this.OneDriveClient,
+                this.Client,
                 options,
                 this.Q);
         }

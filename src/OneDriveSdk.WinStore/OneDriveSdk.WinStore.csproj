@@ -8,7 +8,7 @@
     <ProjectGuid>{A8C54259-542C-40AC-AEB6-EEFC3AA79859}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OneDriveSdk.WinStore</RootNamespace>
+    <RootNamespace>Microsoft.OneDrive.Sdk.WinStore</RootNamespace>
     <AssemblyName>OneDriveSdk.WinStore</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,6 +32,11 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
@@ -47,10 +52,10 @@
   <ItemGroup>
     <Compile Include="Authentication\OnlineIdAuthenticationProvider.cs" />
     <Compile Include="Authentication\OnlineIdServiceInfoProvider.cs" />
-    <Compile Include="Extensions\OneDriveClientExtensions.cs" />
     <Compile Include="Authentication\WebAuthenticationBrokerAuthenticationProvider.cs" />
     <Compile Include="Authentication\WebAuthenticationBrokerServiceInfoProvider.cs" />
     <Compile Include="Authentication\WebAuthenticationBrokerWebAuthenticationUi.cs" />
+    <Compile Include="Extensions\OneDriveClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

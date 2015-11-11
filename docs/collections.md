@@ -72,4 +72,3 @@ var deltaCollectionPage = await oneDriveClient
 ```
 
 `IItemDeltaCollectionPage` is an `ICollectionPage<Item>` object with a `Token` property and a `DeltaLink` property. The token link can be used to pass into `Delta:` when you want to check for more changes. You can also construct a delta request with the `DeltaLink` property. The `NextPageRequest` is an `IItemDeltaRequest` to be used for paging purposes and will be null when there are no more changes.
-

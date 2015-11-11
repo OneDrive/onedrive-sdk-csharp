@@ -24,6 +24,7 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -34,9 +35,9 @@ namespace Microsoft.OneDrive.Sdk
     
         public ItemCreateSessionRequestBuilder(
             string requestUrl,
-            IOneDriveClient oneDriveClient,
+            IBaseClient client,
             ChunkedUploadSessionDescriptor item = null)
-            : base(requestUrl, oneDriveClient)
+            : base(requestUrl, client)
         {
             
                 this.Item = item;
@@ -57,7 +58,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemCreateSessionRequest(
                 this.RequestUrl,
-                this.OneDriveClient,
+                this.Client,
                 options,
                 this.Item);
         }

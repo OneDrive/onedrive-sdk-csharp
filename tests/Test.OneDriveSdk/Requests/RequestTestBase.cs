@@ -43,7 +43,7 @@ namespace Test.OneDriveSdk.Requests
         protected MockSerializer serializer;
         protected ServiceInfo serviceInfo;
         protected MockServiceInfoProvider serviceInfoProvider;
-        protected MockWebUi webUi;
+        protected MockWebAuthenticationUi webUi;
 
         [TestInitialize]
         public void Setup()
@@ -61,14 +61,14 @@ namespace Test.OneDriveSdk.Requests
             };
 
             this.serviceInfoProvider = new MockServiceInfoProvider(this.serviceInfo);
-            this.webUi = new MockWebUi();
+            this.webUi = new MockWebAuthenticationUi();
             this.oneDriveClient = new OneDriveClient(
                 this.appConfig,
                 this.credentialCache.Object,
                 this.httpProvider.Object,
                 this.serviceInfoProvider.Object)
             {
-                BaseUrl = Constants.Authentication.OneDriveConsumerBaseUrl,
+                BaseUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0"),
                 ServiceInfo = this.serviceInfo,
             };
         }

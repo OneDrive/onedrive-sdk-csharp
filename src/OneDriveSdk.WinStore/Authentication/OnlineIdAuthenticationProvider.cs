@@ -20,11 +20,10 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WinStore
+namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Linq;
-    using System.Net;
     using System.Threading.Tasks;
     using Windows.Security.Authentication.OnlineId;
 
@@ -62,22 +61,28 @@ namespace Microsoft.OneDrive.Sdk.WinStore
 
         internal async Task<AccountSession> GetAccountSessionAsync()
         {
-            await this.SignOutAsync();
-            var serviceTicketRequest = new OnlineIdServiceTicketRequest(string.Join(" ", this.ServiceInfo.Scopes), "DELEGATION");
-            var authenticationResponse = await this.authenticator.AuthenticateUserAsync(serviceTicketRequest);
-
-            var ticket = authenticationResponse.Tickets.FirstOrDefault();
-            
-            var accountSession = new AccountSession
+            try
             {
-                AccessToken = ticket == null ? null : ticket.Value,
-                AccountType = this.ServiceInfo.AccountType,
-                CanSignOut = this.authenticator.CanSignOut,
-                ClientId = this.authenticator.ApplicationId.ToString(),
-                UserId = authenticationResponse.SafeCustomerId,
-            };
+                var serviceTicketRequest = new OnlineIdServiceTicketRequest(string.Join(" ", this.ServiceInfo.Scopes), "DELEGATION");
+                var authenticationResponse = await this.authenticator.AuthenticateUserAsync(serviceTicketRequest);
 
-            return accountSession;
+                var ticket = authenticationResponse.Tickets.FirstOrDefault();
+
+                var accountSession = new AccountSession
+                {
+                    AccessToken = ticket == null ? null : ticket.Value,
+                    AccountType = this.ServiceInfo.AccountType,
+                    CanSignOut = this.authenticator.CanSignOut,
+                    ClientId = this.authenticator.ApplicationId.ToString(),
+                    UserId = authenticationResponse.SafeCustomerId,
+                };
+
+                return accountSession;
+            }
+            catch (Exception exception)
+            {
+                throw new OneDriveException(new Error { Code = OneDriveErrorCode.AuthenticationFailure.ToString(), Message = exception.Message }, exception);
+            }
         }
     }
 }

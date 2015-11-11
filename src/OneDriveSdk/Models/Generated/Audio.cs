@@ -101,13 +101,13 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets hasDrm.
         /// </summary>
         [DataMember(Name = "hasDrm", EmitDefaultValue = false, IsRequired = false)]
-        public Boolean? HasDrm { get; set; }
+        public bool? HasDrm { get; set; }
     
         /// <summary>
         /// Gets or sets isVariableBitrate.
         /// </summary>
         [DataMember(Name = "isVariableBitrate", EmitDefaultValue = false, IsRequired = false)]
-        public Boolean? IsVariableBitrate { get; set; }
+        public bool? IsVariableBitrate { get; set; }
     
         /// <summary>
         /// Gets or sets title.

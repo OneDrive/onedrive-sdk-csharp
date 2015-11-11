@@ -47,6 +47,6 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Initializes the NextPageRequest property.
         /// </summary>
-        void InitializeNextPageRequest(IOneDriveClient oneDriveClient, string nextPageLinkString);
+        void InitializeNextPageRequest(IBaseClient client, string nextPageLinkString);
     }
 }

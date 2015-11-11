@@ -42,10 +42,11 @@ namespace Microsoft.OneDrive.Sdk
             AppConfig appConfig,
             CredentialCache credentialCache = null,
             IHttpProvider httpProvider = null,
-            IServiceInfoProvider serviceInfoProvider = null)
+            IServiceInfoProvider serviceInfoProvider = null,
+            ClientType clientType = ClientType.Consumer)
         {
-
             this.appConfig = appConfig;
+            this.ClientType = clientType;
             this.credentialCache = credentialCache ?? new CredentialCache();
             this.HttpProvider = httpProvider ?? new HttpProvider(new Serializer());
             this.serviceInfoProvider = serviceInfoProvider ?? new ServiceInfoProvider();
@@ -72,6 +73,8 @@ namespace Microsoft.OneDrive.Sdk
             get { return this.baseUrl; }
             set { this.baseUrl = value.TrimEnd('/'); }
         }
+
+        public ClientType ClientType { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="IHttpProvider"/> for sending HTTP requests.
@@ -105,8 +108,11 @@ namespace Microsoft.OneDrive.Sdk
         {
             if (this.ServiceInfo == null)
             {
-                this.ServiceInfo =
-                    await this.serviceInfoProvider.GetServiceInfo(this.appConfig, this.credentialCache, this.HttpProvider);
+                this.ServiceInfo = await this.serviceInfoProvider.GetServiceInfo(
+                    this.appConfig,
+                    this.credentialCache,
+                    this.HttpProvider,
+                    this.ClientType);
             }
 
             var authResult = await this.ServiceInfo.AuthenticationProvider.AuthenticateAsync();

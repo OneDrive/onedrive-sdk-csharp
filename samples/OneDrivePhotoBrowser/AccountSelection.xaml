@@ -1,0 +1,16 @@
+﻿<Page
+    x:Class="OneDrivePhotoBrowser.AccountSelection"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OneDrivePhotoBrowser"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" >
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <RelativePanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="200">
+            <Button x:Name="MsaButton" Content="Log in to MSA" HorizontalAlignment="Center" VerticalAlignment="Center" Click="MsaButton_Click" RelativePanel.AlignTopWithPanel="True" />
+            <Button x:Name="AadButton" Content="Log in to AAD" HorizontalAlignment="Center" VerticalAlignment="Center" Click="AadButton_Click" RelativePanel.Below="MsaButton" RelativePanel.AlignBottomWithPanel="True"/>
+        </RelativePanel>
+    </Grid>
+</Page>

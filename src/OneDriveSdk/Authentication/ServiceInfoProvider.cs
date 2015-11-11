@@ -22,11 +22,17 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Threading.Tasks;
 
     public class ServiceInfoProvider : IServiceInfoProvider
     {
-        private IWebAuthenticationUi webAuthenticationUi;
+        private const string discoveryServiceUrl =
+            "https://api.office.com/discovery/v2.0/me/FirstSignIn?redirect_uri=https://localhost:777&scope=MyFiles";
+
+        private const string discoveryServiceReturnUrl = "https://localhost:777";
+
+        protected IWebAuthenticationUi webAuthenticationUi;
 
         /// <summary>
         /// Instantiates a new <see cref="ServiceInfoProvider"/>.
@@ -51,7 +57,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="authenticationProvider">The <see cref="IAuthenticationProvider"/> for authenticating the user.</param>
         /// <param name="webAuthenticationUi">The <see cref="IWebAuthenticationUi"/> for displaying authentication UI to the user.</param>
-        internal ServiceInfoProvider(IAuthenticationProvider authenticationProvider = null, IWebAuthenticationUi webAuthenticationUi = null)
+        public ServiceInfoProvider(IAuthenticationProvider authenticationProvider = null, IWebAuthenticationUi webAuthenticationUi = null)
         {
             this.AuthenticationProvider = authenticationProvider;
             this.webAuthenticationUi = webAuthenticationUi;
@@ -65,25 +71,42 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="appConfig">The <see cref="AppConfig"/> for the current application.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <param name="clientType">The <see cref="ClientType"/> to specify the business or consumer service.</param>
         /// <returns>The <see cref="ServiceInfo"/> for the current session.</returns>
-        public Task<ServiceInfo> GetServiceInfo(
+        public virtual Task<ServiceInfo> GetServiceInfo(
             AppConfig appConfig,
             CredentialCache credentialCache,
-            IHttpProvider httpProvider)
+            IHttpProvider httpProvider,
+            ClientType clientType)
         {
-            var microsoftAccountServiceInfo = new MicrosoftAccountServiceInfo
+            if (clientType == ClientType.Consumer)
             {
-                AppId = appConfig.MicrosoftAccountAppId,
-                ClientSecret = appConfig.MicrosoftAccountClientSecret,
+                var microsoftAccountServiceInfo = new MicrosoftAccountServiceInfo
+                {
+                    AppId = appConfig.MicrosoftAccountAppId,
+                    ClientSecret = appConfig.MicrosoftAccountClientSecret,
+                    CredentialCache = credentialCache,
+                    HttpProvider = httpProvider,
+                    ReturnUrl = appConfig.MicrosoftAccountReturnUrl,
+                    Scopes = appConfig.MicrosoftAccountScopes,
+                    WebAuthenticationUi = this.webAuthenticationUi,
+                };
+
+                microsoftAccountServiceInfo.AuthenticationProvider = this.AuthenticationProvider?? new MicrosoftAccountAuthenticationProvider(microsoftAccountServiceInfo);
+                return Task.FromResult<ServiceInfo>(microsoftAccountServiceInfo);
+            }
+
+            var activeDirectoryServiceInfo = new ActiveDirectoryServiceInfo
+            {
+                AppId = appConfig.ActiveDirectoryAppId,
+                AuthenticationProvider = this.AuthenticationProvider,
+                ClientSecret = appConfig.ActiveDirectoryClientSecret,
                 CredentialCache = credentialCache,
                 HttpProvider = httpProvider,
-                ReturnUrl = appConfig.MicrosoftAccountReturnUrl,
-                Scopes = appConfig.MicrosoftAccountScopes,
-                WebAuthenticationUi = this.webAuthenticationUi,
+                ReturnUrl = appConfig.ActiveDirectoryReturnUrl,
             };
-
-            microsoftAccountServiceInfo.AuthenticationProvider = this.AuthenticationProvider ?? new MicrosoftAccountAuthenticationProvider(microsoftAccountServiceInfo);
-            return Task.FromResult<ServiceInfo>(microsoftAccountServiceInfo);
+            
+            return Task.FromResult<ServiceInfo>(activeDirectoryServiceInfo);
         }
     }
 }

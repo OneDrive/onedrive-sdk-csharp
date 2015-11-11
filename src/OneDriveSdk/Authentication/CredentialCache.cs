@@ -39,28 +39,53 @@ namespace Microsoft.OneDrive.Sdk
 
         private const int CacheVersion = 1;
 
+        /// <summary>
+        /// Instantiates a new <see cref="CredentialCache"/>.
+        /// </summary>
+        /// <param name="serializer">The <see cref="ISerializer"/> for serializing cache contents.</param>
         public CredentialCache(ISerializer serializer = null)
+            : this(null, serializer)
         {
-            this.Serializer = serializer ?? new Serializer();
         }
 
+        /// <summary>
+        /// Instantiates a new <see cref="CredentialCache"/>.
+        /// </summary>
+        /// <param name="blob">The cache contents for initialization.</param>
+        /// <param name="serializer">The <see cref="ISerializer"/> for serializing cache contents.</param>
         public CredentialCache(byte[] blob, ISerializer serializer = null)
         {
             this.Serializer = serializer ?? new Serializer();
             this.InitializeCacheFromBlob(blob);
         }
 
-        public CredentialCacheNotification BeforeAccess { get; set; }
+        /// <summary>
+        /// Gets or sets the notification delegate for before accessing the cache.
+        /// </summary>
+        public virtual CredentialCacheNotification BeforeAccess { get; set; }
 
-        public CredentialCacheNotification BeforeWrite { get; set; }
+        /// <summary>
+        /// Gets or sets the notification delegate for before writing to the cache.
+        /// </summary>
+        public virtual CredentialCacheNotification BeforeWrite { get; set; }
 
-        public CredentialCacheNotification AfterAccess { get; set; }
+        /// <summary>
+        /// Gets or sets the notification delegate for after accessing the cache.
+        /// </summary>
+        public virtual CredentialCacheNotification AfterAccess { get; set; }
 
-        public bool HasStateChanged { get; set; }
+        /// <summary>
+        /// Gets or sets whether or not the cache state has changed.
+        /// </summary>
+        public virtual bool HasStateChanged { get; set; }
 
-        public ISerializer Serializer { get; private set; }
+        protected ISerializer Serializer { get; private set; }
 
-        public byte[] GetCacheBlob()
+        /// <summary>
+        /// Gets the contents of the cache.
+        /// </summary>
+        /// <returns>The cache contents.</returns>
+        public virtual byte[] GetCacheBlob()
         {
             using (var stream = new MemoryStream())
             using (var binaryReader = new BinaryReader(stream))
@@ -81,7 +106,11 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
-        public void InitializeCacheFromBlob(byte[] cacheBytes)
+        /// <summary>
+        /// Initializes the cache from the specified contents.
+        /// </summary>
+        /// <param name="cacheBytes">The cache contents.</param>
+        public virtual void InitializeCacheFromBlob(byte[] cacheBytes)
         {
             if (cacheBytes == null)
             {
@@ -125,6 +154,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Clears the cache contents.
+        /// </summary>
         public virtual void Clear()
         {
             var cacheNotificationArgs = new CredentialCacheNotificationArgs { CredentialCache = this };
@@ -133,6 +165,20 @@ namespace Microsoft.OneDrive.Sdk
             this.OnBeforeWrite(cacheNotificationArgs);
 
             this.cacheDictionary.Clear();
+
+            this.HasStateChanged = true;
+            this.OnAfterAccess(cacheNotificationArgs);
+        }
+
+        internal virtual void AddToCache(AccountSession accountSession)
+        {
+            var cacheNotificationArgs = new CredentialCacheNotificationArgs { CredentialCache = this };
+
+            this.OnBeforeAccess(cacheNotificationArgs);
+            this.OnBeforeWrite(cacheNotificationArgs);
+
+            var cacheKey = this.GetKeyForAuthResult(accountSession);
+            this.cacheDictionary[cacheKey] = accountSession;
 
             this.HasStateChanged = true;
             this.OnAfterAccess(cacheNotificationArgs);
@@ -153,20 +199,6 @@ namespace Microsoft.OneDrive.Sdk
 
                 this.OnAfterAccess(cacheNotificationArgs);
             }
-        }
-
-        internal virtual void AddToCache(AccountSession accountSession)
-        {
-            var cacheNotificationArgs = new CredentialCacheNotificationArgs { CredentialCache = this };
-
-            this.OnBeforeAccess(cacheNotificationArgs);
-            this.OnBeforeWrite(cacheNotificationArgs);
-
-            var cacheKey = this.GetKeyForAuthResult(accountSession);
-            this.cacheDictionary[cacheKey] = accountSession;
-
-            this.HasStateChanged = true;
-            this.OnAfterAccess(cacheNotificationArgs);
         }
 
         internal virtual AccountSession GetResultFromCache(AccountType accountType, string clientId, string userId)
@@ -199,7 +231,7 @@ namespace Microsoft.OneDrive.Sdk
             };
         }
 
-        private void OnAfterAccess(CredentialCacheNotificationArgs args)
+        protected void OnAfterAccess(CredentialCacheNotificationArgs args)
         {
             if (this.AfterAccess != null)
             {
@@ -207,7 +239,7 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
-        private void OnBeforeAccess(CredentialCacheNotificationArgs args)
+        protected void OnBeforeAccess(CredentialCacheNotificationArgs args)
         {
             if (this.BeforeAccess != null)
             {
@@ -215,7 +247,7 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
-        private void OnBeforeWrite(CredentialCacheNotificationArgs args)
+        protected void OnBeforeWrite(CredentialCacheNotificationArgs args)
         {
             if (this.BeforeWrite != null)
             {

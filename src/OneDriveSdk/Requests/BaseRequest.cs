@@ -38,21 +38,21 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public class BaseRequest : IBaseRequest
     {
-        private readonly string requestStatsHeaderValue;
+        private readonly string sdkVersionHeaderValue;
 
         /// <summary>
         /// Constructs a new <see cref="BaseRequest"/>.
         /// </summary>
         /// <param name="requestUrl">The URL for the request.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         /// <param name="options">The header and query options for the request.</param>
         public BaseRequest(
             string requestUrl,
-            IOneDriveClient oneDriveClient = null,
+            IBaseClient client,
             IEnumerable<Option> options = null)
         {
             this.Method = "GET";
-            this.OneDriveClient = oneDriveClient;
+            this.Client = client;
             this.Headers = new List<HeaderOption>();
             this.QueryOptions = new List<QueryOption>();
 
@@ -73,8 +73,8 @@ namespace Microsoft.OneDrive.Sdk
                 }
             }
 
-            this.requestStatsHeaderValue = string.Format(
-                Constants.Headers.RequestStatsFormatString,
+            this.sdkVersionHeaderValue = string.Format(
+                Constants.Headers.SdkVersionHeaderValue,
                 this.GetType().GetTypeInfo().Assembly.GetName().Version);
         }
 
@@ -89,9 +89,9 @@ namespace Microsoft.OneDrive.Sdk
         public IList<HeaderOption> Headers { get; private set; }
 
         /// <summary>
-        /// Gets the <see cref="IOneDriveClient"/> for handling requests.
+        /// Gets the <see cref="IBaseClient"/> for handling requests.
         /// </summary>
-        public IOneDriveClient OneDriveClient { get; private set; }
+        public IBaseClient Client { get; private set; }
 
         /// <summary>
         /// Gets or sets the HTTP method string for the request.
@@ -111,6 +111,18 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Sends the request.
         /// </summary>
+        /// <param name="serializableObject">The serializable object to send.</param>
+        /// <returns>The task to await.</returns>
+        public async Task SendAsync(object serializableObject)
+        {
+            using (var response = await this.SendRequestAsync(serializableObject))
+            {
+            }
+        }
+
+        /// <summary>
+        /// Sends the request.
+        /// </summary>
         /// <typeparam name="T">The expected reponse object type for deserialization.</typeparam>
         /// <param name="serializableObject">The serializable object to send.</param>
         /// <returns>The deserialized response object.</returns>
@@ -121,7 +133,7 @@ namespace Microsoft.OneDrive.Sdk
                 if (response.Content != null)
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
-                    return this.OneDriveClient.HttpProvider.Serializer.DeserializeObject<T>(responseString);
+                    return this.Client.HttpProvider.Serializer.DeserializeObject<T>(responseString);
                 }
 
                 return default(T);
@@ -151,7 +163,7 @@ namespace Microsoft.OneDrive.Sdk
             // We will generate a new auth token later if that isn't set on the client, so not calling
             // IsAuthenticated. Instead, verify the service info and base URL are initialized to make sure
             // AuthenticateAsync has previously been called on the client.
-            if (this.OneDriveClient.ServiceInfo == null || string.IsNullOrEmpty(this.OneDriveClient.BaseUrl))
+            if (this.Client.ServiceInfo == null || string.IsNullOrEmpty(this.Client.BaseUrl))
             {
                 throw new OneDriveException(
                     new Error
@@ -175,7 +187,7 @@ namespace Microsoft.OneDrive.Sdk
                     }
                     else
                     {
-                        request.Content = new StringContent(this.OneDriveClient.HttpProvider.Serializer.SerializeObject(serializableObject));
+                        request.Content = new StringContent(this.Client.HttpProvider.Serializer.SerializeObject(serializableObject));
                     }
 
                     if (!string.IsNullOrEmpty(this.ContentType))
@@ -184,7 +196,7 @@ namespace Microsoft.OneDrive.Sdk
                     }
                 }
 
-                return await this.OneDriveClient.HttpProvider.SendAsync(request);
+                return await this.Client.HttpProvider.SendAsync(request);
             }
         }
 
@@ -216,8 +228,12 @@ namespace Microsoft.OneDrive.Sdk
                 }
             }
 
-            // Append X-RequestStats header for telemetry
-            request.Headers.Add(Constants.Headers.RequestStatsName, this.requestStatsHeaderValue);
+            // Append SDK version header for telemetry
+            request.Headers.Add(
+                this.Client.ClientType == ClientType.Business
+                    ? Constants.Headers.BusinessSdkVersionHeaderName
+                    : Constants.Headers.ConsumerSdkVersionHeaderName,
+                this.sdkVersionHeaderValue);
         }
 
         /// <summary>
@@ -227,7 +243,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The async task.</returns>
         private async Task AuthenticateRequestAsync(HttpRequestMessage request)
         {
-            await this.OneDriveClient.ServiceInfo.AuthenticationProvider.AppendAuthHeaderAsync(request);
+            await this.Client.ServiceInfo.AuthenticationProvider.AppendAuthHeaderAsync(request);
         }
 
         /// <summary>

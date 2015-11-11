@@ -24,6 +24,8 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
+    using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>

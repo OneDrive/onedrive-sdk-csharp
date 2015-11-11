@@ -142,4 +142,3 @@ var newItem = await asyncStatus.CompleteOperationAsync(null, CancellationToken.N
 ```
 
 `CompleteOperationAsync` takes in an `IProgress<AsyncOperationStatus>` for reporting back progress status and a `CancellationToken` for action cancellation. The method will poll until completion unless cancelled.
-

@@ -42,6 +42,8 @@ namespace Microsoft.OneDrive.Sdk
 
         public string AccessToken { get; set; }
 
+        public string AccessTokenType { get; set; }
+
         public AccountType AccountType { get; set; }
 
         public bool CanSignOut { get; set; }
