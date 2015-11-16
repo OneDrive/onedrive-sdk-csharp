@@ -38,7 +38,7 @@ namespace Test.OneDriveSdk.Authentication
         private MockHttpProvider httpProvider;
         private HttpResponseMessage httpResponseMessage;
         private ServiceInfoProvider serviceInfoProvider;
-        private MockWebUi webAuthenticationUi;
+        private MockWebAuthenticationUi webAuthenticationUi;
 
         [TestInitialize]
         public void Setup()
@@ -54,7 +54,7 @@ namespace Test.OneDriveSdk.Authentication
             this.credentialCache = new MockCredentialCache();
             this.httpResponseMessage = new HttpResponseMessage();
             this.httpProvider = new MockHttpProvider(this.httpResponseMessage);
-            this.webAuthenticationUi = new MockWebUi();
+            this.webAuthenticationUi = new MockWebAuthenticationUi();
             this.serviceInfoProvider = new ServiceInfoProvider(this.webAuthenticationUi.Object);
         }
 
@@ -67,7 +67,11 @@ namespace Test.OneDriveSdk.Authentication
         [TestMethod]
         public async Task GetServiceInfo()
         {
-            var serviceInfo = await this.serviceInfoProvider.GetServiceInfo(this.appConfig, this.credentialCache.Object, this.httpProvider.Object);
+            var serviceInfo = await this.serviceInfoProvider.GetServiceInfo(
+                this.appConfig,
+                this.credentialCache.Object,
+                this.httpProvider.Object,
+                ClientType.Consumer);
 
             Assert.IsTrue(serviceInfo is MicrosoftAccountServiceInfo, "Unexpected service info type.");
             Assert.IsTrue(serviceInfo.AuthenticationProvider is MicrosoftAccountAuthenticationProvider, "Unexpected authentication provider type.");
@@ -87,7 +91,7 @@ namespace Test.OneDriveSdk.Authentication
         {
             var mockAuthenticationProvider = new Mock<IAuthenticationProvider>().Object;
             this.serviceInfoProvider = new ServiceInfoProvider(mockAuthenticationProvider, this.webAuthenticationUi.Object);
-            var serviceInfo = await this.serviceInfoProvider.GetServiceInfo(this.appConfig, this.credentialCache.Object, this.httpProvider.Object);
+            var serviceInfo = await this.serviceInfoProvider.GetServiceInfo(this.appConfig, this.credentialCache.Object, this.httpProvider.Object, ClientType.Consumer);
             
             Assert.IsFalse(serviceInfo.AuthenticationProvider is MicrosoftAccountAuthenticationProvider, "Unexpected authentication provider type.");
             Assert.AreEqual(mockAuthenticationProvider, serviceInfo.AuthenticationProvider, "Unexpected authentication provider set.");

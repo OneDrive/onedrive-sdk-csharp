@@ -24,6 +24,7 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -35,11 +36,11 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs a new ThumbnailRequestBuilder.
         /// </summary>
         /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         public ThumbnailRequestBuilder(
             string requestUrl,
-            IOneDriveClient oneDriveClient)
-            : base(requestUrl, oneDriveClient)
+            IBaseClient client)
+            : base(requestUrl, client)
         {
         }
 
@@ -59,7 +60,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The built request.</returns>
         public IThumbnailRequest Request(IList<Option> options)
         {
-            return new ThumbnailRequest(this.RequestUrl, this.OneDriveClient, options);
+            return new ThumbnailRequest(this.RequestUrl, this.Client, options);
         }
 
     
@@ -71,7 +72,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             get
             {
-                return new ThumbnailContentRequestBuilder(this.AppendSegmentToRequestUrl("content"), this.OneDriveClient);
+                return new ThumbnailContentRequestBuilder(this.AppendSegmentToRequestUrl("content"), this.Client);
             }
         }
     

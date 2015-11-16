@@ -24,7 +24,9 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -38,11 +40,11 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         public ItemCopyRequest(
             string requestUrl,
-            IOneDriveClient oneDriveClient,
+            IBaseClient client,
             IList<Option> options,
             string name = null,
             ItemReference parentReference = null)
-            : base(requestUrl, oneDriveClient, options)
+            : base(requestUrl, client, options)
         {
     
             this.Method = "POST";
@@ -67,11 +69,11 @@ namespace Microsoft.OneDrive.Sdk
         
             using (var response = await this.SendRequestAsync(this.RequestBody))
             {
-                return new ItemCopyAsyncMonitor(this.OneDriveClient, response.Headers.Location.ToString());
+                return new ItemCopyAsyncMonitor(this.Client, response.Headers.Location.ToString());
             }
     
         }
-
+    
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -79,7 +81,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IItemCopyRequest Expand(string value)
         {
-            this.QueryOptions.Add(new QueryOption("expand", value));
+            this.QueryOptions.Add(new QueryOption("$expand", value));
             return this;
         }
 
@@ -90,7 +92,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IItemCopyRequest Select(string value)
         {
-            this.QueryOptions.Add(new QueryOption("select", value));
+            this.QueryOptions.Add(new QueryOption("$select", value));
             return this;
         }
 
@@ -101,9 +103,9 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request object to send.</returns>
         public IItemCopyRequest Top(int value)
         {
-            this.QueryOptions.Add(new QueryOption("top", value.ToString()));
+            this.QueryOptions.Add(new QueryOption("$top", value.ToString()));
             return this;
         }
-
+    
     }
 }

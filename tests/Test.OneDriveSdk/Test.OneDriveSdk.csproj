@@ -34,6 +34,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
@@ -60,18 +65,19 @@
     <Compile Include="Authentication\CredentialCacheTests.cs" />
     <Compile Include="Authentication\AuthenticationProviderTests.cs" />
     <Compile Include="Authentication\AccountSessionTests.cs" />
+    <Compile Include="Authentication\MicrosoftAccountAuthenticationProviderTests.cs" />
     <Compile Include="Authentication\MicrosoftAccountServiceInfoTests.cs" />
     <Compile Include="Authentication\OAuthErrorHandlerTests.cs" />
     <Compile Include="Authentication\ServiceInfoProviderTests.cs" />
     <Compile Include="Helpers\UrlHelperTests.cs" />
+    <Compile Include="Mocks\ExceptionHttpMessageHandler.cs" />
     <Compile Include="Mocks\MockAuthenticationProvider.cs" />
     <Compile Include="Mocks\MockCredentialCache.cs" />
     <Compile Include="Mocks\MockHttpProvider.cs" />
     <Compile Include="Mocks\MockProgress.cs" />
     <Compile Include="Mocks\MockSerializer.cs" />
     <Compile Include="Mocks\MockServiceInfoProvider.cs" />
-    <Compile Include="Mocks\MockWebUi.cs" />
-    <Compile Include="Authentication\MicrosoftAccountAuthenticationProviderTests.cs" />
+    <Compile Include="Mocks\MockWebAuthenticationUi.cs" />
     <Compile Include="Mocks\TestHttpMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\AsyncMonitorTests.cs" />

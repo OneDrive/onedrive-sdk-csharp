@@ -24,6 +24,9 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     
     /// <summary>
@@ -41,7 +44,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Issues the POST request.
         /// </summary>
         Task<IItemCopyAsyncMonitor> PostAsync();
-
+            
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -62,6 +65,6 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The top value.</param>
         /// <returns>The request object to send.</returns>
         IItemCopyRequest Top(int value);
-
+    
     }
 }

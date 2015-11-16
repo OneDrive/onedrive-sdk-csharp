@@ -28,7 +28,8 @@ namespace Microsoft.OneDrive.Sdk
         {
             this.AccountType = AccountType.MicrosoftAccount;
             this.AuthenticationServiceUrl = Constants.Authentication.MicrosoftAccountAuthenticationServiceUrl;
-            this.BaseUrl = Constants.Authentication.OneDriveConsumerBaseUrl;
+            this.OneDriveServiceEndpointVersion = "v1.0";
+            this.BaseUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, this.OneDriveServiceEndpointVersion);
             this.SignOutUrl = Constants.Authentication.MicrosoftAccountSignOutUrl;
             this.TokenServiceUrl = Constants.Authentication.MicrosoftAccountTokenServiceUrl;
         }

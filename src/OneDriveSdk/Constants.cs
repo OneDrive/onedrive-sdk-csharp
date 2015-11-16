@@ -30,11 +30,19 @@ namespace Microsoft.OneDrive.Sdk
         {
             public const string AccessTokenKeyName = "access_token";
 
+            public const string AuthenticationCancelled = "authentication_cancelled";
+
+            public const string AuthorizationServiceKey = "authorization_service";
+
             public const string ClientIdKeyName = "client_id";
 
             public const string ClientSecretKeyName = "client_secret";
 
             public const string CodeKeyName = "code";
+
+            public const string DiscoveryResourceKey = "discovery_resource";
+
+            public const string DiscoveryServiceKey = "discovery_service";
 
             public const string ErrorDescriptionKeyName = "error_description";
 
@@ -54,9 +62,21 @@ namespace Microsoft.OneDrive.Sdk
 
             public const string TokenResponseTypeValueName = "token";
 
+            public const string TokenServiceKey = "token_service";
+
             public const string TokenTypeKeyName = "token_type";
             
             public const string UserIdKeyName = "user_id";
+
+            internal const string ActiveDirectoryAuthenticationServiceUrl = "https://login.windows.net/common/oauth2/authorize";
+
+            internal const string ActiveDirectoryDiscoveryResource = "https://api.office.com/discovery/";
+
+            internal const string ActiveDirectoryDiscoveryServiceUrl = "https://api.office.com/discovery/v2.0/me/services";
+
+            internal const string ActiveDirectorySignOutUrl = "https://login.windows.net/common/oauth2/logout";
+
+            internal const string ActiveDirectoryTokenServiceUrl = "https://login.windows.net/common/oauth2/token";
 
             internal const string MicrosoftAccountAuthenticationServiceUrl = "https://login.live.com/oauth20_authorize.srf";
 
@@ -64,18 +84,22 @@ namespace Microsoft.OneDrive.Sdk
 
             internal const string MicrosoftAccountTokenServiceUrl = "https://login.live.com/oauth20_token.srf";
 
-            internal const string OneDriveConsumerBaseUrl = "https://api.onedrive.com/v1.0";
+            internal const string MyFilesCapability = "MyFiles";
+
+            internal const string OneDriveConsumerBaseUrlFormatString = "https://api.onedrive.com/{0}";
         }
 
         public static class Headers
         {
-            public const string Bearer = "bearer";
+            public const string Bearer = "Bearer";
+            
+            public const string BusinessSdkVersionHeaderName = "X-ClientService-ClientTag";
+
+            public const string ConsumerSdkVersionHeaderName = "X-RequestStats";
 
             public const string FormUrlEncodedContentType = "application/x-www-form-urlencoded";
 
-            public const string RequestStatsName = "X-RequestStats";
-
-            public const string RequestStatsFormatString = "SDK-Version=CSharp-v{0}";
+            public const string SdkVersionHeaderValue = "SDK-Version=CSharp-v{0}";
         }
 
         public static class Url

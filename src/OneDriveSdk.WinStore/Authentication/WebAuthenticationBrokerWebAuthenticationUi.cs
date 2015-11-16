@@ -20,7 +20,7 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WinStore
+namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace Microsoft.OneDrive.Sdk.WinStore
 
             // AuthenticateAsync will return a UserCancel status if authentication requires user input. Try authentication
             // again using UI.
-            if (result != null && result.ResponseStatus == WebAuthenticationStatus.UserCancel)
+            if (result == null || result.ResponseStatus == WebAuthenticationStatus.UserCancel)
             {
                 result = await this.AuthenticateAsync(requestUri, callbackUri, WebAuthenticationOptions.None);
             }
@@ -64,7 +64,9 @@ namespace Microsoft.OneDrive.Sdk.WinStore
 
         private async Task<WebAuthenticationResult> AuthenticateAsync(Uri requestUri, Uri callbackUri, WebAuthenticationOptions authenticationOptions)
         {
-            return await WebAuthenticationBroker.AuthenticateAsync(authenticationOptions, requestUri);
+            return callbackUri == null
+                ? await WebAuthenticationBroker.AuthenticateAsync(authenticationOptions, requestUri)
+                : await WebAuthenticationBroker.AuthenticateAsync(authenticationOptions, requestUri, callbackUri);
         }
     }
 }

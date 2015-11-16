@@ -7,7 +7,7 @@
     <ProjectGuid>{C48558A9-320F-464D-BEF4-48266F3CF2D3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OneDriveSdk.WindowsForms</RootNamespace>
+    <RootNamespace>Microsoft.OneDrive.Sdk.WindowsForms</RootNamespace>
     <AssemblyName>OneDriveSdk.WindowsForms</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINFORMS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -28,14 +28,27 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;WINFORMS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.19.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.19.208020213\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.19.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.19.208020213\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,24 +57,55 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AdalAccountSession.cs">
+      <Link>Authentication\AdalAccountSession.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AdalAuthenticationProviderBase.cs">
+      <Link>Authentication\AdalAuthenticationProviderBase.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AdalCredentialCache.cs">
+      <Link>Authentication\AdalCredentialCache.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AuthenticationResultWrapper.cs">
+      <Link>Authentication\AuthenticationResultWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryService.cs">
+      <Link>Authentication\DiscoveryService.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryServiceResponse.cs">
+      <Link>Authentication\DiscoveryServiceResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\IAuthenticationResult.cs">
+      <Link>Authentication\IAuthenticationResult.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\ITokenCache.cs">
+      <Link>Authentication\ITokenCache.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\ITokenCacheItem.cs">
+      <Link>Authentication\ITokenCacheItem.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\TokenCacheItemWrapper.cs">
+      <Link>Authentication\TokenCacheItemWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\TokenCacheWrapper.cs">
+      <Link>Authentication\TokenCacheWrapper.cs</Link>
+    </Compile>
+    <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
+    <Compile Include="Authentication\AdalServiceInfoProvider.cs" />
+    <Compile Include="Authentication\AuthenticationContextWrapper.cs" />
+    <Compile Include="Authentication\IAuthenticationContextWrapper.cs" />
+    <Compile Include="Extensions\BusinessClientExtensions.cs" />
     <Compile Include="Web\FormsWebDialog.cs">
       <SubType>form</SubType>
     </Compile>
-    <Compile Include="FormAuthDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormAuthDialog.Designer.cs">
-      <DependentUpon>FormAuthDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Web\FormsWebAuthenticationUi.cs" />
-    <EmbeddedResource Include="FormAuthDialog.resx">
-      <DependentUpon>FormAuthDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -75,6 +119,7 @@
     <EmbeddedResource Include="Web\FormsWebDialog.resx">
       <DependentUpon>FormsWebDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -94,6 +139,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

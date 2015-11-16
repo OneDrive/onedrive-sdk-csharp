@@ -20,27 +20,18 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace OneDriveSdk.WindowsForms
+namespace Test.OneDriveSdk.WindowsForms.Mocks
 {
-    using System;
-    using System.Windows.Forms;
+    using Microsoft.OneDrive.Sdk;
+    using Moq;
 
-    public partial class FormAuthDialog : Form
+    public class MockTokenCacheItem : Mock<ITokenCacheItem>
     {
-        public FormAuthDialog()
+        
+        public MockTokenCacheItem()
+            : base(MockBehavior.Strict)
         {
-            InitializeComponent();
-        }
-
-        public WebBrowser WebBrowser
-        {
-            get { return this.webBrowser; }
-        }
-
-        public string Authenticate(Uri requestUri, Uri callbackUri)
-        {
-            this.WebBrowser.Navigate(requestUri);
-            return null;
+            this.SetupAllProperties();
         }
     }
 }

@@ -33,7 +33,6 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public class HttpProvider : IHttpProvider, IDisposable
     {
-        private HttpClientHandler httpClientHandler;
         private const int maxRedirects = 5;
 
         internal HttpClient httpClient;
@@ -44,25 +43,56 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="serializer">A serializer for serializing and deserializing JSON objects.</param>
         public HttpProvider(ISerializer serializer = null)
         {
+            var clientHandler = new HttpClientHandler { AllowAutoRedirect = false };
+            this.httpClient = new HttpClient(clientHandler, /* disposeHandler */ true);
+
+            this.CacheControlHeader = new CacheControlHeaderValue { NoCache = true, NoStore = true };
             this.Serializer = serializer ?? new Serializer();
+        }
 
-            // We cannot change the AllowAutoRedirect property on the handler after the initial request is made.
-            // In order to reuse the same client objects and not spin up a new one with defaults every time
-            // we'll create 2 client instances and use whichever one we need to use at the time.
-
-            this.httpClientHandler = new HttpClientHandler
+        /// <summary>
+        /// Gets or sets the cache control header for requests;
+        /// </summary>
+        public CacheControlHeaderValue CacheControlHeader
+        {
+            get
             {
-                AllowAutoRedirect = false,
-            };
+                return this.httpClient.DefaultRequestHeaders.CacheControl;
+            }
 
-            this.httpClient = new HttpClient(this.httpClientHandler);
-
-            // Disable request caching
-            this.httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+            set
             {
-                NoCache = true,
-                NoStore = true
-            };
+                this.httpClient.DefaultRequestHeaders.CacheControl = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the overall request timeout.
+        /// </summary>
+        public TimeSpan OverallTimeout
+        {
+            get
+            {
+                return this.httpClient.Timeout;
+            }
+
+            set
+            {
+                try
+                {
+                    this.httpClient.Timeout = value;
+                }
+                catch (InvalidOperationException exception)
+                {
+                    throw new OneDriveException(
+                        new Error
+                        {
+                            Code = OneDriveErrorCode.NotAllowed.ToString(),
+                            Message = "Overall timeout cannot be set after the first request is sent."
+                        },
+                        exception);
+                }
+            }
         }
 
         /// <summary>
@@ -79,11 +109,6 @@ namespace Microsoft.OneDrive.Sdk
             {
                 this.httpClient.Dispose();
             }
-
-            if (this.httpClientHandler != null)
-            {
-                this.httpClientHandler.Dispose();
-            }
         }
 
         /// <summary>
@@ -93,12 +118,11 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The <see cref="HttpResponseMessage"/>.</returns>
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
-            var initialResponse = await this.httpClient.SendAsync(request);
-            var response = initialResponse;
+            var response = await this.SendRequestAsync(request);
 
-            if (this.IsRedirect(initialResponse.StatusCode))
+            if (this.IsRedirect(response.StatusCode))
             {
-                response = await this.HandleRedirect(initialResponse);
+                response = await this.HandleRedirect(response);
 
                 if (response == null)
                 {
@@ -152,10 +176,14 @@ namespace Microsoft.OneDrive.Sdk
                 // Preserve headers for the next request
                 foreach (var header in initialResponse.RequestMessage.Headers)
                 {
-                    redirectRequest.Headers.Add(header.Key, header.Value);
+                    if (!header.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase))
+                    {
+                        redirectRequest.Headers.Add(header.Key, header.Value);
+                    }
                 }
 
-                var response = await this.httpClient.SendAsync(redirectRequest);
+
+                var response = await this.SendRequestAsync(redirectRequest);
 
                 if (this.IsRedirect(response.StatusCode))
                 {
@@ -173,6 +201,34 @@ namespace Microsoft.OneDrive.Sdk
                 }
 
                 return response;
+            }
+        }
+
+        internal async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request)
+        {
+            try
+            {
+                return await this.httpClient.SendAsync(request);
+            }
+            catch (TaskCanceledException exception)
+            {
+                throw new OneDriveException(
+                        new Error
+                        {
+                            Code = OneDriveErrorCode.Timeout.ToString(),
+                            Message = "The request timed out."
+                        },
+                        exception);
+            }
+            catch (Exception exception)
+            {
+                throw new OneDriveException(
+                        new Error
+                        {
+                            Code = OneDriveErrorCode.GeneralException.ToString(),
+                            Message = "An error occurred sending the request."
+                        },
+                        exception);
             }
         }
 

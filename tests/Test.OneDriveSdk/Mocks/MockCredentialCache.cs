@@ -34,6 +34,7 @@ namespace Test.OneDriveSdk.Mocks
             this.Setup(cache => cache.OnAddToCache());
             this.Setup(cache => cache.OnDeleteFromCache());
             this.Setup(cache => cache.OnGetResultFromCache());
+            this.Setup(cache => cache.InitializeCacheFromBlob(It.IsAny<byte[]>()));
         }
     }
 

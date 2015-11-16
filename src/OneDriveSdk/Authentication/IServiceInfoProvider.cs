@@ -34,10 +34,12 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="appConfig">The <see cref="AppConfig"/> for the current application.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <param name="clientType">The <see cref="ClientType"/> to specify the business or consumer service.</param>
         /// <returns>The <see cref="ServiceInfo"/> for the current session.</returns>
         Task<ServiceInfo> GetServiceInfo(
             AppConfig appConfig,
             CredentialCache credentialCache,
-            IHttpProvider httpProvider);
+            IHttpProvider httpProvider,
+            ClientType clientType);
     }
 }

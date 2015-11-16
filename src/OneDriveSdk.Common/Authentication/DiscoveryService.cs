@@ -20,31 +20,31 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Test.OneDriveSdk.Mocks
+namespace Microsoft.OneDrive.Sdk
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.OneDrive.Sdk;
-    using Moq;
-
-    public class MockWebUi : Mock<IWebAuthenticationUi>
+    /// <summary>
+    /// Class for deserializing discovery service objects returned from calls to the discovery service.
+    /// </summary>
+    public class DiscoveryService
     {
-        private IDictionary<string, string> responseValues;
+        /// <summary>
+        /// Gets or sets the capability for the service.
+        /// </summary>
+        public string Capability { get; set; }
 
-        public MockWebUi()
-            : this(new Dictionary<string, string>())
-        {
-        }
+        /// <summary>
+        /// Gets or sets the service API version.
+        /// </summary>
+        public string ServiceApiVersion { get; set; }
 
-        public MockWebUi(IDictionary<string, string> responseValues)
-            : base(MockBehavior.Strict)
-        {
-            this.responseValues = responseValues;
+        /// <summary>
+        /// Gets or sets the URL for the service endpoint.
+        /// </summary>
+        public string ServiceEndpointUri { get; set; }
 
-            this.Setup(
-                webUi => webUi.AuthenticateAsync(It.IsAny<Uri>(), It.IsAny<Uri>()))
-                    .Returns(Task.FromResult(this.responseValues));
-        }
+        /// <summary>
+        /// Gets or sets the resource for the service.
+        /// </summary>
+        public string ServiceResourceId { get; set; }
     }
 }

@@ -46,7 +46,7 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = streamContent;
 
-                var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
@@ -87,7 +87,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemById_BuildRequest()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id");
             var itemRequestBuilder = this.oneDriveClient.Drive.Items["id"] as ItemRequestBuilder;
 
             Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
@@ -101,8 +101,22 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemByPath_BuildRequest()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/root:/item/with/path:");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/root:/item/with/path:");
             var itemRequestBuilder = this.oneDriveClient.Drive.Root.ItemWithPath("item/with/path") as ItemRequestBuilder;
+
+            Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequestBuilder.RequestUrl), "Unexpected request URL.");
+
+            var itemRequest = itemRequestBuilder.Request() as ItemRequest;
+            Assert.IsNotNull(itemRequest, "Unexpected request.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
+        }
+
+        [TestMethod]
+        public void ItemByPath_BuildRequestWithLeadingSlash()
+        {
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/root:/item/with/path:");
+            var itemRequestBuilder = this.oneDriveClient.Drive.Root.ItemWithPath("/item/with/path") as ItemRequestBuilder;
 
             Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
             Assert.AreEqual(expectedRequestUri, new Uri(itemRequestBuilder.RequestUrl), "Unexpected request URL.");
@@ -123,7 +137,7 @@ namespace Test.OneDriveSdk.Requests
         {
             using (var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.NoContent))
             {
-                var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
@@ -139,39 +153,39 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemRequest_Expand()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id");
             var itemRequest = this.oneDriveClient.Drive.Items["id"].Request().Expand("value") as ItemRequest;
 
             Assert.IsNotNull(itemRequest, "Unexpected request.");
             Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
             Assert.AreEqual(1, itemRequest.QueryOptions.Count, "Unexpected query options present.");
-            Assert.AreEqual("expand", itemRequest.QueryOptions[0].Name, "Unexpected expand query name.");
+            Assert.AreEqual("$expand", itemRequest.QueryOptions[0].Name, "Unexpected expand query name.");
             Assert.AreEqual("value", itemRequest.QueryOptions[0].Value, "Unexpected expand query value.");
         }
 
         [TestMethod]
         public void ItemRequest_Select()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id");
             var itemRequest = this.oneDriveClient.Drive.Items["id"].Request().Select("value") as ItemRequest;
 
             Assert.IsNotNull(itemRequest, "Unexpected request.");
             Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
             Assert.AreEqual(1, itemRequest.QueryOptions.Count, "Unexpected query options present.");
-            Assert.AreEqual("select", itemRequest.QueryOptions[0].Name, "Unexpected select query name.");
+            Assert.AreEqual("$select", itemRequest.QueryOptions[0].Name, "Unexpected select query name.");
             Assert.AreEqual("value", itemRequest.QueryOptions[0].Value, "Unexpected select query value.");
         }
 
         [TestMethod]
         public void ItemRequest_Top()
         {
-            var expectedRequestUri = new Uri(Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id");
+            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id");
             var itemRequest = this.oneDriveClient.Drive.Items["id"].Request().Top(1) as ItemRequest;
 
             Assert.IsNotNull(itemRequest, "Unexpected request.");
             Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
             Assert.AreEqual(1, itemRequest.QueryOptions.Count, "Unexpected query options present.");
-            Assert.AreEqual("top", itemRequest.QueryOptions[0].Name, "Unexpected top query name.");
+            Assert.AreEqual("$top", itemRequest.QueryOptions[0].Name, "Unexpected top query name.");
             Assert.AreEqual("1", itemRequest.QueryOptions[0].Value, "Unexpected top query value.");
         }
 
@@ -189,7 +203,7 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = streamContent;
 
-                var requestUrl = Constants.Authentication.OneDriveConsumerBaseUrl + "/drive/items/id";
+                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
                 this.httpProvider.Setup(
                         provider => provider.SendAsync(
                             It.Is<HttpRequestMessage>(

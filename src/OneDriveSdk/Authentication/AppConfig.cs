@@ -25,22 +25,47 @@ namespace Microsoft.OneDrive.Sdk
     public class AppConfig
     {
         /// <summary>
-        /// Gets the application ID for Microsoft Account authentication.
+        /// Gets or sets the application ID for Active Directory authentication.
+        /// </summary>
+        public string ActiveDirectoryAppId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the client secret for Active Directory authentication.
+        /// </summary>
+        public string ActiveDirectoryClientSecret { get; set; }
+
+        /// <summary>
+        /// Gets or sets the application return URL for Active Directory authentication.
+        /// </summary>
+        public string ActiveDirectoryReturnUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the service endpoint URL for OneDrive for Business.
+        /// </summary>
+        public string ActiveDirectoryServiceEndpointUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the service resource for Active Directory authentication.
+        /// </summary>
+        public string ActiveDirectoryServiceResource { get; set; }
+
+        /// <summary>
+        /// Gets or sets the application ID for Microsoft Account authentication.
         /// </summary>
         public string MicrosoftAccountAppId { get; set; }
 
         /// <summary>
-        /// Gets the client secret for Microsoft Account authentication.
+        /// Gets or sets the client secret for Microsoft Account authentication.
         /// </summary>
         public string MicrosoftAccountClientSecret { get; set; }
 
         /// <summary>
-        /// Gets the application return URL for Microsoft Account authentication.
+        /// Gets or sets the application return URL for Microsoft Account authentication.
         /// </summary>
         public string MicrosoftAccountReturnUrl { get; set; }
 
         /// <summary>
-        /// Gets the requested scopes for Microsoft Account authentication.
+        /// Gets or sets the requested scopes for Microsoft Account authentication.
         /// </summary>
         public string[] MicrosoftAccountScopes { get; set; }
     }

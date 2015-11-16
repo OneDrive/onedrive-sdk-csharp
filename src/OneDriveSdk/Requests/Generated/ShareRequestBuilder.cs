@@ -24,6 +24,7 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -35,11 +36,11 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs a new ShareRequestBuilder.
         /// </summary>
         /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         public ShareRequestBuilder(
             string requestUrl,
-            IOneDriveClient oneDriveClient)
-            : base(requestUrl, oneDriveClient)
+            IBaseClient client)
+            : base(requestUrl, client)
         {
         }
 
@@ -59,7 +60,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The built request.</returns>
         public IShareRequest Request(IList<Option> options)
         {
-            return new ShareRequest(this.RequestUrl, this.OneDriveClient, options);
+            return new ShareRequest(this.RequestUrl, this.Client, options);
         }
 
     
@@ -71,7 +72,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             get
             {
-                return new ItemsCollectionRequestBuilder(this.AppendSegmentToRequestUrl("items"), this.OneDriveClient);
+                return new ItemsCollectionRequestBuilder(this.AppendSegmentToRequestUrl("items"), this.Client);
             }
         }
     

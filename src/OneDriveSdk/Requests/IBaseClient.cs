@@ -40,6 +40,11 @@ namespace Microsoft.OneDrive.Sdk
         string BaseUrl { get; }
 
         /// <summary>
+        /// Gets the type of the current client.
+        /// </summary>
+        ClientType ClientType { get; }
+
+        /// <summary>
         /// Gets the <see cref="IHttpProvider"/> for sending HTTP requests.
         /// </summary>
         IHttpProvider HttpProvider { get; }

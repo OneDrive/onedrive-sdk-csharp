@@ -36,14 +36,14 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Constructs a new ThumbnailContentRequest.
         /// <param name="requestUrl">The request URL.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         /// <param name="options">Query option name value pairs for the request.</param>
         /// </summary>
         public ThumbnailContentRequest(
             string requestUrl,
-            IOneDriveClient oneDriveClient,
+            IBaseClient client,
             IList<Option> options)
-            : base(requestUrl, oneDriveClient, options)
+            : base(requestUrl, client, options)
         {
         }
 

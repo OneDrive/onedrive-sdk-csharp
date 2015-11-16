@@ -33,9 +33,17 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         public IItemRequestBuilder ItemWithPath(string path)
         {
+            if (!string.IsNullOrEmpty(path))
+            {
+                if (!path.StartsWith("/"))
+                {
+                    path = string.Format("/{0}", path);
+                }
+            }
+
             return new ItemRequestBuilder(
-                string.Format("{0}:/{1}:", this.RequestUrl, path),
-                this.OneDriveClient);
+                string.Format("{0}:{1}:", this.RequestUrl, path),
+                this.Client);
         }
     }
 }

@@ -49,26 +49,24 @@ namespace OneDrivePhotoBrowser.Controllers
             
             IEnumerable<Item> items;
 
-            // If id isn't set, get the OneDrive root's photos and folders. Otherwise, get those for the specified item ID.
-            // Also retrieve the thumbnails for each item.
-            if (string.IsNullOrEmpty(id))
-            {
-                var childrenPage = await this.oneDriveClient.Drive.Root.Children.Request().Expand("thumbnails").GetAsync();
-                items = childrenPage == null
-                    ? new List<Item>()
-                    : childrenPage.CurrentPage.Where(item => item.Folder != null || item.Image != null);
-            }
-            else
-            {
-                var childrenPage = await this.oneDriveClient.Drive.Items[id].Children.Request().Expand("thumbnails").GetAsync();
-                items = childrenPage == null
-                    ? new List<Item>()
-                    : childrenPage.CurrentPage.Where(item => item.Folder != null || item.Image != null);
-            }
+            var expandString = this.oneDriveClient.ClientType == ClientType.Consumer
+                ? "thumbnails,children(expand=thumbnails)"
+                : "thumbnails, children";
 
-            foreach (var item in items)
+            // If id isn't set, get the OneDrive root's photos and folders. Otherwise, get those for the specified item ID.
+            // Also retrieve the thumbnails for each item if using a consumer client.
+            var itemRequest = string.IsNullOrEmpty(id)
+                ? this.oneDriveClient.Drive.Root.Request().Expand(expandString)
+                : this.oneDriveClient.Drive.Items[id].Request().Expand(expandString);
+
+            var item = await itemRequest.GetAsync();
+            items = item.Children == null
+                ? new List<Item>()
+                : item.Children.CurrentPage.Where(child => child.Folder != null || child.Image != null);
+
+            foreach (var child in items)
             {
-                results.Add(new ItemModel(item));
+                results.Add(new ItemModel(child));
             }
 
             return results;

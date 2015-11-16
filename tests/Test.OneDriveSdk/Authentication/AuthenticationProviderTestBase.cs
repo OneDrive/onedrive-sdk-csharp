@@ -42,7 +42,7 @@ namespace Test.OneDriveSdk
         protected HttpResponseMessage httpResponseMessage;
         protected MockSerializer serializer;
         protected ServiceInfo serviceInfo;
-        protected MockWebUi webUi;
+        protected MockWebAuthenticationUi webAuthenticationUi;
 
         [TestInitialize]
         public virtual void Setup()
@@ -51,7 +51,7 @@ namespace Test.OneDriveSdk
             this.credentialCache = new MockCredentialCache();
             this.serializer = new MockSerializer();
             this.httpProvider = new MockHttpProvider(this.httpResponseMessage, this.serializer.Object);
-            this.webUi = new MockWebUi();
+            this.webAuthenticationUi = new MockWebAuthenticationUi();
 
             this.serviceInfo = new ServiceInfo
             {
@@ -63,7 +63,7 @@ namespace Test.OneDriveSdk
                 Scopes = new string[] { "scope1", "scope2" },
                 SignOutUrl = "https://login.live.com/signout",
                 TokenServiceUrl = "https://login.live.com/token",
-                WebAuthenticationUi = this.webUi.Object
+                WebAuthenticationUi = this.webAuthenticationUi.Object
             };
         }
 
@@ -77,7 +77,7 @@ namespace Test.OneDriveSdk
         {
             var tokenResponseDictionary = new Dictionary<string, string> { { "code", "code" } };
 
-            this.webUi.Setup(webUi => webUi.AuthenticateAsync(
+            this.webAuthenticationUi.Setup(webUi => webUi.AuthenticateAsync(
                 It.Is<Uri>(uri => uri.ToString().Contains("response_type=code")),
                 It.Is<Uri>(uri => uri.ToString().Equals(this.serviceInfo.ReturnUrl))))
                 .Returns(

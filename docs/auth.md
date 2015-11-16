@@ -5,17 +5,9 @@ To authenticate your app to use OneDrive, you need to get a `OneDriveClient`, wh
 
 **Note** This topic assumes that you are familiar with app authentication. For more info about authentication in OneDrive, see [Authentication for the OneDrive API](https://dev.onedrive.com/auth/readme.htm).
 
-## Simple authentication
-The easiest way to get an authenticated client is to call `GetMicrosoftAccountClient`, which returns a `OneDriveClient` object, and then call `AuthenticateAsync` on the resulting object:
+## Standard authentication components
 
-```csharp
-var oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
-                         clientId,
-                         returnUrl,
-                         scopes);
-                         
-await oneDriveClient.AuthenticateAsync();
-```
+Various helper methods are available for constructing a client. All of them take a set of standard parameters:
 
 | Paramater | Description |
 |:----------|:------------|
@@ -24,7 +16,12 @@ await oneDriveClient.AuthenticateAsync();
 | _scopes_ | Permissions that your app requires from the user. Required. |
 | _client\_secret_ | The client secret created for your app. Optional. Not available for Windows Store 8.1, Windows Phone 8.1, and Universal Windows Platform (UWP) apps. |
 
-In addition to _clientId_, _returnURL_, _scopes_, and _client\_secret_ the method takes in implementations for a credential cache, HTTP provider, and a service info provider or web authentication UI. If not provided, the default implementations of each item will be used.
+In addition to _clientId_, _returnURL_, _scopes_, and _client\_secret_ the method takes in implementations for a client type, credential cache, HTTP provider, and a service info provider or web authentication UI. If not provided, the default implementations of each item will be used.
+
+### ClientType
+A single client can only call OneDrive for Consumer or OneDrive for Business, not both. The service type is specified via passing ClientType `Personal` or `Business` to the client. The default client type is `Personal`.
+
+If the application would like to interact with both OneDrive for Consumer and OneDrive for Business a client should be created for each.
 
 ### CredentialCache
 
@@ -42,6 +39,19 @@ The service info provider is responsible for providing information for accessing
 
 When you use the default `IServiceInfoProvider` and `IAuthenticationProvider` implementations, an `IWebAuthenticationUi` implementation is required to display authentication UI to the user. Default implementations are available for WinForms, Windows 8.1, Windows Phone 8.1, and UWP applications. If no `IWebAuthenticationUi` implementation is present, only the silent authentication flow will be used.
 
+# Microsoft account (MSA) authentication
+## Simple authentication
+The easiest way to get an authenticated client is to use one of the `OneDriveClient` extensions and call `AuthenticateAsync` on the resulting client:
+
+```csharp
+var oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
+                         clientId,
+                         returnUrl,
+                         scopes);
+                         
+await oneDriveClient.AuthenticateAsync();
+```
+
 ## Authentication for WinForms
 
 ```csharp
@@ -56,7 +66,7 @@ await oneDriveClient.AuthenticateAsync();
 
 ## Windows 8.1, Windows Phone 8.1, and UWP
 
-The OneDriveClient extensions are available based on the build target of the project. For Windows 8.1, Windows Phone 8.1, and UWP projects, there are three available methods depending on which Windows authentication API is used to retrieve a client:
+The OneDriveClient extensions available are based on the build target of the project. For Windows 8.1, Windows Phone 8.1, and UWP projects, there are three available methods depending on which Windows authentication API is used to retrieve a client:
 
 * `GetClientUsingOnlineIdAuthenticator`
 * `GetClientUsingWebAuthenticationBroker`
@@ -81,6 +91,46 @@ var oneDriveClient = OneDriveClientExtensions.GetClientUsingWebAuthenticationBro
                          appId,
                          scopes);
                          
+await oneDriveClient.AuthenticateAsync();
+```
+
+## Signing out
+
+To sign out you can call:
+
+```csharp
+await oneDriveClient.SignOutAsync();
+```
+
+# Azure Active Directory (AAD) authentication
+
+The SDK uses [ADAL](https://github.com/AzureAD/azure-activedirectory-library-for-dotnet) for authentication against AAD. Implementations are available for WinForms, Windows 8.1, and UWP apps. Due to technical limitations, **Windows Phone 8.1 is not supported**.
+
+## Caching credentials
+
+Since ADAL has its own caching model, AAD authentication has its own CredentialCache implementation for caching, the AdalCredentialCache, that wraps the ADAL caching functionality. The mechanisms for interacting with the cache are the same as with Credential Cache but it can only be used for AAD credential caching. If a CredentialCache is provided that is not an AdalCredentialCache operations will bypass writing to it.
+
+## Authentication using the discovery service
+
+In the case where the OneDrive for Business API endpoint and resource ID aren't known it is possible to authenticate using the [discovery service](https://msdn.microsoft.com/en-us/office/office365/howto/discover-service-endpoints).
+
+```csharp
+var oneDriveClient = BusinessClientExtensions.GetActiveDirectoryClient(clientId, returnUrl);
+                         
+await oneDriveClient.AuthenticateAsync();
+```
+
+## Authentication using the OneDrive for Business API endpoint and resource ID
+
+If the OneDrive for Business API endpoint and resource ID are already known they can be provided to the client and authentication will not route through the discovery service.
+
+```csharp
+var oneDriveClient = BusinessClientExtensions.GetActiveDirectoryClient(
+                        clientId,
+                        returnUrl,
+                        oneDriveApiEndpoint,
+                        serviceResourceId)
+
 await oneDriveClient.AuthenticateAsync();
 ```
 

@@ -31,17 +31,17 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs a new <see cref="BaseRequestBuilder"/>.
         /// </summary>
         /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
-        public BaseRequestBuilder(string requestUrl, IOneDriveClient oneDriveClient)
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
+        public BaseRequestBuilder(string requestUrl, IBaseClient client)
         {
-            this.OneDriveClient = oneDriveClient;
+            this.Client = client;
             this.RequestUrl = requestUrl;
         }
 
         /// <summary>
-        /// Gets the <see cref="IOneDriveClient"/> for handling requests..
+        /// Gets the <see cref="IBaseClient"/> for handling requests..
         /// </summary>
-        public IOneDriveClient OneDriveClient { get; private set; }
+        public IBaseClient Client { get; private set; }
 
         /// <summary>
         /// Gets the URL for the built request, without query string.

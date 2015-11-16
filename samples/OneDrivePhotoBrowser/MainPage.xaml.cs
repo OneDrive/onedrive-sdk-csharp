@@ -25,7 +25,7 @@
 namespace OneDrivePhotoBrowser
 {
     using Controllers;
-    using Microsoft.OneDrive.Sdk.WinStore;
+    using Microsoft.OneDrive.Sdk;
     using Models;
     using System.Linq;
     using Windows.UI.Xaml;
@@ -39,7 +39,7 @@ namespace OneDrivePhotoBrowser
     {
         private ItemsController itemsController;
         
-        private readonly string[] scopes = new string[] { "onedrive.readwrite", "wl.offline_access", "wl.signin" };
+        private readonly string[] scopes = new string[] { "onedrive.read", "wl.offline_access", "wl.signin" };
 
         public MainPage()
         {
@@ -49,15 +49,6 @@ namespace OneDrivePhotoBrowser
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (((App)Application.Current).OneDriveClient == null)
-            {
-
-                ((App)Application.Current).OneDriveClient = OneDriveClientExtensions.GetUniversalClient(
-                    this.scopes);
-                
-                await ((App)Application.Current).OneDriveClient.AuthenticateAsync();
-            }
-
             if (this.itemsController == null)
             {
                 this.itemsController = new ItemsController(((App)Application.Current).OneDriveClient);

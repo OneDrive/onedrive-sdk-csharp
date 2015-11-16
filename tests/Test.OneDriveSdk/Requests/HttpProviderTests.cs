@@ -38,7 +38,6 @@ namespace Test.OneDriveSdk.Requests
     public class HttpProviderTests
     {
         private HttpClient httpClient;
-        private HttpMessageHandler httpMessageHandler;
         private HttpProvider httpProvider;
         private HttpResponseMessage httpResponseMessage;
         private MockSerializer serializer = new MockSerializer();
@@ -47,9 +46,9 @@ namespace Test.OneDriveSdk.Requests
         public void Setup()
         {
             this.httpResponseMessage = new HttpResponseMessage();
-            this.httpMessageHandler = new TestHttpMessageHandler(this.httpResponseMessage);
-            this.httpClient = new HttpClient(this.httpMessageHandler);
+            this.httpClient = new HttpClient(new TestHttpMessageHandler(this.httpResponseMessage), /* disposeHandler */ true);
             this.httpProvider = new HttpProvider(this.serializer.Object);
+            this.httpProvider.httpClient.Dispose();
             this.httpProvider.httpClient = this.httpClient;
         }
 
@@ -58,8 +57,23 @@ namespace Test.OneDriveSdk.Requests
         {
             this.httpClient.Dispose();
             this.httpResponseMessage.Dispose();
-            this.httpMessageHandler.Dispose();
             this.httpProvider.Dispose();
+        }
+
+        [TestMethod]
+        public void HttpProvider_CustomCacheHeaderAndTimeout()
+        {
+            var timeout = TimeSpan.FromSeconds(200);
+            var cacheHeader = new CacheControlHeaderValue();
+            using (var defaultHttpProvider = new HttpProvider(null) { CacheControlHeader = cacheHeader, OverallTimeout = timeout })
+            {
+                Assert.IsFalse(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache, "NoCache true.");
+                Assert.IsFalse(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore, "NoStore true.");
+
+                Assert.AreEqual(timeout, defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
+                Assert.IsNotNull(defaultHttpProvider.Serializer, "Serializer not initialized.");
+                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initilaized.");
+            }
         }
 
         [TestMethod]
@@ -69,6 +83,8 @@ namespace Test.OneDriveSdk.Requests
             {
                 Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoCache, "NoCache false.");
                 Assert.IsTrue(defaultHttpProvider.httpClient.DefaultRequestHeaders.CacheControl.NoStore, "NoStore false.");
+
+                Assert.AreEqual(TimeSpan.FromSeconds(100), defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
 
                 Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initilaized.");
             }
@@ -82,6 +98,62 @@ namespace Test.OneDriveSdk.Requests
                 var returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
 
                 Assert.AreEqual(this.httpResponseMessage, returnedResponseMessage, "Unexpected response returned.");
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task SendAsync_ClientGeneralException()
+        {
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost"))
+            {
+                this.httpClient.Dispose();
+
+                var clientException = new Exception();
+                this.httpClient = new HttpClient(new ExceptionHttpMessageHandler(clientException), /* disposeHandler */ true);
+                this.httpProvider.httpClient = this.httpClient;
+
+                try
+                {
+                    await this.httpProvider.SendRequestAsync(httpRequestMessage);
+                }
+                catch (OneDriveException exception)
+                {
+                    Assert.IsNotNull(exception.Error, "No error body returned.");
+                    Assert.AreEqual(OneDriveErrorCode.GeneralException.ToString(), exception.Error.Code, "Incorrect error code returned.");
+                    Assert.AreEqual("An error occurred sending the request.", exception.Error.Message, "Unexpected error message.");
+                    Assert.AreEqual(clientException, exception.InnerException, "Inner exception not set.");
+
+                    throw;
+                }
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task SendAsync_ClientTimeout()
+        {
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost"))
+            {
+                this.httpClient.Dispose();
+
+                var clientException = new TaskCanceledException();
+                this.httpClient = new HttpClient(new ExceptionHttpMessageHandler(clientException), /* disposeHandler */ true);
+                this.httpProvider.httpClient = this.httpClient;
+
+                try
+                {
+                    await this.httpProvider.SendRequestAsync(httpRequestMessage);
+                }
+                catch (OneDriveException exception)
+                {
+                    Assert.IsNotNull(exception.Error, "No error body returned.");
+                    Assert.AreEqual(OneDriveErrorCode.Timeout.ToString(), exception.Error.Code, "Incorrect error code returned.");
+                    Assert.AreEqual("The request timed out.", exception.Error.Message, "Unexpected error message.");
+                    Assert.AreEqual(clientException, exception.InnerException, "Inner exception not set.");
+
+                    throw;
+                }
             }
         }
 

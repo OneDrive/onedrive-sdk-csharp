@@ -23,6 +23,7 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -30,6 +31,7 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial interface ISharesCollectionRequestBuilder
     {
+    
         /// <summary>
         /// Builds the request.
         /// </summary>
@@ -49,5 +51,6 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="id">The ID for the Shares.</param>
         /// <returns>The <see cref="IShareRequestBuilder"/>.</returns>
         IShareRequestBuilder this[string id] { get; }
+
     }
 }

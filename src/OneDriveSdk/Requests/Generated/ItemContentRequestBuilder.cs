@@ -35,11 +35,11 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs a new ItemContentRequestBuilder.
         /// </summary>
         /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="oneDriveClient">The <see cref="IOneDriveClient"/> for handling requests.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         public ItemContentRequestBuilder(
             string requestUrl,
-            IOneDriveClient oneDriveClient)
-            : base(requestUrl, oneDriveClient)
+            IBaseClient client)
+            : base(requestUrl, client)
         {
         }
 
@@ -49,7 +49,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The built request.</returns>
         public IItemContentRequest Request()
         {
-            return new ItemContentRequest(this.RequestUrl, this.OneDriveClient, null);
+            return new ItemContentRequest(this.RequestUrl, this.Client, null);
         }
     }
 }

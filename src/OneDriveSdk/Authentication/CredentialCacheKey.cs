@@ -44,8 +44,7 @@ namespace Microsoft.OneDrive.Sdk
         public override int GetHashCode()
         {
             return
-                (string.Format(
-                    "{1}{0}{2}{0}{3}",
+                (string.Join(
                     CredentialCacheKey.Delimiter,
                     this.AccountType,
                     this.ClientId,

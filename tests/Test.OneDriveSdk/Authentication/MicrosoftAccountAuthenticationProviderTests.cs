@@ -109,8 +109,8 @@ namespace Test.OneDriveSdk
 
             await this.authenticationProvider.SignOutAsync();
 
-            this.webUi.Verify(
-                webUi => webUi.AuthenticateAsync(
+            this.webAuthenticationUi.Verify(
+                webAuthenticationUi => webAuthenticationUi.AuthenticateAsync(
                     It.Is<Uri>(uri => uri.ToString().Equals(expectedSignOutUrl)),
                     It.Is<Uri>(uri => uri.ToString().Equals(this.serviceInfo.ReturnUrl))),
                 Times.Once);

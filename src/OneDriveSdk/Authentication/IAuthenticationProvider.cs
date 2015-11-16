@@ -30,7 +30,7 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public interface IAuthenticationProvider
     {
-        AccountSession CurrentAccountSession { get; set; }
+        AccountSession CurrentAccountSession { get; }
 
         /// <summary>
         /// Appends the authentication header to the specified web request.
