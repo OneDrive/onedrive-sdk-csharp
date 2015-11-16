@@ -14,6 +14,7 @@
     <iconUrl>https://dev.onedrive.com/images/OneDriveCloud.png</iconUrl>
     <tags>onedrive sharepoint files livesdk liveconnect cloud storage microsoftaccount windowsliveid microsoftid windowsphone windowsstore metro xaml html</tags>
     <dependencies>
+      <dependency id="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.19.208020213" />
       <dependency id="Newtonsoft.Json" version="7.0.1" />
     </dependencies>
 
