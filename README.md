@@ -12,6 +12,12 @@ frameworks:
 * .NET for Windows Store apps 
 * Windows Phone 8.1 and higher
 
+Azure Active Directory authentication is available for:
+
+* Windows Forms apps
+* UWP apps
+* Windows 8.1 apps
+
 ## Installation via Nuget
 
 To install the OneDrive SDK via NuGet

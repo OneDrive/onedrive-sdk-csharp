@@ -104,7 +104,7 @@ await oneDriveClient.SignOutAsync();
 
 # Azure Active Directory (AAD) authentication
 
-The SDK uses [ADAL](https://github.com/AzureAD/azure-activedirectory-library-for-dotnet) for authentication against AAD. Implementations are available for WinForms, Windows 8.1, and UWP apps. Due to technical limitations, Windows Phone 8.1 is **not** supported.
+The SDK uses [ADAL](https://github.com/AzureAD/azure-activedirectory-library-for-dotnet) for authentication against AAD. Implementations are available for WinForms, Windows 8.1, and UWP apps. Due to technical limitations, **Windows Phone 8.1 is not supported**.
 
 ## Caching credentials
 
