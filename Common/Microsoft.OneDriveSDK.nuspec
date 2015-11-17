@@ -30,15 +30,15 @@
   </metadata>
   <files>
     <!-- PCL projects -->
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-net451+wp81+win81\OneDriveSdk.dll" />         
+    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-net45+netcore45+wpa81+win8\OneDriveSdk.dll" />         
 
     <!-- Standard .NET projects, like Windows Forms or ASP.NET -->  
     <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\net451\OneDriveSdk.dll" />  
     <file src="..\src\OneDriveSdk.WindowsForms\bin\Release\OneDriveSdk.WindowsForms.dll" target="lib\net451\OneDriveSdk.WindowsForms.dll" />  
 
     <!-- Windows Phone 8.1 -->
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\wpa81\OneDriveSdk.dll" />  
-    <file src="..\src\OneDriveSdk.WinStore\bin\Release\OneDriveSdk.WinStore.dll" target="lib\wpa81\OneDriveSdk.WinStore.dll" />  
+    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-win81+wpa81\OneDriveSdk.dll" />  
+    <file src="..\src\OneDriveSdk.WinStore\bin\Release\OneDriveSdk.WinStore.dll" target="lib\portable-win81+wpa81\OneDriveSdk.WinStore.dll" />  
 
     <!-- Windows 8.1 -->
     <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\win81\OneDriveSdk.dll" />  
