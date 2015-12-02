@@ -52,7 +52,6 @@ namespace Test.OneDriveSdk.WinRT
                 AppId = "12345",
                 AuthenticationServiceUrl = "https://login.live.com/authenticate",
                 CredentialCache = this.credentialCache,
-                ReturnUrl = "https://login.live.com/return",
                 Scopes = new string[] { "scope1", "scope2" },
                 SignOutUrl = "https://login.live.com/signout",
                 TokenServiceUrl = "https://login.live.com/token",
@@ -63,7 +62,22 @@ namespace Test.OneDriveSdk.WinRT
         }
 
         [TestMethod]
-        public async Task GetAccountSessionAsync()
+        public async Task GetAccountSessionAsync_ReturnUri()
+        {
+            const string token = "token";
+
+            this.serviceInfo.ReturnUrl = "https://login.live.com/returnUrl";
+            this.signOut = false;
+            this.webAuthenticationUi.responseValues = new Dictionary<string, string> { { Constants.Authentication.AccessTokenKeyName, token } };
+
+            var accountSession = await this.authenticationProvider.GetAccountSessionAsync();
+
+            Assert.IsNotNull(accountSession, "No account session returned.");
+            Assert.AreEqual(token, accountSession.AccessToken, "Unexpected token returned.");
+        }
+
+        [TestMethod]
+        public async Task GetAccountSessionAsync_SingleSignOn()
         {
             const string token = "token";
 
@@ -77,7 +91,32 @@ namespace Test.OneDriveSdk.WinRT
         }
 
         [TestMethod]
-        public async Task SignOutAsync()
+        public async Task SignOutAsync_ReturnUri()
+        {
+            this.serviceInfo.ReturnUrl = "https://login.live.com/returnUrl";
+            this.signOut = true;
+            var expectedSignOutUrl = string.Format(
+                "{0}?client_id={1}&redirect_uri={2}",
+                this.serviceInfo.SignOutUrl,
+                this.serviceInfo.AppId,
+                this.serviceInfo.ReturnUrl);
+
+            var accountSession = new AccountSession
+            {
+                AccessToken = "accessToken",
+                ClientId = "12345",
+            };
+
+            this.authenticationProvider.CurrentAccountSession = accountSession;
+
+            await this.authenticationProvider.SignOutAsync();
+
+            Assert.IsNull(this.authenticationProvider.CurrentAccountSession, "Current account session not cleared.");
+            Assert.IsTrue(this.credentialCache.DeleteFromCacheCalled, "DeleteFromCache not called.");
+        }
+
+        [TestMethod]
+        public async Task SignOutAsync_SingleSignOn()
         {
             this.signOut = true;
             var expectedSignOutUrl = string.Format(
@@ -102,7 +141,14 @@ namespace Test.OneDriveSdk.WinRT
 
         private void OnAuthenticateAsync(Uri requestUri, Uri callbackUri)
         {
-            Assert.IsNull(callbackUri, "Unexpected callbackUri set.");
+            if (string.IsNullOrEmpty(this.serviceInfo.ReturnUrl))
+            {
+                Assert.IsNull(callbackUri, "Unexpected callbackUri set.");
+            }
+            else
+            {
+                Assert.AreEqual(this.serviceInfo.ReturnUrl, callbackUri.ToString(), "Unexpected callbackUri set.");
+            }
 
             if (this.signOut)
             {
