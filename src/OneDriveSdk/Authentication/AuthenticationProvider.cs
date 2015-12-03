@@ -52,7 +52,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The task to await.</returns>
         public virtual async Task AppendAuthHeaderAsync(HttpRequestMessage request)
         {
-            if (this.CurrentAccountSession == null)
+            if (this.CurrentAccountSession == null || string.IsNullOrEmpty(this.CurrentAccountSession.AccessToken))
             {
                 await this.AuthenticateAsync();
             }
