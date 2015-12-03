@@ -3,11 +3,11 @@
   <metadata>
     <id>Microsoft.OneDriveSDK</id>
     <version>1.0.0</version>
-    <title>OneDrive C# SDK</title>
+    <title>OneDrive .NET SDK</title>
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Integrate the OneDrive API into your C# App!</description>
+    <description>Integrate the OneDrive API into your .NET App!</description>
     <copyright>Copyright 2015 Microsoft Corporation</copyright>
     <projectUrl>https://github.com/OneDrive/onedrive-sdk-csharp</projectUrl>
     <licenseUrl>http://msdn.microsoft.com/en-US/cc300389</licenseUrl>
