@@ -42,11 +42,12 @@ namespace Microsoft.OneDrive.Sdk
             requestUriStringBuilder.Append(this.ServiceInfo.SignOutUrl);
             requestUriStringBuilder.AppendFormat("{0}={1}", Constants.Authentication.RedirectUriKeyName, this.ServiceInfo.ReturnUrl);
             requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
-
-            // Don't pass the callbackUri to AuthenticateAsync so we invoke the SSO authentication flow.
+            
             await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(
                 new Uri(requestUriStringBuilder.ToString()),
-                /* callbackUri */ null);
+                string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
+                    ? null
+                    : new Uri(this.ServiceInfo.ReturnUrl));
 
             this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
             this.CurrentAccountSession = null;
@@ -67,9 +68,13 @@ namespace Microsoft.OneDrive.Sdk
             requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ResponseTypeKeyName, Constants.Authentication.TokenResponseTypeValueName);
 
             var requestUri = new Uri(requestUriStringBuilder.ToString());
+            
+            var authenticationResponseValues = await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(
+                requestUri,
+                string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
+                    ? null
+                    : new Uri(this.ServiceInfo.ReturnUrl));
 
-            // Don't pass the callbackUri to AuthenticateAsync so we invoke the SSO authentication flow.
-            var authenticationResponseValues = await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(requestUri, /* callbackUri */ null);
             OAuthErrorHandler.ThrowIfError(authenticationResponseValues);
 
             return new AccountSession(authenticationResponseValues, this.ServiceInfo.AppId, AccountType.MicrosoftAccount) { CanSignOut = true };

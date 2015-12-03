@@ -87,7 +87,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Gets the current account session.
         /// </summary>
-        public AccountSession CurrentAccountSession { get; internal set; }
+        public AccountSession CurrentAccountSession { get; set; }
 
         protected abstract Task<IAuthenticationResult> AuthenticateResourceAsync(string resource);
 

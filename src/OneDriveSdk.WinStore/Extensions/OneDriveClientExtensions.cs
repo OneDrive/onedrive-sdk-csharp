@@ -31,22 +31,33 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new OneDriveClient(
                 new AppConfig { MicrosoftAccountScopes = scopes },
-                /* credentialCache */ null,
-                httpProvider ?? new HttpProvider(),
-                new OnlineIdServiceInfoProvider());
+                httpProvider: httpProvider ?? new HttpProvider(),
+                serviceInfoProvider: new OnlineIdServiceInfoProvider());
         }
 
         public static IOneDriveClient GetClientUsingWebAuthenticationBroker(
             string appId,
             string[] scopes,
-            string returnUrl = null,
+            IHttpProvider httpProvider = null)
+        {
+            return OneDriveClientExtensions.GetClientUsingWebAuthenticationBroker(appId, scopes, null, httpProvider);
+        }
+
+        public static IOneDriveClient GetClientUsingWebAuthenticationBroker(
+            string appId,
+            string[] scopes,
+            string returnUrl,
             IHttpProvider httpProvider = null)
         {
             return new OneDriveClient(
-                new AppConfig { MicrosoftAccountScopes = scopes },
-                /* credentialCache */ null,
-                httpProvider ?? new HttpProvider(),
-                new WebAuthenticationBrokerServiceInfoProvider());
+                new AppConfig
+                {
+                    MicrosoftAccountAppId = appId,
+                    MicrosoftAccountReturnUrl = returnUrl,
+                    MicrosoftAccountScopes = scopes
+                },
+                httpProvider: httpProvider ?? new HttpProvider(),
+                serviceInfoProvider: new WebAuthenticationBrokerServiceInfoProvider());
         }
 
         public static IOneDriveClient GetUniversalClient(
