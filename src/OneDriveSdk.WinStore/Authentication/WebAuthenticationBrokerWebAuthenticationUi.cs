@@ -45,17 +45,25 @@ namespace Microsoft.OneDrive.Sdk
             {
                 result = await this.AuthenticateAsync(requestUri, callbackUri, WebAuthenticationOptions.SilentMode);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
                 // WebAuthenticationBroker can throw an exception in silent authentication mode when not using SSO and
-                // silent authentication isn't available. Swallow it and try authenticating with user prompt.
+                // silent authentication isn't available. Swallow it and try authenticating with user prompt. Even if
+                // the exception is another type of exception we'll swallow and try again with the user prompt.
             }
 
-            // AuthenticateAsync will return a UserCancel status if authentication requires user input. Try authentication
-            // again using UI.
+            // AuthenticateAsync will return a UserCancel status in SSO mode if authentication requires user input. Try
+            // authentication again using the user prompt flow.
             if (result == null || result.ResponseStatus == WebAuthenticationStatus.UserCancel)
             {
-                result = await this.AuthenticateAsync(requestUri, callbackUri, WebAuthenticationOptions.None);
+                try
+                {
+                    result = await this.AuthenticateAsync(requestUri, callbackUri, WebAuthenticationOptions.None);
+                }
+                catch (Exception exception)
+                {
+                    throw new OneDriveException(new Error { Code = OneDriveErrorCode.AuthenticationFailure.ToString() }, exception);
+                }
             }
 
             if (result != null && !string.IsNullOrEmpty(result.ResponseData))

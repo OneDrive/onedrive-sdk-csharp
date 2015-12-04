@@ -22,8 +22,20 @@
 
 namespace Microsoft.OneDrive.Sdk.WindowsForms
 {
+    using System.Threading.Tasks;
+
     public static class BusinessClientExtensions
     {
+        /// <summary>
+        /// Creates an unauthenticated business client using ADAL for authentication.
+        /// </summary>
+        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
+        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
+        /// <param name="serviceResource">The service resource for Azure Active Directory authentication. If not provided, will be retrieved using the Discovery service.</param>
+        /// <param name="serviceEndpointUrl">The service endpoint URL for making API requests. If not provided, will be retrieved using the Discovery service.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static IOneDriveClient GetActiveDirectoryClient(
             string appId,
             string returnUrl,
@@ -44,6 +56,37 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                 new HttpProvider(),
                 new AdalServiceInfoProvider(),
                 ClientType.Business);
+        }
+
+        /// <summary>
+        /// Creates an authenticated business client using ADAL for authentication.
+        /// </summary>
+        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
+        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
+        /// <param name="serviceResource">The service resource for Azure Active Directory authentication. If not provided, will be retrieved using the Discovery service.</param>
+        /// <param name="serviceEndpointUrl">The service endpoint URL for making API requests. If not provided, will be retrieved using the Discovery service.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static async Task<IOneDriveClient> GetAuthenticatedActiveDirectoryClient(
+            string appId,
+            string returnUrl,
+            string serviceResource = null,
+            string serviceEndpointUrl = null,
+            AdalCredentialCache credentialCache = null,
+            IHttpProvider httpProvider = null)
+        {
+            var client = BusinessClientExtensions.GetActiveDirectoryClient(
+                appId,
+                returnUrl,
+                serviceResource,
+                serviceEndpointUrl,
+                credentialCache,
+                httpProvider);
+
+            await client.AuthenticateAsync();
+
+            return client;
         }
     }
 }

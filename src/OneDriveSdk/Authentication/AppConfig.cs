@@ -50,22 +50,22 @@ namespace Microsoft.OneDrive.Sdk
         public string ActiveDirectoryServiceResource { get; set; }
 
         /// <summary>
-        /// Gets or sets the application ID for Microsoft Account authentication.
+        /// Gets or sets the application ID for Microsoft account authentication.
         /// </summary>
         public string MicrosoftAccountAppId { get; set; }
 
         /// <summary>
-        /// Gets or sets the client secret for Microsoft Account authentication.
+        /// Gets or sets the client secret for Microsoft account authentication.
         /// </summary>
         public string MicrosoftAccountClientSecret { get; set; }
 
         /// <summary>
-        /// Gets or sets the application return URL for Microsoft Account authentication.
+        /// Gets or sets the application return URL for Microsoft account authentication.
         /// </summary>
         public string MicrosoftAccountReturnUrl { get; set; }
 
         /// <summary>
-        /// Gets or sets the requested scopes for Microsoft Account authentication.
+        /// Gets or sets the requested scopes for Microsoft account authentication.
         /// </summary>
         public string[] MicrosoftAccountScopes { get; set; }
     }

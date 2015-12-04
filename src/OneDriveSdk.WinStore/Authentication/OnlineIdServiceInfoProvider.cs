@@ -40,7 +40,7 @@ namespace Microsoft.OneDrive.Sdk
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "OnlineIdServiceProvider only supports Microsoft Account authentication."
+                        Message = "OnlineIdServiceProvider only supports Microsoft account authentication."
                     });
             }
 
