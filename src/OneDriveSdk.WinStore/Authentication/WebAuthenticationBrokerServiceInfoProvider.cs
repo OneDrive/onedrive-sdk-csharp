@@ -58,7 +58,7 @@ namespace Microsoft.OneDrive.Sdk
                 ClientSecret = appConfig.MicrosoftAccountClientSecret,
                 CredentialCache = credentialCache,
                 HttpProvider = httpProvider,
-                ReturnUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString(),
+                ReturnUrl = appConfig.MicrosoftAccountReturnUrl,
                 Scopes = appConfig.MicrosoftAccountScopes,
                 WebAuthenticationUi = this.webAuthenticationUi,
             };

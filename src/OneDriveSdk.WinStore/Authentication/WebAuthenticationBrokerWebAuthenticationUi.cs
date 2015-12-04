@@ -41,7 +41,15 @@ namespace Microsoft.OneDrive.Sdk
             WebAuthenticationResult result = null;
 
             // Attempt to authentication without prompting the user first.
-            result = await this.AuthenticateAsync(requestUri, callbackUri, WebAuthenticationOptions.SilentMode);
+            try
+            {
+                result = await this.AuthenticateAsync(requestUri, callbackUri, WebAuthenticationOptions.SilentMode);
+            }
+            catch (Exception)
+            {
+                // WebAuthenticationBroker can throw an exception in silent authentication mode when not using SSO and
+                // silent authentication isn't available. Swallow it and try authenticating with user prompt.
+            }
 
             // AuthenticateAsync will return a UserCancel status if authentication requires user input. Try authentication
             // again using UI.
