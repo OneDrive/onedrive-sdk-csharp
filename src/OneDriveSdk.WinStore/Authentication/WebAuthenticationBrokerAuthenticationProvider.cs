@@ -25,6 +25,7 @@ namespace Microsoft.OneDrive.Sdk
     using System;
     using System.Text;
     using System.Threading.Tasks;
+    using Windows.Security.Authentication.Web;
 
     public class WebAuthenticationBrokerAuthenticationProvider : AuthenticationProvider
     {
@@ -38,9 +39,13 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         public override async Task SignOutAsync()
         {
+            var returnUrlForRequest = string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
+                ? WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString()
+                : this.ServiceInfo.ReturnUrl;
+
             var requestUriStringBuilder = new StringBuilder();
             requestUriStringBuilder.Append(this.ServiceInfo.SignOutUrl);
-            requestUriStringBuilder.AppendFormat("{0}={1}", Constants.Authentication.RedirectUriKeyName, this.ServiceInfo.ReturnUrl);
+            requestUriStringBuilder.AppendFormat("?{0}={1}", Constants.Authentication.RedirectUriKeyName, returnUrlForRequest);
             requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
             
             await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(
@@ -60,15 +65,19 @@ namespace Microsoft.OneDrive.Sdk
 
         internal async Task<AccountSession> GetAccountSessionAsync()
         {
+            var returnUrlForRequest = string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
+                ? WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString()
+                : this.ServiceInfo.ReturnUrl;
+
             var requestUriStringBuilder = new StringBuilder();
             requestUriStringBuilder.Append(this.ServiceInfo.AuthenticationServiceUrl);
-            requestUriStringBuilder.AppendFormat("?{0}={1}", Constants.Authentication.RedirectUriKeyName, this.ServiceInfo.ReturnUrl);
+            requestUriStringBuilder.AppendFormat("?{0}={1}", Constants.Authentication.RedirectUriKeyName, returnUrlForRequest);
             requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
             requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, string.Join("%20", this.ServiceInfo.Scopes));
             requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ResponseTypeKeyName, Constants.Authentication.TokenResponseTypeValueName);
 
             var requestUri = new Uri(requestUriStringBuilder.ToString());
-            
+
             var authenticationResponseValues = await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(
                 requestUri,
                 string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)

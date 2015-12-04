@@ -40,13 +40,13 @@ namespace Microsoft.OneDrive.Sdk
             string[] scopes,
             IHttpProvider httpProvider = null)
         {
-            return OneDriveClientExtensions.GetClientUsingWebAuthenticationBroker(appId, scopes, null, httpProvider);
+            return OneDriveClientExtensions.GetClientUsingWebAuthenticationBroker(appId, null, scopes, httpProvider);
         }
 
         public static IOneDriveClient GetClientUsingWebAuthenticationBroker(
             string appId,
-            string[] scopes,
             string returnUrl,
+            string[] scopes,
             IHttpProvider httpProvider = null)
         {
             return new OneDriveClient(
