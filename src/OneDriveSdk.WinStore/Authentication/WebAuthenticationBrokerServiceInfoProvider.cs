@@ -48,7 +48,7 @@ namespace Microsoft.OneDrive.Sdk
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "WebAuthenticationBrokerServiceInfoProvider only supports Microsoft Account authentication."
+                        Message = "WebAuthenticationBrokerServiceInfoProvider only supports Microsoft account authentication."
                     });
             }
 

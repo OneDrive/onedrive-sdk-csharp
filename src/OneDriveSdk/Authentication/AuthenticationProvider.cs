@@ -96,10 +96,17 @@ namespace Microsoft.OneDrive.Sdk
 
             authResult = await this.GetAuthenticationResultAsync();
 
-            if (authResult != null)
+            if (authResult == null || string.IsNullOrEmpty(authResult.AccessToken))
             {
-                this.CacheAuthResult(authResult);
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Failed to retrieve a valid authentication token for the user."
+                    });
             }
+
+            this.CacheAuthResult(authResult);
 
             return authResult;
         }

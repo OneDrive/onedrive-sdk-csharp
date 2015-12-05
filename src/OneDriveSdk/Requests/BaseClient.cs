@@ -31,9 +31,9 @@ namespace Microsoft.OneDrive.Sdk
     {
         private string baseUrl;
 
-        private readonly AppConfig appConfig;
-        private readonly CredentialCache credentialCache;
-        private readonly IServiceInfoProvider serviceInfoProvider;
+        internal readonly AppConfig appConfig;
+        internal readonly CredentialCache credentialCache;
+        internal readonly IServiceInfoProvider serviceInfoProvider;
 
         /// <summary>
         /// Constructs a new <see cref="BaseClient"/>.
