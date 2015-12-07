@@ -21,23 +21,36 @@
 
 namespace Test.OneDriveSdk.Mocks
 {
+    using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class TestHttpMessageHandler : HttpMessageHandler
     {
-        private HttpResponseMessage httpResponseMessage;
+        private Dictionary<string, HttpResponseMessage> responseMessages;
 
-        public TestHttpMessageHandler(HttpResponseMessage httpResponseMessage)
+        public TestHttpMessageHandler()
         {
-            this.httpResponseMessage = httpResponseMessage;
+            this.responseMessages = new Dictionary<string, HttpResponseMessage>();
+        }
+
+        public void AddResponseMapping(string requestUrl, HttpResponseMessage responseMessage)
+        {
+            this.responseMessages.Add(requestUrl, responseMessage);
         }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            this.httpResponseMessage.RequestMessage = request;
-            return Task.FromResult(this.httpResponseMessage);
+            HttpResponseMessage responseMessage;
+
+            if (this.responseMessages.TryGetValue(request.RequestUri.ToString(), out responseMessage))
+            {
+                responseMessage.RequestMessage = request;
+                return Task.FromResult(responseMessage);
+            }
+
+            return Task.FromResult<HttpResponseMessage>(null);
         }
     }
 }
