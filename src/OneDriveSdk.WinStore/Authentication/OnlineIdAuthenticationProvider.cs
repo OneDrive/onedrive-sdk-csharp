@@ -68,6 +68,18 @@ namespace Microsoft.OneDrive.Sdk
 
                 var ticket = authenticationResponse.Tickets.FirstOrDefault();
 
+                if (ticket == null || string.IsNullOrEmpty(ticket.Value))
+                {
+                    throw new OneDriveException(
+                        new Error
+                        {
+                            Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                            Message = string.Format(
+                                "Failed to retrieve a valid authentication token from OnlineIdAuthenticator for user {0}.",
+                                authenticationResponse.SignInName)
+                        });
+                }
+
                 var accountSession = new AccountSession
                 {
                     AccessToken = ticket == null ? null : ticket.Value,

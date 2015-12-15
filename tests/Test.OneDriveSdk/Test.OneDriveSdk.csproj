@@ -84,6 +84,7 @@
     <Compile Include="Requests\BaseRequestTests.cs" />
     <Compile Include="Requests\ItemRequestTests.cs" />
     <Compile Include="Requests\HttpProviderTests.cs" />
+    <Compile Include="Requests\OneDriveClientExtensionsTests.cs" />
     <Compile Include="Requests\RequestTestBase.cs" />
     <Compile Include="Requests\MethodRequestTests.cs" />
     <Compile Include="Requests\ThumbnailRequestTests.cs" />

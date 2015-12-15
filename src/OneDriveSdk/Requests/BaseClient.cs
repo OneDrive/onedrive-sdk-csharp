@@ -71,7 +71,7 @@ namespace Microsoft.OneDrive.Sdk
         public string BaseUrl
         {
             get { return this.baseUrl; }
-            set { this.baseUrl = value.TrimEnd('/'); }
+            set { this.baseUrl = string.IsNullOrEmpty(value) ? null : value.TrimEnd('/'); }
         }
 
         public ClientType ClientType { get; private set; }
