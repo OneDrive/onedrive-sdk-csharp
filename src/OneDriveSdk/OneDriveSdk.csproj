@@ -128,10 +128,6 @@
     <Compile Include="Requests\Generated\DrivesCollectionRequest.cs" />
     <Compile Include="Requests\Generated\DrivesCollectionRequestBuilder.cs" />
     <Compile Include="Requests\Generated\DrivesCollectionResponse.cs" />
-    <Compile Include="Requests\Generated\DriveSharedWithMeCollectionPage.cs" />
-    <Compile Include="Requests\Generated\DriveSharedWithMeCollectionResponse.cs" />
-    <Compile Include="Requests\Generated\DriveSharedWithMeRequest.cs" />
-    <Compile Include="Requests\Generated\DriveSharedWithMeRequestBuilder.cs" />
     <Compile Include="Requests\Generated\IChildrenCollectionPage.cs" />
     <Compile Include="Requests\Generated\IChildrenCollectionRequest.cs" />
     <Compile Include="Requests\Generated\IChildrenCollectionRequestBuilder.cs" />
@@ -146,9 +142,6 @@
     <Compile Include="Requests\Generated\IDrivesCollectionPage.cs" />
     <Compile Include="Requests\Generated\IDrivesCollectionRequest.cs" />
     <Compile Include="Requests\Generated\IDrivesCollectionRequestBuilder.cs" />
-    <Compile Include="Requests\Generated\IDriveSharedWithMeCollectionPage.cs" />
-    <Compile Include="Requests\Generated\IDriveSharedWithMeRequest.cs" />
-    <Compile Include="Requests\Generated\IDriveSharedWithMeRequestBuilder.cs" />
     <Compile Include="Requests\Generated\IItemAllPhotosCollectionPage.cs" />
     <Compile Include="Requests\Generated\IItemAllPhotosRequest.cs" />
     <Compile Include="Requests\Generated\IItemAllPhotosRequestBuilder.cs" />
