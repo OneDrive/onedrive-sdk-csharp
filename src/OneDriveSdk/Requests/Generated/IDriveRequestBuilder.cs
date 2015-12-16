@@ -76,11 +76,5 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The <see cref="IDriveRecentRequestBuilder"/>.</returns>
         IDriveRecentRequestBuilder Recent();
     
-        /// <summary>
-        /// Gets the request builder for DriveSharedWithMe.
-        /// </summary>
-        /// <returns>The <see cref="IDriveSharedWithMeRequestBuilder"/>.</returns>
-        IDriveSharedWithMeRequestBuilder SharedWithMe();
-    
     }
 }

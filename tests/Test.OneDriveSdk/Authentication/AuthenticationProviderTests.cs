@@ -116,7 +116,7 @@ namespace Test.OneDriveSdk
             Assert.IsTrue(requestBodyString.Contains("refresh_token=" + token), "Token not set correctly.");
             Assert.IsTrue(
                 requestBodyString.Contains("client_secret=" + this.serviceInfo.ClientSecret),
-                "Client seceret not set correctly.");
+                "Client secret not set correctly.");
         }
 
         [TestMethod]
@@ -125,7 +125,7 @@ namespace Test.OneDriveSdk
             var token = "token";
             var requestBodyString = this.authenticationProvider.GetRefreshTokenRequestBody(token);
             Assert.IsTrue(requestBodyString.Contains("refresh_token=" + token), "Token not set correctly.");
-            Assert.IsFalse(requestBodyString.Contains("client_secret"), "Client seceret set.");
+            Assert.IsFalse(requestBodyString.Contains("client_secret"), "Client secret set.");
         }
     }
 }

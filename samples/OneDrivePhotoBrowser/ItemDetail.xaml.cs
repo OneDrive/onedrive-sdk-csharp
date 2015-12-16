@@ -84,7 +84,7 @@ namespace OneDrivePhotoBrowser
         /// <returns>The task to await.</returns>
         private async Task LoadImage(ItemModel item)
         {
-            // Only load a detail view image for image items. Initialize the bitmap from the image conent stream.
+            // Only load a detail view image for image items. Initialize the bitmap from the image content stream.
             if (item.Bitmap == null && (item.Item.Image != null))
             {
                 item.Bitmap = new BitmapImage();

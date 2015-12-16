@@ -125,7 +125,7 @@ namespace Microsoft.OneDrive.Sdk
                 new Error
                 {
                     Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                    Message = "An error occured during active directory authentication.",
+                    Message = "An error occurred during active directory authentication.",
                 },
                 innerException);
         }

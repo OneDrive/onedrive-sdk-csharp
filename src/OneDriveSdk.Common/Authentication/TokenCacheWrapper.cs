@@ -38,7 +38,7 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
-        /// Gets or sets the notification delegate for aftere accessing the cache.
+        /// Gets or sets the notification delegate for after accessing the cache.
         /// </summary>
         public TokenCacheNotification AfterAccess
         {

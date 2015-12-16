@@ -234,7 +234,7 @@ namespace Test.OneDriveSdk.WinRT
                 Assert.IsNotNull(exception.Error, "Error not set in exception.");
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code returned.");
                 Assert.AreEqual(
-                    string.Format("An error occured during active directory authentication. Error: {0}. Description: {1}",
+                    string.Format("An error occurred during active directory authentication. Error: {0}. Description: {1}",
                             authenticationResult.Error,
                             authenticationResult.ErrorDescription),
                     exception.Error.Message,
@@ -407,7 +407,7 @@ namespace Test.OneDriveSdk.WinRT
                 Assert.IsNotNull(exception.Error, "Error not set in exception.");
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code returned.");
                 Assert.AreEqual(
-                    "An error occured during active directory authentication.",
+                    "An error occurred during active directory authentication.",
                     exception.Error.Message,
                     "Unexpected error message returned.");
 

@@ -50,6 +50,7 @@ namespace Test.OneDriveSdk.Requests
         {
             this.appConfig = new AppConfig();
             this.authenticationProvider = new MockAuthenticationProvider();
+            this.authenticationProvider.Setup(provider => provider.AuthenticateAsync()).Returns(Task.FromResult(new AccountSession()));
             this.authenticationProvider.Setup(provider => provider.AppendAuthHeaderAsync(It.IsAny<HttpRequestMessage>())).Returns(Task.FromResult(0));
             this.credentialCache = new MockCredentialCache();
             this.serializer = new MockSerializer();

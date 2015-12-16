@@ -33,6 +33,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="appId">The application ID for Microsoft account authentication.</param>
         /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
         /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
+        /// <param name="authenticationProvider">The <see cref="IAuthenticationProvider"/> for authenticating the client.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
@@ -40,6 +41,7 @@ namespace Microsoft.OneDrive.Sdk
             string appId,
             string returnUrl,
             string[] scopes,
+            IAuthenticationProvider authenticationProvider,
             CredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
@@ -48,7 +50,7 @@ namespace Microsoft.OneDrive.Sdk
                 returnUrl,
                 scopes,
                 /* clientSecret */ null,
-                new ServiceInfoProvider(),
+                new ServiceInfoProvider(authenticationProvider),
                 credentialCache,
                 httpProvider);
         }
@@ -59,7 +61,8 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="appId">The application ID for Microsoft account authentication.</param>
         /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
         /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
-        /// <param name="webAuthenticationUi">The <see cref="IWebAuthenticationUi"/> for displaying authentication UI to the user.</param>
+        /// <param name="clientSecret">The client secret for Microsoft account authentication.</param>
+        /// <param name="authenticationProvider">The <see cref="IAuthenticationProvider"/> for authenticating the client.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
@@ -67,7 +70,8 @@ namespace Microsoft.OneDrive.Sdk
             string appId,
             string returnUrl,
             string[] scopes,
-            IWebAuthenticationUi webAuthenticationUi,
+            string clientSecret,
+            IAuthenticationProvider authenticationProvider,
             CredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
@@ -75,10 +79,42 @@ namespace Microsoft.OneDrive.Sdk
                 appId,
                 returnUrl,
                 scopes,
-                /* clientSecret */ null,
-                webAuthenticationUi,
+                clientSecret,
+                new ServiceInfoProvider(authenticationProvider),
                 credentialCache,
                 httpProvider);
+        }
+
+        /// <summary>
+        /// Creates an authenticated OneDrive client for use against OneDrive consumer.
+        /// </summary>
+        /// <param name="appId">The application ID for Microsoft account authentication.</param>
+        /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
+        /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
+        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static async Task<IOneDriveClient> GetAuthenticatedMicrosoftAccountClient(
+            string appId,
+            string returnUrl,
+            string[] scopes,
+            IServiceInfoProvider serviceInfoProvider,
+            CredentialCache credentialCache = null,
+            IHttpProvider httpProvider = null)
+        {
+            var client = OneDriveClient.GetMicrosoftAccountClient(
+                appId,
+                returnUrl,
+                scopes,
+                /* clientSecret */ null,
+                credentialCache,
+                httpProvider,
+                serviceInfoProvider);
+
+            await client.AuthenticateAsync();
+
+            return client;
         }
 
         /// <summary>
@@ -113,6 +149,34 @@ namespace Microsoft.OneDrive.Sdk
             await client.AuthenticateAsync();
 
             return client;
+        }
+
+        /// <summary>
+        /// Creates an authenticated OneDrive client for use against OneDrive consumer.
+        /// </summary>
+        /// <param name="appId">The application ID for Microsoft account authentication.</param>
+        /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
+        /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
+        /// <param name="webAuthenticationUi">The <see cref="IWebAuthenticationUi"/> for displaying authentication UI to the user.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static Task<IOneDriveClient> GetAuthenticatedMicrosoftAccountClient(
+            string appId,
+            string returnUrl,
+            string[] scopes,
+            IWebAuthenticationUi webAuthenticationUi,
+            CredentialCache credentialCache = null,
+            IHttpProvider httpProvider = null)
+        {
+            return OneDriveClient.GetAuthenticatedMicrosoftAccountClient(
+                appId,
+                returnUrl,
+                scopes,
+                /* clientSecret */ null,
+                webAuthenticationUi,
+                credentialCache,
+                httpProvider);
         }
 
         /// <summary>
@@ -168,6 +232,7 @@ namespace Microsoft.OneDrive.Sdk
             var appConfig = new AppConfig
             {
                 MicrosoftAccountAppId = appId,
+                MicrosoftAccountClientSecret = clientSecret,
                 MicrosoftAccountReturnUrl = returnUrl,
                 MicrosoftAccountScopes = scopes,
             };
@@ -209,10 +274,11 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="appId">The application ID for Microsoft account authentication.</param>
         /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
         /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
+        /// <param name="refreshToken">The refresh token for silent authentication.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetSlientlyAuthenticatedMicrosoftAccountClient(
+        public static Task<IOneDriveClient> GetSilentlyAuthenticatedMicrosoftAccountClient(
             string appId,
             string returnUrl,
             string[] scopes,
@@ -220,7 +286,7 @@ namespace Microsoft.OneDrive.Sdk
             CredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
-            return OneDriveClient.GetSlientlyAuthenticatedMicrosoftAccountClient(
+            return OneDriveClient.GetSilentlyAuthenticatedMicrosoftAccountClient(
                 appId,
                 returnUrl,
                 scopes,
@@ -237,11 +303,43 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="appId">The application ID for Microsoft account authentication.</param>
         /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
         /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
+        /// <param name="clientSecret">The client secret for Microsoft account authentication.</param>
+        /// <param name="refreshToken">The refresh token for silent authentication.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static Task<IOneDriveClient> GetSilentlyAuthenticatedMicrosoftAccountClient(
+            string appId,
+            string returnUrl,
+            string[] scopes,
+            string clientSecret,
+            string refreshToken,
+            CredentialCache credentialCache = null,
+            IHttpProvider httpProvider = null)
+        {
+            return OneDriveClient.GetSilentlyAuthenticatedMicrosoftAccountClient(
+                appId,
+                returnUrl,
+                scopes,
+                clientSecret,
+                refreshToken,
+                new ServiceInfoProvider(),
+                credentialCache,
+                httpProvider);
+        }
+
+        /// <summary>
+        /// Creates an authenticated OneDrive client for use against OneDrive consumer for silent (refresh token) authentication.
+        /// </summary>
+        /// <param name="appId">The application ID for Microsoft account authentication.</param>
+        /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
+        /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
+        /// <param name="refreshToken">The refresh token for silent authentication.</param>
         /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetSlientlyAuthenticatedMicrosoftAccountClient(
+        public static Task<IOneDriveClient> GetSilentlyAuthenticatedMicrosoftAccountClient(
             string appId,
             string returnUrl,
             string[] scopes,
@@ -250,7 +348,7 @@ namespace Microsoft.OneDrive.Sdk
             CredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
-            return OneDriveClient.GetSlientlyAuthenticatedMicrosoftAccountClient(
+            return OneDriveClient.GetSilentlyAuthenticatedMicrosoftAccountClient(
                 appId,
                 returnUrl,
                 scopes,
@@ -268,11 +366,12 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="returnUrl">The application return URL for Microsoft account authentication.</param>
         /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
         /// <param name="clientSecret">The client secret for Microsoft account authentication.</param>
+        /// <param name="refreshToken">The refresh token for silent authentication.</param>
         /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static async Task<IOneDriveClient> GetSlientlyAuthenticatedMicrosoftAccountClient(
+        public static async Task<IOneDriveClient> GetSilentlyAuthenticatedMicrosoftAccountClient(
             string appId,
             string returnUrl,
             string[] scopes,

@@ -122,16 +122,5 @@ namespace Microsoft.OneDrive.Sdk
                 this.Client);
         }
     
-        /// <summary>
-        /// Gets the request builder for DriveSharedWithMe.
-        /// </summary>
-        /// <returns>The <see cref="IDriveSharedWithMeRequestBuilder"/>.</returns>
-        public IDriveSharedWithMeRequestBuilder SharedWithMe()
-        {
-            return new DriveSharedWithMeRequestBuilder(
-                this.AppendSegmentToRequestUrl("view.sharedWithMe"),
-                this.Client);
-        }
-    
     }
 }

@@ -24,6 +24,7 @@ namespace Test.OneDriveSdk.Requests
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -39,14 +40,14 @@ namespace Test.OneDriveSdk.Requests
     {
         private HttpClient httpClient;
         private HttpProvider httpProvider;
-        private HttpResponseMessage httpResponseMessage;
         private MockSerializer serializer = new MockSerializer();
+        private TestHttpMessageHandler testHttpMessageHandler;
 
         [TestInitialize]
         public void Setup()
         {
-            this.httpResponseMessage = new HttpResponseMessage();
-            this.httpClient = new HttpClient(new TestHttpMessageHandler(this.httpResponseMessage), /* disposeHandler */ true);
+            this.testHttpMessageHandler = new TestHttpMessageHandler();
+            this.httpClient = new HttpClient(this.testHttpMessageHandler, /* disposeHandler */ true);
             this.httpProvider = new HttpProvider(this.serializer.Object);
             this.httpProvider.httpClient.Dispose();
             this.httpProvider.httpClient = this.httpClient;
@@ -56,7 +57,6 @@ namespace Test.OneDriveSdk.Requests
         public void Teardown()
         {
             this.httpClient.Dispose();
-            this.httpResponseMessage.Dispose();
             this.httpProvider.Dispose();
         }
 
@@ -72,7 +72,7 @@ namespace Test.OneDriveSdk.Requests
 
                 Assert.AreEqual(timeout, defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
                 Assert.IsNotNull(defaultHttpProvider.Serializer, "Serializer not initialized.");
-                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initilaized.");
+                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initialized.");
             }
         }
 
@@ -86,7 +86,7 @@ namespace Test.OneDriveSdk.Requests
 
                 Assert.AreEqual(TimeSpan.FromSeconds(100), defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
 
-                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initilaized.");
+                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initialized.");
             }
         }
 
@@ -94,10 +94,12 @@ namespace Test.OneDriveSdk.Requests
         public async Task SendAsync()
         {
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost"))
+            using (var httpResponseMessage = new HttpResponseMessage())
             {
+                this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), httpResponseMessage);
                 var returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
 
-                Assert.AreEqual(this.httpResponseMessage, returnedResponseMessage, "Unexpected response returned.");
+                Assert.AreEqual(httpResponseMessage, returnedResponseMessage, "Unexpected response returned.");
             }
         }
 
@@ -161,10 +163,13 @@ namespace Test.OneDriveSdk.Requests
         [ExpectedException(typeof(OneDriveException))]
         public async Task SendAsync_InvalidRedirectResponse()
         {
-            this.httpResponseMessage.StatusCode = HttpStatusCode.Redirect;
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost"))
+            using (var httpResponseMessage = new HttpResponseMessage())
             {
-                this.httpResponseMessage.RequestMessage = httpRequestMessage;
+                httpResponseMessage.StatusCode = HttpStatusCode.Redirect;
+                httpResponseMessage.RequestMessage = httpRequestMessage;
+
+                this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), httpResponseMessage);
 
                 try
                 {
@@ -185,21 +190,63 @@ namespace Test.OneDriveSdk.Requests
         }
 
         [TestMethod]
+        public async Task SendAsync_RedirectResponse_VerifyHeadersOnRedirect()
+        {
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost"))
+            using (var redirectResponseMessage = new HttpResponseMessage())
+            using (var finalResponseMessage = new HttpResponseMessage())
+            {
+                httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", "token");
+                httpRequestMessage.Headers.Add("testHeader", "testValue");
+
+                redirectResponseMessage.StatusCode = HttpStatusCode.Redirect;
+                redirectResponseMessage.Headers.Location = new Uri("https://localhost/redirect");
+                redirectResponseMessage.RequestMessage = httpRequestMessage;
+
+                this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), redirectResponseMessage);
+                this.testHttpMessageHandler.AddResponseMapping(redirectResponseMessage.Headers.Location.ToString(), finalResponseMessage);
+
+                var returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
+
+                Assert.AreEqual(2, finalResponseMessage.RequestMessage.Headers.Count(), "Unexpected number of headers on redirect request message.");
+                
+                foreach (var header in httpRequestMessage.Headers)
+                {
+                    var expectedValues = header.Value.ToList();
+                    var actualValues = finalResponseMessage.RequestMessage.Headers.GetValues(header.Key).ToList();
+
+                    Assert.AreEqual(actualValues.Count, expectedValues.Count, "Unexpected header on redirect request message.");
+
+                    for (var i = 0; i < expectedValues.Count; i++)
+                    {
+                        Assert.AreEqual(expectedValues[i], actualValues[i], "Unexpected header on redirect request message.");
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(OneDriveException))]
         public async Task SendAsync_MaxRedirects()
         {
-            int redirectCount = 0;
-            this.httpResponseMessage.StatusCode = HttpStatusCode.Redirect;
-            this.httpResponseMessage.Headers.Location = new Uri("https://localhost/redirect");
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost"))
+            using (var redirectResponseMessage = new HttpResponseMessage())
+            using (var tooManyRedirectsResponseMessage = new HttpResponseMessage())
             {
-                this.httpResponseMessage.RequestMessage = httpRequestMessage;
-                
+                redirectResponseMessage.StatusCode = HttpStatusCode.Redirect;
+                redirectResponseMessage.Headers.Location = new Uri("https://localhost/redirect");
+                tooManyRedirectsResponseMessage.StatusCode = HttpStatusCode.Redirect;
+
+                redirectResponseMessage.RequestMessage = httpRequestMessage;
+
+                this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), redirectResponseMessage);
+                this.testHttpMessageHandler.AddResponseMapping(redirectResponseMessage.Headers.Location.ToString(), tooManyRedirectsResponseMessage);
+
                 httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue(Constants.Headers.Bearer, "ticket");
 
                 try
                 {
-                    await this.httpProvider.HandleRedirect(this.httpResponseMessage, redirectCount);
+                    await this.httpProvider.HandleRedirect(redirectResponseMessage, 5);
                 }
                 catch (OneDriveException exception)
                 {
@@ -221,9 +268,12 @@ namespace Test.OneDriveSdk.Requests
         {
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, "https://localhost"))
             using (var stringContent = new StringContent("test"))
+            using (var httpResponseMessage = new HttpResponseMessage())
             {
-                this.httpResponseMessage.Content = stringContent;
-                this.httpResponseMessage.StatusCode = HttpStatusCode.NotFound;
+                httpResponseMessage.Content = stringContent;
+                httpResponseMessage.StatusCode = HttpStatusCode.NotFound;
+
+                this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), httpResponseMessage);
 
                 this.serializer.Setup(
                     serializer => serializer.DeserializeObject<ErrorResponse>(
@@ -251,9 +301,12 @@ namespace Test.OneDriveSdk.Requests
         {
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost"))
             using (var stringContent = new StringContent("test"))
+            using (var httpResponseMessage = new HttpResponseMessage())
             {
-                this.httpResponseMessage.Content = stringContent;
-                this.httpResponseMessage.StatusCode = HttpStatusCode.InternalServerError;
+                httpResponseMessage.Content = stringContent;
+                httpResponseMessage.StatusCode = HttpStatusCode.InternalServerError;
+
+                this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), httpResponseMessage);
 
                 var notFoundErrorString = OneDriveErrorCode.ItemNotFound.ToString();
 

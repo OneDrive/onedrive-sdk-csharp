@@ -73,7 +73,7 @@ namespace OneDriveApiBrowser
         }
 
         /// <summary>
-        /// Retreive a specific size thumbnail's metadata. If it isn't already 
+        /// Retrieve a specific size thumbnail's metadata. If it isn't already 
         /// available make a call to the service to retrieve it.
         /// </summary>
         /// <param name="size"></param>
