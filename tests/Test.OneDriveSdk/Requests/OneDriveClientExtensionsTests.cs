@@ -198,7 +198,8 @@ namespace Test.OneDriveSdk.Requests
                 .Returns(Task.FromResult<ServiceInfo>(
                     new MicrosoftAccountServiceInfo
                     {
-                        AuthenticationProvider = this.authenticationProvider.Object
+                        AuthenticationProvider = this.authenticationProvider.Object,
+                        BaseUrl = "https://localhost",
                     }));
         }
     }

@@ -71,7 +71,20 @@ namespace Microsoft.OneDrive.Sdk
         public string BaseUrl
         {
             get { return this.baseUrl; }
-            set { this.baseUrl = string.IsNullOrEmpty(value) ? null : value.TrimEnd('/'); }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new OneDriveException(
+                        new Error
+                        {
+                            Code = OneDriveErrorCode.InvalidRequest.ToString(),
+                            Message = "Base URL cannot be null or empty."
+                        });
+                }
+
+                this.baseUrl = value.TrimEnd('/');
+            }
         }
 
         public ClientType ClientType { get; private set; }
@@ -91,7 +104,7 @@ namespace Microsoft.OneDrive.Sdk
                 return this.ServiceInfo != null
                     && this.ServiceInfo.AuthenticationProvider != null
                     && this.ServiceInfo.AuthenticationProvider.CurrentAccountSession != null
-                    && !this.ServiceInfo.AuthenticationProvider.CurrentAccountSession.IsExpiring();
+                    && !string.IsNullOrEmpty(this.BaseUrl);
             }
         }
 
