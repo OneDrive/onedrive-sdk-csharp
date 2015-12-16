@@ -72,7 +72,7 @@ namespace Test.OneDriveSdk.Requests
 
                 Assert.AreEqual(timeout, defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
                 Assert.IsNotNull(defaultHttpProvider.Serializer, "Serializer not initialized.");
-                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initilaized.");
+                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initialized.");
             }
         }
 
@@ -86,7 +86,7 @@ namespace Test.OneDriveSdk.Requests
 
                 Assert.AreEqual(TimeSpan.FromSeconds(100), defaultHttpProvider.httpClient.Timeout, "Unexpected default timeout set.");
 
-                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initilaized.");
+                Assert.IsInstanceOfType(defaultHttpProvider.Serializer, typeof(Serializer), "Unexpected serializer initialized.");
             }
         }
 

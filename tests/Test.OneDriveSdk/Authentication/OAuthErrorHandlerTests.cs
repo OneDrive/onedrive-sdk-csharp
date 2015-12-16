@@ -49,7 +49,7 @@ namespace Test.OneDriveSdk.Authentication
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code.");
                 Assert.AreEqual(errorMessage, exception.Error.Message, "Unexpected error message.");
 
-                // Rethrow to kick off final validation.
+                // Re-throw to kick off final validation.
                 throw;
             }
         }
@@ -75,7 +75,7 @@ namespace Test.OneDriveSdk.Authentication
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code.");
                 Assert.AreEqual(errorDescription, exception.Error.Message, "Unexpected error message.");
 
-                // Rethrow to kick off final validation.
+                // Re-throw to kick off final validation.
                 throw;
             }
         }

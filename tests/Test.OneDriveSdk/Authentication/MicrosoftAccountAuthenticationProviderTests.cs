@@ -77,7 +77,7 @@ namespace Test.OneDriveSdk
             Assert.IsTrue(requestBodyString.Contains("code=" + code), "Code not set correctly.");
             Assert.IsTrue(
                 requestBodyString.Contains("client_secret=" + this.serviceInfo.ClientSecret),
-                "Client seceret not set correctly.");
+                "Client secret not set correctly.");
         }
 
         [TestMethod]
@@ -86,7 +86,7 @@ namespace Test.OneDriveSdk
             var code = "code";
             var requestBodyString = ((MicrosoftAccountAuthenticationProvider)this.authenticationProvider).GetCodeRedemptionRequestBody(code);
             Assert.IsTrue(requestBodyString.Contains("code=" + code), "Code not set correctly.");
-            Assert.IsFalse(requestBodyString.Contains("client_secret"), "Client seceret set.");
+            Assert.IsFalse(requestBodyString.Contains("client_secret"), "Client secret set.");
         }
 
         [TestMethod]

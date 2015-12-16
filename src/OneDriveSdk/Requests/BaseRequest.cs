@@ -123,7 +123,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Sends the request.
         /// </summary>
-        /// <typeparam name="T">The expected reponse object type for deserialization.</typeparam>
+        /// <typeparam name="T">The expected response object type for deserialization.</typeparam>
         /// <param name="serializableObject">The serializable object to send.</param>
         /// <returns>The deserialized response object.</returns>
         public async Task<T> SendAsync<T>(object serializableObject)
@@ -143,7 +143,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Sends the request.
         /// </summary>
-        /// <typeparam name="T">The expected reponse object type for deserialization.</typeparam>
+        /// <typeparam name="T">The expected response object type for deserialization.</typeparam>
         /// <param name="serializableObject">The serializable object to send.</param>
         /// <returns>The stream.</returns>
         public async Task<Stream> SendStreamRequestAsync(object serializableObject)
@@ -155,7 +155,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Sends the request.
         /// </summary>
-        /// <typeparam name="T">The expected reponse object type for deserialization.</typeparam>
+        /// <typeparam name="T">The expected response object type for deserialization.</typeparam>
         /// <param name="serializableObject">The serializable object to send.</param>
         /// <returns>The <see cref="WebResponse"/> object.</returns>
         public async Task<HttpResponseMessage> SendRequestAsync(object serializableObject)

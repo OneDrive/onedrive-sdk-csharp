@@ -264,7 +264,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             {
                 Assert.IsNotNull(exception.Error, "Error not set in exception.");
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code returned.");
-                Assert.AreEqual("An error occured during active directory authentication.",
+                Assert.AreEqual("An error occurred during active directory authentication.",
                     exception.Error.Message,
                     "Unexpected error message returned.");
                 Assert.AreEqual(innerException, exception.InnerException, "Unexpected inner exception.");
@@ -440,7 +440,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 Assert.IsNotNull(exception.Error, "Error not set in exception.");
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code returned.");
                 Assert.AreEqual(
-                    "An error occured during active directory authentication.",
+                    "An error occurred during active directory authentication.",
                     exception.Error.Message,
                     "Unexpected error message returned.");
 
