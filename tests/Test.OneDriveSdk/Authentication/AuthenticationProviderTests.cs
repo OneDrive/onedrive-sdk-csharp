@@ -50,6 +50,8 @@ namespace Test.OneDriveSdk
             var cachedAccountSession = new AccountSession
             {
                 AccessToken = "token",
+                ExpiresOnUtc = DateTimeOffset.UtcNow.AddMinutes(60),
+
             };
 
             this.authenticationProvider.CurrentAccountSession = cachedAccountSession;
@@ -61,6 +63,36 @@ namespace Test.OneDriveSdk
                     string.Format("{0} {1}", Constants.Headers.Bearer, cachedAccountSession.AccessToken),
                     httpRequestMessage.Headers.Authorization.ToString(),
                     "Unexpected authorization header set.");
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task AppendAuthenticationHeader_ExpiredAccountSession()
+        {
+            var cachedAccountSession = new AccountSession
+            {
+                AccessToken = "token",
+            };
+
+            this.authenticationProvider.CurrentAccountSession = cachedAccountSession;
+
+            using (var httpRequestMessage = new HttpRequestMessage())
+            {
+                try
+                {
+                    await this.authenticationProvider.AppendAuthHeaderAsync(httpRequestMessage);
+                }
+                catch (OneDriveException oneDriveException)
+                {
+                    Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), oneDriveException.Error.Code, "Unexpected error code.");
+                    Assert.AreEqual(
+                        "Failed to retrieve a valid authentication token for the user.",
+                        oneDriveException.Error.Message,
+                        "Unexpected error message.");
+
+                    throw;
+                }
             }
         }
 

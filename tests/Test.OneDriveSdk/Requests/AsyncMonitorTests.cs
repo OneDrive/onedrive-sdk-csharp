@@ -33,7 +33,8 @@ namespace Test.OneDriveSdk.Requests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Mocks;
     using Moq;
-    
+    using System;
+
     [TestClass]
     public class AsyncMonitorTests
     {
@@ -134,6 +135,9 @@ namespace Test.OneDriveSdk.Requests
                     It.IsAny<Stream>()))
                 .Returns(new AsyncOperationStatus { Status = "cancelled" });
             this.oneDriveClient.SetupGet(client => client.IsAuthenticated).Returns(true);
+            this.authenticationProvider
+                .SetupGet(provider => provider.CurrentAccountSession)
+                .Returns(new AccountSession { ExpiresOnUtc = DateTimeOffset.UtcNow.AddMinutes(60) });
 
             using (var stringContent = new StringContent("content"))
             {
@@ -154,6 +158,9 @@ namespace Test.OneDriveSdk.Requests
                     It.IsAny<Stream>()))
                 .Returns(new AsyncOperationStatus { Status = "deleteFailed" });
             this.oneDriveClient.SetupGet(client => client.IsAuthenticated).Returns(true);
+            this.authenticationProvider
+                .SetupGet(provider => provider.CurrentAccountSession)
+                .Returns(new AccountSession { ExpiresOnUtc = DateTimeOffset.UtcNow.AddMinutes(60) });
 
             using (var stringContent = new StringContent("content"))
             {
@@ -186,7 +193,10 @@ namespace Test.OneDriveSdk.Requests
                     });
 
             this.oneDriveClient.SetupGet(client => client.IsAuthenticated).Returns(true);
-            
+            this.authenticationProvider
+                .SetupGet(provider => provider.CurrentAccountSession)
+                .Returns(new AccountSession { ExpiresOnUtc = DateTimeOffset.UtcNow.AddMinutes(60) });
+
             using (var stringContent = new StringContent("content"))
             {
                 this.httpResponseMessage.Content = stringContent;
@@ -214,6 +224,9 @@ namespace Test.OneDriveSdk.Requests
                     It.IsAny<Stream>()))
                 .Returns((AsyncOperationStatus)null);
             this.oneDriveClient.SetupGet(client => client.IsAuthenticated).Returns(true);
+            this.authenticationProvider
+                .SetupGet(provider => provider.CurrentAccountSession)
+                .Returns(new AccountSession { ExpiresOnUtc = DateTimeOffset.UtcNow.AddMinutes(60) });
 
             using (var stringContent = new StringContent("content"))
             {
