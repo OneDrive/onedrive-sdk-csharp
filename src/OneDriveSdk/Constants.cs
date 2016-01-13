@@ -100,6 +100,8 @@ namespace Microsoft.OneDrive.Sdk
             public const string FormUrlEncodedContentType = "application/x-www-form-urlencoded";
 
             public const string SdkVersionHeaderValue = "SDK-Version=CSharp-v{0}";
+
+            public const string ThrowSiteHeaderName = "X-ThrowSite";
         }
 
         public static class Url

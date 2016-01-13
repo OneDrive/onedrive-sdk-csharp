@@ -335,5 +335,83 @@ namespace Test.OneDriveSdk.Requests
                 }
             }
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task SendAsync_CopyThrowSiteHeader()
+        {
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost"))
+            using (var httpResponseMessage = new HttpResponseMessage())
+            {
+                const string throwSite = "throw site";
+
+                httpResponseMessage.StatusCode = HttpStatusCode.BadRequest;
+                httpResponseMessage.Headers.Add(Constants.Headers.ThrowSiteHeaderName, throwSite);
+                httpResponseMessage.RequestMessage = httpRequestMessage;
+
+                this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), httpResponseMessage);
+
+                this.serializer.Setup(
+                    serializer => serializer.DeserializeObject<ErrorResponse>(
+                        It.IsAny<Stream>()))
+                    .Returns(new ErrorResponse { Error = new Error() });
+
+                try
+                {
+                    var returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
+                }
+                catch (OneDriveException exception)
+                {
+                    Assert.IsNotNull(exception.Error, "Error not set in exception.");
+                    Assert.AreEqual(
+                        throwSite,
+                        exception.Error.ThrowSite,
+                        "Unexpected error throw site returned.");
+
+                    throw;
+                }
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task SendAsync_CopyThrowSiteHeader_ThrowSiteAlreadyInError()
+        {
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost"))
+            using (var stringContent = new StringContent("test"))
+            using (var httpResponseMessage = new HttpResponseMessage())
+            {
+                httpResponseMessage.Content = stringContent;
+
+                const string throwSiteBodyValue = "throw site in body";
+                const string throwSiteHeaderValue = "throw site in header";
+
+                httpResponseMessage.StatusCode = HttpStatusCode.BadRequest;
+                httpResponseMessage.Headers.Add(Constants.Headers.ThrowSiteHeaderName, throwSiteHeaderValue);
+                httpResponseMessage.RequestMessage = httpRequestMessage;
+
+                this.testHttpMessageHandler.AddResponseMapping(httpRequestMessage.RequestUri.ToString(), httpResponseMessage);
+
+                this.serializer.Setup(
+                    serializer => serializer.DeserializeObject<ErrorResponse>(
+                        It.IsAny<Stream>()))
+                    .Returns(new ErrorResponse { Error = new Error { ThrowSite = throwSiteBodyValue } });
+
+                try
+                {
+                    var returnedResponseMessage = await this.httpProvider.SendAsync(httpRequestMessage);
+                }
+                catch (OneDriveException exception)
+                {
+                    Assert.IsNotNull(exception.Error, "Error not set in exception.");
+                    Assert.AreEqual(
+                        throwSiteBodyValue,
+                        exception.Error.ThrowSite,
+                        "Unexpected error throw site returned.");
+
+                    throw;
+                }
+            }
+        }
     }
 }

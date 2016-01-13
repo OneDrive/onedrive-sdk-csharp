@@ -39,6 +39,9 @@ namespace Microsoft.OneDrive.Sdk
         [DataMember(Name = "message", IsRequired = false, EmitDefaultValue = false)]
         public string Message { get; set; }
 
+        [DataMember(Name = "throwSite", IsRequired = false, EmitDefaultValue = false)]
+        public string ThrowSite { get; set; }
+
         [JsonExtensionData]
         public IDictionary<string, object> AdditionalData { get; set; }
     }
