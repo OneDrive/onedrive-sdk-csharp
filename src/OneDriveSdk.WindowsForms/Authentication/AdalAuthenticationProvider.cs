@@ -64,12 +64,15 @@ namespace Microsoft.OneDrive.Sdk
         {
             IAuthenticationResult authenticationResult = null;
             var clientCredential = string.IsNullOrEmpty(this.serviceInfo.ClientSecret) ? null : new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
+            var userIdentifier = string.IsNullOrEmpty(this.serviceInfo.UserId)
+                ? UserIdentifier.AnyUser
+                : new UserIdentifier(this.serviceInfo.UserId, UserIdentifierType.OptionalDisplayableId);
 
             try
             {
                 authenticationResult = clientCredential == null
                     ? await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId)
-                    : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, UserIdentifier.AnyUser);
+                    : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier);
             }
             catch (Exception)
             {
@@ -88,7 +91,8 @@ namespace Microsoft.OneDrive.Sdk
                         resource,
                         this.ServiceInfo.AppId,
                         new Uri(this.ServiceInfo.ReturnUrl),
-                        PromptBehavior.Always)
+                        PromptBehavior.Auto,
+                        userIdentifier)
                     : await this.authenticationContextWrapper.AcquireTokenAsync(resource, clientCredential);
             }
             catch (AdalException adalException)

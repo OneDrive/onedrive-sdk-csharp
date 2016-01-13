@@ -23,6 +23,7 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
+    using System.Net;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.Security.Authentication.Web;
@@ -65,6 +66,48 @@ namespace Microsoft.OneDrive.Sdk
 
         internal async Task<AccountSession> GetAccountSessionAsync()
         {
+            // Log the user in if we haven't already pulled their credentials from the cache.
+            var code = await this.GetAuthorizationCodeAsync();
+
+            if (!string.IsNullOrEmpty(code))
+            {
+                var authResult = await this.SendTokenRequestAsync(this.GetCodeRedemptionRequestBody(code));
+                authResult.CanSignOut = true;
+
+                return authResult;
+            }
+
+            return null;
+        }
+
+        internal string GetCodeRedemptionRequestBody(string code)
+        {
+            var returnUrlForRequest = string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
+                ? WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString()
+                : this.ServiceInfo.ReturnUrl;
+
+            var requestBodyString = string.Format(
+                "{0}={1}&{2}={3}&{4}={5}&{6}={7}&{8}=authorization_code",
+                Constants.Authentication.RedirectUriKeyName,
+                returnUrlForRequest,
+                Constants.Authentication.ClientIdKeyName,
+                this.ServiceInfo.AppId,
+                Constants.Authentication.ScopeKeyName,
+                WebUtility.UrlEncode(string.Join(" ", this.ServiceInfo.Scopes)),
+                Constants.Authentication.CodeKeyName,
+                code,
+                Constants.Authentication.GrantTypeKeyName);
+
+            if (!string.IsNullOrEmpty(this.ServiceInfo.ClientSecret))
+            {
+                requestBodyString += "&client_secret=" + this.ServiceInfo.ClientSecret;
+            }
+
+            return requestBodyString;
+        }
+
+        private async Task<string> GetAuthorizationCodeAsync()
+        {
             var returnUrlForRequest = string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
                 ? WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString()
                 : this.ServiceInfo.ReturnUrl;
@@ -74,7 +117,13 @@ namespace Microsoft.OneDrive.Sdk
             requestUriStringBuilder.AppendFormat("?{0}={1}", Constants.Authentication.RedirectUriKeyName, returnUrlForRequest);
             requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
             requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, string.Join("%20", this.ServiceInfo.Scopes));
-            requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ResponseTypeKeyName, Constants.Authentication.TokenResponseTypeValueName);
+
+            if (!string.IsNullOrEmpty(this.ServiceInfo.UserId))
+            {
+                requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.UserIdKeyName, this.ServiceInfo.UserId);
+            }
+
+            requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ResponseTypeKeyName, Constants.Authentication.CodeKeyName);
 
             var requestUri = new Uri(requestUriStringBuilder.ToString());
 
@@ -86,7 +135,13 @@ namespace Microsoft.OneDrive.Sdk
 
             OAuthErrorHandler.ThrowIfError(authenticationResponseValues);
 
-            return new AccountSession(authenticationResponseValues, this.ServiceInfo.AppId, AccountType.MicrosoftAccount) { CanSignOut = true };
+            string code;
+            if (authenticationResponseValues != null && authenticationResponseValues.TryGetValue("code", out code))
+            {
+                return code;
+            }
+
+            return null;
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Microsoft.OneDrive.Sdk
             {
                 result = await this.AuthenticateAsync(requestUri, callbackUri, WebAuthenticationOptions.SilentMode);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 // WebAuthenticationBroker can throw an exception in silent authentication mode when not using SSO and
                 // silent authentication isn't available. Swallow it and try authenticating with user prompt. Even if
