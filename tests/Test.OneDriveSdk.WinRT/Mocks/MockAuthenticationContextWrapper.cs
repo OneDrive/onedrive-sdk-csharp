@@ -29,8 +29,16 @@ namespace Test.OneDriveSdk.WinRT.Mocks
 
     public class MockAuthenticationContextWrapper : IAuthenticationContextWrapper
     {
-        public delegate IAuthenticationResult AuthenticationResultCallback(string resource, string clientId, Uri redirectUri);
-        public delegate IAuthenticationResult AuthenticationResultSilentCallback(string resource, string clientId);
+        public delegate IAuthenticationResult AuthenticationResultCallback(
+            string resource,
+            string clientId,
+            Uri redirectUri,
+            UserIdentifier userIdentifier);
+
+        public delegate IAuthenticationResult AuthenticationResultSilentCallback(
+            string resource,
+            string clientId,
+            UserIdentifier userIdentifier);
 
         public AuthenticationResultCallback AcquireTokenAsyncCallback { get; set; }
         public AuthenticationResultSilentCallback AcquireTokenSilentAsyncCallback { get; set; }
@@ -42,12 +50,12 @@ namespace Test.OneDriveSdk.WinRT.Mocks
             PromptBehavior promptBehavior,
             UserIdentifier userIdentifier)
         {
-            return Task.FromResult(this.AcquireTokenAsyncCallback(resource, clientId, redirectUri));
+            return Task.FromResult(this.AcquireTokenAsyncCallback(resource, clientId, redirectUri, userIdentifier));
         }
 
         public Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId, UserIdentifier userIdentifier)
         {
-            return Task.FromResult(this.AcquireTokenSilentAsyncCallback(resource, clientId));
+            return Task.FromResult(this.AcquireTokenSilentAsyncCallback(resource, clientId, userIdentifier));
         }
     }
 }

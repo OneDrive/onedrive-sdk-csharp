@@ -52,6 +52,9 @@ namespace Microsoft.OneDrive.Sdk
             this.serviceInfoProvider = serviceInfoProvider ?? new ServiceInfoProvider();
         }
 
+        /// <summary>
+        /// Gets the <see cref="IAuthenticationProvider"/> for authenticating requests.
+        /// </summary>
         public IAuthenticationProvider AuthenticationProvider
         {
             get
@@ -87,6 +90,9 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="ClientType"/> of the client.
+        /// </summary>
         public ClientType ClientType { get; private set; }
 
         /// <summary>

@@ -90,119 +90,49 @@ namespace Test.OneDriveSdk.WinRT
         [TestMethod]
         public async Task AuthenticateAsync_AuthenticateSilentlyWithDiscoveryService()
         {
-            const string serviceResourceId = "https://localhost/resource/";
+            await this.AuthenticateAsync_AuthenticateSilentlyWithDiscoveryService_Base(false);
+        }
 
-            var authenticationResult = new MockAuthenticationResult
-            {
-                AccessToken = "token",
-                AccessTokenType = "type",
-                ExpiresOn = DateTimeOffset.UtcNow,
-                Status = AuthenticationStatus.Success,
-            };
-
-            await this.AuthenticateAsync_AuthenticateWithDiscoveryService(
-                authenticationResult,
-                (string resource, string clientId, Uri redirectUri) =>
-                {
-                    switch (resource)
-                    {
-                        case (Constants.Authentication.ActiveDirectoryDiscoveryResource):
-                            return new MockAuthenticationResult { AccessToken = "discoveryServiceToken" };
-                        default:
-                            return null;
-                    }
-                },
-                (string resource, string clientId) =>
-                {
-                    switch (resource)
-                    {
-                        case (serviceResourceId):
-                            return authenticationResult;
-                        case (Constants.Authentication.ActiveDirectoryDiscoveryResource):
-                            throw new Exception();
-                        default:
-                            return null;
-                    }
-                });
+        [TestMethod]
+        public async Task AuthenticateAsync_AuthenticateSilentlyWithDiscoveryService_UserSignInNameSet()
+        {
+            await this.AuthenticateAsync_AuthenticateSilentlyWithDiscoveryService_Base(true);
         }
 
         [TestMethod]
         public async Task AuthenticateAsync_AuthenticateWithDiscoveryService()
         {
-            const string serviceResourceId = "https://localhost/resource/";
+            await this.AuthenticateAsync_AuthenticateWithDiscoveryService_Base(false);
+        }
 
-            var authenticationResult = new MockAuthenticationResult
-            {
-                AccessToken = "token",
-                AccessTokenType = "type",
-                ExpiresOn = DateTimeOffset.UtcNow,
-                Status = AuthenticationStatus.Success,
-            };
-
-            await this.AuthenticateAsync_AuthenticateWithDiscoveryService(
-                authenticationResult,
-                (string resource, string clientId, Uri redirectUri) =>
-                    {
-                        switch (resource)
-                        {
-                            case (serviceResourceId):
-                                return authenticationResult;
-                            case (Constants.Authentication.ActiveDirectoryDiscoveryResource):
-                                return new MockAuthenticationResult { AccessToken = "discoveryServiceToken" };
-                            default:
-                                return null;
-                        }
-                    },
-                (string resource, string clientId) =>
-                    {
-                        throw new Exception();
-                    });
+        [TestMethod]
+        public async Task AuthenticateAsync_AuthenticateWithDiscoveryService_UserSignInNameSet()
+        {
+            await this.AuthenticateAsync_AuthenticateWithDiscoveryService_Base(true);
         }
 
         [TestMethod]
         public async Task AuthenticateAsync_AuthenticateSilentlyWithoutDiscoveryService()
         {
-            var silentAuthenticationResult = new MockAuthenticationResult
-            {
-                AccessToken = "token",
-                AccessTokenType = "type",
-                ExpiresOn = DateTimeOffset.UtcNow,
-                Status = AuthenticationStatus.Success,
-            };
+            await this.AuthenticateAsync_AuthenticateSilentlyWithoutDiscoveryService_Base(false);
+        }
 
-            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService(
-                silentAuthenticationResult,
-                null,
-                (string resource, string clientId) =>
-                {
-                    return silentAuthenticationResult;
-                });
+        [TestMethod]
+        public async Task AuthenticateAsync_AuthenticateSilentlyWithoutDiscoveryService_UserSignInNameSet()
+        {
+            await this.AuthenticateAsync_AuthenticateSilentlyWithoutDiscoveryService_Base(true);
         }
 
         [TestMethod]
         public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService()
         {
-            this.serviceInfo.ServiceResource = "https://resource/";
-            this.serviceInfo.BaseUrl = "https://localhost";
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(false);
+        }
 
-            var authenticationResult = new MockAuthenticationResult
-            {
-                AccessToken = "token",
-                AccessTokenType = "type",
-                ExpiresOn = DateTimeOffset.UtcNow,
-                Status = AuthenticationStatus.Success,
-            };
-
-            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService(
-                authenticationResult,
-                (string resource, string clientId, Uri redirectUri) =>
-                {
-                    return authenticationResult;
-                },
-                (string resource, string clientId) =>
-                {
-                    throw new Exception();
-                });
+        [TestMethod]
+        public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService_UserSignInNameSet()
+        {
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(true);
         }
 
         [TestMethod]
@@ -220,11 +150,11 @@ namespace Test.OneDriveSdk.WinRT
             try
             {
                 await this.AuthenticateWithDiscoveryService(
-                    (string resource, string clientId, Uri redirectUri) =>
+                    (string resource, string clientId, Uri redirectUri, UserIdentifier userIdentifier) =>
                     {
                         return authenticationResult;
                     },
-                    (string resource, string clientId) =>
+                    (string resource, string clientId, UserIdentifier userIdentifier) =>
                     {
                         throw new Exception();
                     });
@@ -253,7 +183,7 @@ namespace Test.OneDriveSdk.WinRT
             try
             {
                 await this.AuthenticateWithDiscoveryService(
-                    (string resource, string clientId, Uri redirectUri) =>
+                    (string resource, string clientId, Uri redirectUri, UserIdentifier userIdentifier) =>
                     {
                         switch (resource)
                         {
@@ -263,7 +193,7 @@ namespace Test.OneDriveSdk.WinRT
                                 return null;
                         }
                     },
-                    (string resource, string clientId) =>
+                    (string resource, string clientId, UserIdentifier userIdentifier) =>
                     {
                         throw new Exception();
                     },
@@ -304,7 +234,7 @@ namespace Test.OneDriveSdk.WinRT
             try
             {
                 await this.AuthenticateWithDiscoveryService(
-                    (string resource, string clientId, Uri redirectUri) =>
+                    (string resource, string clientId, Uri redirectUri, UserIdentifier userIdentifier) =>
                     {
                         switch (resource)
                         {
@@ -314,7 +244,7 @@ namespace Test.OneDriveSdk.WinRT
                                 return null;
                         }
                     },
-                    (string resource, string clientId) =>
+                    (string resource, string clientId, UserIdentifier userIdentifier) =>
                     {
                         throw new Exception();
                     },
@@ -355,7 +285,7 @@ namespace Test.OneDriveSdk.WinRT
             try
             {
                 await this.AuthenticateWithDiscoveryService(
-                    (string resource, string clientId, Uri redirectUri) =>
+                    (string resource, string clientId, Uri redirectUri, UserIdentifier userIdentifier) =>
                     {
                         switch (resource)
                         {
@@ -365,7 +295,7 @@ namespace Test.OneDriveSdk.WinRT
                                 return null;
                         }
                     },
-                    (string resource, string clientId) =>
+                    (string resource, string clientId, UserIdentifier userIdentifier) =>
                     {
                         throw new Exception();
                     },
@@ -393,11 +323,11 @@ namespace Test.OneDriveSdk.WinRT
             try
             {
                 await this.AuthenticateWithDiscoveryService(
-                    (string resource, string clientId, Uri redirectUri) =>
+                    (string resource, string clientId, Uri redirectUri, UserIdentifier userIdentifier) =>
                     {
                         return null;
                     },
-                    (string resource, string clientId) =>
+                    (string resource, string clientId, UserIdentifier userIdentifier) =>
                     {
                         throw new Exception();
                     });
@@ -622,6 +552,186 @@ namespace Test.OneDriveSdk.WinRT
             }
 
             return accountSession;
+        }
+
+        private async Task AuthenticateAsync_AuthenticateSilentlyWithDiscoveryService_Base(bool setUserSignInName)
+        {
+            const string serviceResourceId = "https://localhost/resource/";
+
+            if (setUserSignInName)
+            {
+                this.serviceInfo.UserId = "email";
+            }
+
+            var authenticationResult = new MockAuthenticationResult
+            {
+                AccessToken = "token",
+                AccessTokenType = "type",
+                ExpiresOn = DateTimeOffset.UtcNow,
+                Status = AuthenticationStatus.Success,
+            };
+
+            await this.AuthenticateAsync_AuthenticateWithDiscoveryService(
+                authenticationResult,
+                (string resource, string clientId, Uri redirectUri, UserIdentifier userIdentifier) =>
+                {
+                    if (setUserSignInName)
+                    {
+                        Assert.AreEqual(this.serviceInfo.UserId, userIdentifier.Id, "Unexpected user identifier.");
+                    }
+                    else
+                    {
+                        Assert.AreEqual(UserIdentifier.AnyUser, userIdentifier, "Unexpected user identifier.");
+                    }
+
+                    switch (resource)
+                    {
+                        case (Constants.Authentication.ActiveDirectoryDiscoveryResource):
+                            return new MockAuthenticationResult { AccessToken = "discoveryServiceToken" };
+                        default:
+                            return null;
+                    }
+                },
+                (string resource, string clientId, UserIdentifier userIdentifier) =>
+                {
+                    if (setUserSignInName)
+                    {
+                        Assert.AreEqual(this.serviceInfo.UserId, userIdentifier.Id, "Unexpected user identifier.");
+                    }
+                    else
+                    {
+                        Assert.AreEqual(UserIdentifier.AnyUser, userIdentifier, "Unexpected user identifier.");
+                    }
+
+                    switch (resource)
+                    {
+                        case (serviceResourceId):
+                            return authenticationResult;
+                        case (Constants.Authentication.ActiveDirectoryDiscoveryResource):
+                            throw new Exception();
+                        default:
+                            return null;
+                    }
+                });
+        }
+
+
+        public async Task AuthenticateAsync_AuthenticateSilentlyWithoutDiscoveryService_Base(bool setUserSignInName)
+        {
+            if (setUserSignInName)
+            {
+                this.serviceInfo.UserId = "email";
+            }
+
+            var silentAuthenticationResult = new MockAuthenticationResult
+            {
+                AccessToken = "token",
+                AccessTokenType = "type",
+                ExpiresOn = DateTimeOffset.UtcNow,
+                Status = AuthenticationStatus.Success,
+            };
+
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService(
+                silentAuthenticationResult,
+                null,
+                (string resource, string clientId, UserIdentifier userIdentifier) =>
+                {
+                    if (setUserSignInName)
+                    {
+                        Assert.AreEqual(this.serviceInfo.UserId, userIdentifier.Id, "Unexpected user identifier.");
+                    }
+                    else
+                    {
+                        Assert.AreEqual(UserIdentifier.AnyUser, userIdentifier, "Unexpected user identifier.");
+                    }
+
+                    return silentAuthenticationResult;
+                });
+        }
+
+        public async Task AuthenticateAsync_AuthenticateWithDiscoveryService_Base(bool setUserSignInName)
+        {
+            const string serviceResourceId = "https://localhost/resource/";
+
+            if (setUserSignInName)
+            {
+                this.serviceInfo.UserId = "email";
+            }
+
+            var authenticationResult = new MockAuthenticationResult
+            {
+                AccessToken = "token",
+                AccessTokenType = "type",
+                ExpiresOn = DateTimeOffset.UtcNow,
+                Status = AuthenticationStatus.Success,
+            };
+
+            await this.AuthenticateAsync_AuthenticateWithDiscoveryService(
+                authenticationResult,
+                (string resource, string clientId, Uri redirectUri, UserIdentifier userIdentifier) =>
+                {
+                    if (setUserSignInName)
+                    {
+                        Assert.AreEqual(this.serviceInfo.UserId, userIdentifier.Id, "Unexpected user identifier.");
+                    }
+                    else
+                    {
+                        Assert.AreEqual(UserIdentifier.AnyUser, userIdentifier, "Unexpected user identifier.");
+                    }
+
+                    switch (resource)
+                    {
+                        case (serviceResourceId):
+                            return authenticationResult;
+                        case (Constants.Authentication.ActiveDirectoryDiscoveryResource):
+                            return new MockAuthenticationResult { AccessToken = "discoveryServiceToken" };
+                        default:
+                            return null;
+                    }
+                },
+                (string resource, string clientId, UserIdentifier userIdentifier) =>
+                {
+                    throw new Exception();
+                });
+        }
+
+        private async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(bool setUserSignInName)
+        {
+            this.serviceInfo.ServiceResource = "https://resource/";
+            this.serviceInfo.BaseUrl = "https://localhost";
+
+            if (setUserSignInName)
+            {
+                this.serviceInfo.UserId = "email";
+            }
+
+            var authenticationResult = new MockAuthenticationResult
+            {
+                AccessToken = "token",
+                AccessTokenType = "type",
+                ExpiresOn = DateTimeOffset.UtcNow,
+                Status = AuthenticationStatus.Success,
+            };
+
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService(
+                authenticationResult,
+                (string resource, string clientId, Uri redirectUri, UserIdentifier userIdentifier) =>
+                {
+                    if (setUserSignInName)
+                    {
+                        Assert.AreEqual(this.serviceInfo.UserId, userIdentifier.Id, "Unexpected user identifier.");
+                    }
+                    else
+                    {
+                        Assert.AreEqual(UserIdentifier.AnyUser, userIdentifier, "Unexpected user identifier.");
+                    }
+
+                    return authenticationResult;
+                },
+                (string resource, string clientId, UserIdentifier userIdentifier) =>
+                {
+                    throw new Exception();
+                });
         }
 
         private void OnAuthenticateAsync_SignOut(Uri requestUri, Uri callbackUri)

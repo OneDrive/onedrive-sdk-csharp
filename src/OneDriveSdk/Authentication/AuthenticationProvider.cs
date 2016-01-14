@@ -31,7 +31,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Threading.Tasks;
 
     /// <summary>
-    /// An <see cref="IAuthenticationProvider"/> implementation using the Live SDK.
+    /// A default <see cref="IAuthenticationProvider"/> implementation.
     /// </summary>
     public abstract class AuthenticationProvider : IAuthenticationProvider
     {
