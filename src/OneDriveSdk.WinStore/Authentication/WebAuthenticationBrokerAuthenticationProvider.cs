@@ -66,79 +66,19 @@ namespace Microsoft.OneDrive.Sdk
 
         internal async Task<AccountSession> GetAccountSessionAsync()
         {
+            var returnUrl = string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
+                ? WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString()
+                : this.ServiceInfo.ReturnUrl;
+
             // Log the user in if we haven't already pulled their credentials from the cache.
-            var code = await this.GetAuthorizationCodeAsync();
+            var code = await this.GetAuthorizationCodeAsync(returnUrl);
 
             if (!string.IsNullOrEmpty(code))
             {
-                var authResult = await this.SendTokenRequestAsync(this.GetCodeRedemptionRequestBody(code));
+                var authResult = await this.SendTokenRequestAsync(this.GetCodeRedemptionRequestBody(code, returnUrl));
                 authResult.CanSignOut = true;
 
                 return authResult;
-            }
-
-            return null;
-        }
-
-        internal string GetCodeRedemptionRequestBody(string code)
-        {
-            var returnUrlForRequest = string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
-                ? WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString()
-                : this.ServiceInfo.ReturnUrl;
-
-            var requestBodyString = string.Format(
-                "{0}={1}&{2}={3}&{4}={5}&{6}={7}&{8}=authorization_code",
-                Constants.Authentication.RedirectUriKeyName,
-                returnUrlForRequest,
-                Constants.Authentication.ClientIdKeyName,
-                this.ServiceInfo.AppId,
-                Constants.Authentication.ScopeKeyName,
-                WebUtility.UrlEncode(string.Join(" ", this.ServiceInfo.Scopes)),
-                Constants.Authentication.CodeKeyName,
-                code,
-                Constants.Authentication.GrantTypeKeyName);
-
-            if (!string.IsNullOrEmpty(this.ServiceInfo.ClientSecret))
-            {
-                requestBodyString += "&client_secret=" + this.ServiceInfo.ClientSecret;
-            }
-
-            return requestBodyString;
-        }
-
-        private async Task<string> GetAuthorizationCodeAsync()
-        {
-            var returnUrlForRequest = string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
-                ? WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString()
-                : this.ServiceInfo.ReturnUrl;
-
-            var requestUriStringBuilder = new StringBuilder();
-            requestUriStringBuilder.Append(this.ServiceInfo.AuthenticationServiceUrl);
-            requestUriStringBuilder.AppendFormat("?{0}={1}", Constants.Authentication.RedirectUriKeyName, returnUrlForRequest);
-            requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
-            requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, string.Join("%20", this.ServiceInfo.Scopes));
-
-            if (!string.IsNullOrEmpty(this.ServiceInfo.UserId))
-            {
-                requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.UserIdKeyName, this.ServiceInfo.UserId);
-            }
-
-            requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ResponseTypeKeyName, Constants.Authentication.CodeKeyName);
-
-            var requestUri = new Uri(requestUriStringBuilder.ToString());
-
-            var authenticationResponseValues = await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(
-                requestUri,
-                string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
-                    ? null
-                    : new Uri(this.ServiceInfo.ReturnUrl));
-
-            OAuthErrorHandler.ThrowIfError(authenticationResponseValues);
-
-            string code;
-            if (authenticationResponseValues != null && authenticationResponseValues.TryGetValue("code", out code))
-            {
-                return code;
             }
 
             return null;
