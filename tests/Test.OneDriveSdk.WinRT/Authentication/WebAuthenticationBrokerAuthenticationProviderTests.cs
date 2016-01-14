@@ -29,6 +29,9 @@ namespace Test.OneDriveSdk.WinRT
     using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
     using Mocks;
     using System.Collections.Generic;
+    using System.Net.Http;
+    using System.IO;
+    using Windows.Security.Authentication.Web;
 
     [TestClass]
     public class WebAuthenticationBrokerAuthenticationProviderTests
@@ -64,30 +67,87 @@ namespace Test.OneDriveSdk.WinRT
         [TestMethod]
         public async Task GetAccountSessionAsync_ReturnUri()
         {
+            const string code = "code";
             const string token = "token";
 
             this.serviceInfo.ReturnUrl = "https://login.live.com/returnUrl";
             this.signOut = false;
-            this.webAuthenticationUi.responseValues = new Dictionary<string, string> { { Constants.Authentication.AccessTokenKeyName, token } };
+            this.webAuthenticationUi.responseValues = new Dictionary<string, string> { { Constants.Authentication.CodeKeyName, code } };
+            this.webAuthenticationUi.OnAuthenticateAsync = (Uri requestUri, Uri callbackUri) =>
+            {
+                Assert.IsTrue(requestUri.ToString().Contains("response_type=code"), "Unexpected request Uri.");
+                Assert.IsTrue(callbackUri.ToString().Equals(this.serviceInfo.ReturnUrl), "Unexpected callback Uri.");
+            };
 
-            var accountSession = await this.authenticationProvider.GetAccountSessionAsync();
+            using (var httpResponseMessage = new HttpResponseMessage())
+            using (var responseStream = new MemoryStream())
+            using (var streamContent = new StreamContent(responseStream))
+            {
+                httpResponseMessage.Content = streamContent;
 
-            Assert.IsNotNull(accountSession, "No account session returned.");
-            Assert.AreEqual(token, accountSession.AccessToken, "Unexpected token returned.");
+                var mockSerializer = new MockSerializer();
+
+                mockSerializer.OnDeserializeObjectStream = (Stream stream) =>
+                {
+                    mockSerializer.DeserializeObjectResponse = new Dictionary<string, string> { { Constants.Authentication.AccessTokenKeyName, token } };
+                };
+
+                this.serviceInfo.HttpProvider = new MockHttpProvider(httpResponseMessage, mockSerializer)
+                {
+                    OnSendAsync = (HttpRequestMessage requestMessage) =>
+                    {
+                        Assert.IsTrue(requestMessage.RequestUri.ToString().Equals(this.serviceInfo.TokenServiceUrl), "Unexpected token request URL.");
+                    }
+                };
+
+                var accountSession = await this.authenticationProvider.GetAccountSessionAsync();
+
+                Assert.IsNotNull(accountSession, "No account session returned.");
+                Assert.AreEqual(token, accountSession.AccessToken, "Unexpected token returned.");
+            }
         }
 
         [TestMethod]
         public async Task GetAccountSessionAsync_SingleSignOn()
         {
+            const string code = "code";
             const string token = "token";
 
             this.signOut = false;
-            this.webAuthenticationUi.responseValues = new Dictionary<string, string> { { Constants.Authentication.AccessTokenKeyName, token } };
 
-            var accountSession = await this.authenticationProvider.GetAccountSessionAsync();
+            this.webAuthenticationUi.responseValues = new Dictionary<string, string> { { Constants.Authentication.CodeKeyName, code } };
+            this.webAuthenticationUi.OnAuthenticateAsync = (Uri requestUri, Uri callbackUri) =>
+            {
+                Assert.IsTrue(requestUri.ToString().Contains("response_type=code"), "Unexpected request Uri.");
+                Assert.IsTrue(callbackUri.ToString().Equals(WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString()), "Unexpected callback Uri.");
+            };
 
-            Assert.IsNotNull(accountSession, "No account session returned.");
-            Assert.AreEqual(token, accountSession.AccessToken, "Unexpected token returned.");
+            using (var httpResponseMessage = new HttpResponseMessage())
+            using (var responseStream = new MemoryStream())
+            using (var streamContent = new StreamContent(responseStream))
+            {
+                httpResponseMessage.Content = streamContent;
+
+                var mockSerializer = new MockSerializer();
+
+                mockSerializer.OnDeserializeObjectStream = (Stream stream) =>
+                {
+                    mockSerializer.DeserializeObjectResponse = new Dictionary<string, string> { { Constants.Authentication.AccessTokenKeyName, token } };
+                };
+
+                this.serviceInfo.HttpProvider = new MockHttpProvider(httpResponseMessage, mockSerializer)
+                {
+                    OnSendAsync = (HttpRequestMessage requestMessage) =>
+                    {
+                        Assert.IsTrue(requestMessage.RequestUri.ToString().Equals(this.serviceInfo.TokenServiceUrl), "Unexpected token request URL.");
+                    }
+                };
+
+                var accountSession = await this.authenticationProvider.GetAccountSessionAsync();
+
+                Assert.IsNotNull(accountSession, "No account session returned.");
+                Assert.AreEqual(token, accountSession.AccessToken, "Unexpected token returned.");
+            }
         }
 
         [TestMethod]
