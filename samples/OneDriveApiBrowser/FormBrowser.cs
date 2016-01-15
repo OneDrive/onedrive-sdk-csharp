@@ -473,10 +473,15 @@ namespace OneDriveApiBrowser
 
         private static void PresentOneDriveException(Exception exception)
         {
-            string message = exception.Message;
-            if (string.IsNullOrEmpty(message) && exception.InnerException != null)
+            string message = null;
+            var oneDriveException = exception as OneDriveException;
+            if (oneDriveException == null)
             {
-                message = exception.InnerException.Message;
+                message = exception.Message;
+            }
+            else
+            {
+                message = string.Format("{0}{1}", Environment.NewLine, oneDriveException.ToString());
             }
 
             MessageBox.Show(string.Format("OneDrive reported the following error: {0}", message));

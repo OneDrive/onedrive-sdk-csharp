@@ -55,5 +55,15 @@ namespace Microsoft.OneDrive.Sdk
 
             return false;
         }
+
+        public override string ToString()
+        {
+            if (this.Error != null)
+            {
+                return this.Error.ToString();
+            }
+
+            return null;
+        }
     }
 }

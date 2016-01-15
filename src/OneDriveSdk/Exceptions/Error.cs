@@ -22,10 +22,11 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
-    using Newtonsoft.Json;
+    using System;
     using System.Collections.Generic;
-    using System.Net;
     using System.Runtime.Serialization;
+    using System.Text;
+    using Newtonsoft.Json;
 
     [DataContract]
     public class Error
@@ -44,5 +45,38 @@ namespace Microsoft.OneDrive.Sdk
 
         [JsonExtensionData]
         public IDictionary<string, object> AdditionalData { get; set; }
+
+        public override string ToString()
+        {
+            var errorStringBuilder = new StringBuilder();
+
+            if (!string.IsNullOrEmpty(this.Code))
+            {
+                errorStringBuilder.AppendFormat("Code: {0}", this.Code);
+                errorStringBuilder.Append(Environment.NewLine);
+            }
+
+            if (!string.IsNullOrEmpty(this.ThrowSite))
+            {
+                errorStringBuilder.AppendFormat("Throw site: {0}", this.ThrowSite);
+                errorStringBuilder.Append(Environment.NewLine);
+            }
+
+            if (!string.IsNullOrEmpty(this.Message))
+            {
+                errorStringBuilder.AppendFormat("Message: {0}", this.Message);
+                errorStringBuilder.Append(Environment.NewLine);
+            }
+
+            if (this.InnerError != null)
+            {
+                errorStringBuilder.Append(Environment.NewLine);
+                errorStringBuilder.Append("Inner error");
+                errorStringBuilder.Append(Environment.NewLine);
+                errorStringBuilder.Append(this.InnerError.ToString());
+            }
+
+            return errorStringBuilder.ToString();
+        }
     }
 }
