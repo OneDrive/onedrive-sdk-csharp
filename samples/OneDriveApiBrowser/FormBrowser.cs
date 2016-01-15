@@ -330,7 +330,7 @@ namespace OneDriveApiBrowser
                     }
                     else
                     {
-                        throw;
+                        PresentOneDriveException(exception);
                     }
                 }
             }

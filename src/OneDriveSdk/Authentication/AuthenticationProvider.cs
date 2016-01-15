@@ -190,24 +190,19 @@ namespace Microsoft.OneDrive.Sdk
         {
             returnUrl = returnUrl ?? this.ServiceInfo.ReturnUrl;
 
-            var requestBodyString = string.Format(
-                "{0}={1}&{2}={3}&{4}={5}&{6}={7}&{8}=authorization_code",
-                Constants.Authentication.RedirectUriKeyName,
-                returnUrl,
-                Constants.Authentication.ClientIdKeyName,
-                this.ServiceInfo.AppId,
-                Constants.Authentication.ScopeKeyName,
-                WebUtility.UrlEncode(string.Join(" ", this.ServiceInfo.Scopes)),
-                Constants.Authentication.CodeKeyName,
-                code,
-                Constants.Authentication.GrantTypeKeyName);
+            var requestBodyStringBuilder = new StringBuilder();
+            requestBodyStringBuilder.AppendFormat("{0}={1}", Constants.Authentication.RedirectUriKeyName, returnUrl);
+            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
+            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, WebUtility.UrlEncode(string.Join(" ", this.ServiceInfo.Scopes)));
+            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.CodeKeyName, code);
+            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.GrantTypeKeyName, Constants.Authentication.AuthorizationCodeGrantType);
 
             if (!string.IsNullOrEmpty(this.ServiceInfo.ClientSecret))
             {
-                requestBodyString += "&client_secret=" + this.ServiceInfo.ClientSecret;
+                requestBodyStringBuilder.AppendFormat("&client_secret={0}", this.ServiceInfo.ClientSecret);
             }
 
-            return requestBodyString;
+            return requestBodyStringBuilder.ToString();
         }
 
         protected virtual Task<AccountSession> RefreshAccessTokenAsync(string refreshToken)

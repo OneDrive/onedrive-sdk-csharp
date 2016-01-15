@@ -32,6 +32,8 @@ namespace Microsoft.OneDrive.Sdk
 
             public const string AuthenticationCancelled = "authentication_cancelled";
 
+            public const string AuthorizationCodeGrantType = "authorization_code";
+
             public const string AuthorizationServiceKey = "authorization_service";
 
             public const string ClientIdKeyName = "client_id";
