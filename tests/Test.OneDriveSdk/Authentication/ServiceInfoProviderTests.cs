@@ -55,7 +55,10 @@ namespace Test.OneDriveSdk.Authentication
             this.httpResponseMessage = new HttpResponseMessage();
             this.httpProvider = new MockHttpProvider(this.httpResponseMessage);
             this.webAuthenticationUi = new MockWebAuthenticationUi();
-            this.serviceInfoProvider = new ServiceInfoProvider(this.webAuthenticationUi.Object);
+            this.serviceInfoProvider = new ServiceInfoProvider(this.webAuthenticationUi.Object)
+            {
+                UserSignInName = "email",
+            };
         }
 
         [TestCleanup]
@@ -82,7 +85,7 @@ namespace Test.OneDriveSdk.Authentication
             Assert.AreEqual(this.appConfig.MicrosoftAccountClientSecret, serviceInfo.ClientSecret, "Unexpected client secret set.");
             Assert.AreEqual(this.appConfig.MicrosoftAccountReturnUrl, serviceInfo.ReturnUrl, "Unexpected return URL set.");
             Assert.AreEqual(this.appConfig.MicrosoftAccountScopes, serviceInfo.Scopes, "Unexpected scopes set.");
-            Assert.AreEqual(this.credentialCache.Object, serviceInfo.CredentialCache, "Unexpected credential cache set.");
+            Assert.AreEqual("email", serviceInfo.UserId, "Unexpected user ID set.");
             Assert.AreEqual(this.webAuthenticationUi.Object, serviceInfo.WebAuthenticationUi, "Unexpected web UI set.");
         }
 

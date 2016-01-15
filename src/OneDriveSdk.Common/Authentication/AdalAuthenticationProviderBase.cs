@@ -27,6 +27,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
     public abstract class AdalAuthenticationProviderBase : IAuthenticationProvider
     {
@@ -159,6 +160,13 @@ namespace Microsoft.OneDrive.Sdk
             {
                 this.ServiceInfo.CredentialCache.DeleteFromCache(accountSession);
             }
+        }
+
+        protected UserIdentifier GetUserIdentifierForAuthentication()
+        {
+            return string.IsNullOrEmpty(this.serviceInfo.UserId)
+                ? UserIdentifier.AnyUser
+                : new UserIdentifier(this.serviceInfo.UserId, UserIdentifierType.OptionalDisplayableId);
         }
 
         private async Task<string> GetAuthenticationTokenForResourceAsync(string resource)

@@ -45,7 +45,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (!this.client.IsAuthenticated)
+                if (!this.client.IsAuthenticated || this.client.AuthenticationProvider.CurrentAccountSession.IsExpiring())
                 {
                     await this.client.AuthenticateAsync();
                 }

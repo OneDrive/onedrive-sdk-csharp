@@ -121,6 +121,7 @@
     <Compile Include="Mocks\MockAdalCredentialCache.cs" />
     <Compile Include="Mocks\MockAuthenticationResult.cs" />
     <Compile Include="Mocks\MockCredentialCache.cs" />
+    <Compile Include="Mocks\MockSerializer.cs" />
     <Compile Include="Mocks\MockHttpProvider.cs" />
     <Compile Include="Mocks\MockWebAuthenticationUi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -201,7 +201,8 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 It.Is<string>(resource => resource.Equals(serviceResourceId)),
                 It.Is<string>(clientId => clientId.Equals(this.serviceInfo.AppId)),
                 It.Is<Uri>(returnUri => returnUri.ToString().Equals(this.serviceInfo.ReturnUrl)),
-                PromptBehavior.Always)).Returns(mockAuthenticationResult.Object);
+                PromptBehavior.Auto,
+                UserIdentifier.AnyUser)).Returns(mockAuthenticationResult.Object);
 
             await this.AuthenticateAsync_AuthenticateWithDiscoveryService(
                 mockAuthenticationContextWrapper,
@@ -229,7 +230,8 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 It.Is<string>(resource => resource.Equals(serviceResourceId)),
                 It.Is<string>(clientId => clientId.Equals(this.serviceInfo.AppId)),
                 It.Is<Uri>(returnUri => returnUri.ToString().Equals(this.serviceInfo.ReturnUrl)),
-                PromptBehavior.Always)).Returns(mockAuthenticationResult.Object);
+                PromptBehavior.Auto,
+                UserIdentifier.AnyUser)).Returns(mockAuthenticationResult.Object);
 
             await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService(
                 mockAuthenticationContextWrapper.Object,
@@ -254,7 +256,8 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 It.Is<string>(resource => resource.Equals(serviceResourceId)),
                 It.Is<string>(clientId => clientId.Equals(this.serviceInfo.AppId)),
                 It.Is<Uri>(returnUri => returnUri.ToString().Equals(this.serviceInfo.ReturnUrl)),
-                PromptBehavior.Always)).Throws(innerException);
+                PromptBehavior.Auto,
+                UserIdentifier.AnyUser)).Throws(innerException);
             
             try
             {
@@ -429,7 +432,8 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 It.Is<string>(resource => resource.Equals(serviceResourceId)),
                 It.Is<string>(clientId => clientId.Equals(this.serviceInfo.AppId)),
                 It.Is<Uri>(returnUri => returnUri.ToString().Equals(this.serviceInfo.ReturnUrl)),
-                PromptBehavior.Always)).Returns((IAuthenticationResult)null);
+                PromptBehavior.Auto,
+                UserIdentifier.AnyUser)).Returns((IAuthenticationResult)null);
 
             try
             {
@@ -614,7 +618,8 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 It.Is<string>(resource => resource.Equals(Constants.Authentication.ActiveDirectoryDiscoveryResource)),
                 It.Is<string>(clientId => clientId.Equals(this.serviceInfo.AppId)),
                 It.Is<Uri>(returnUri => returnUri.ToString().Equals(this.serviceInfo.ReturnUrl)),
-                PromptBehavior.Always)).Returns(mockAuthenticationResult.Object);
+                PromptBehavior.Auto,
+                UserIdentifier.AnyUser)).Returns(mockAuthenticationResult.Object);
 
             if (discoveryServiceResponse == null)
             {

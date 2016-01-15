@@ -26,6 +26,9 @@ namespace Microsoft.OneDrive.Sdk
 
     public interface IServiceInfoProvider
     {
+        /// <summary>
+        /// Gets the <see cref="IAuthenticationProvider"/> for authenticating requests.
+        /// </summary>
         IAuthenticationProvider AuthenticationProvider { get; }
 
         /// <summary>

@@ -32,6 +32,8 @@ namespace Microsoft.OneDrive.Sdk
 
             public const string AuthenticationCancelled = "authentication_cancelled";
 
+            public const string AuthorizationCodeGrantType = "authorization_code";
+
             public const string AuthorizationServiceKey = "authorization_service";
 
             public const string ClientIdKeyName = "client_id";
@@ -100,6 +102,8 @@ namespace Microsoft.OneDrive.Sdk
             public const string FormUrlEncodedContentType = "application/x-www-form-urlencoded";
 
             public const string SdkVersionHeaderValue = "SDK-Version=CSharp-v{0}";
+
+            public const string ThrowSiteHeaderName = "X-ThrowSite";
         }
 
         public static class Url

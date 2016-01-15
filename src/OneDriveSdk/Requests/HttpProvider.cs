@@ -23,6 +23,8 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -139,24 +141,40 @@ namespace Microsoft.OneDrive.Sdk
             {
                 using (response)
                 {
-                    var error = await this.ConvertErrorResponseAsync(response);
-
-                    if (error != null && error.Error != null)
+                    var errorResponse = await this.ConvertErrorResponseAsync(response);
+                    Error error = null;
+                    
+                    if (errorResponse == null || errorResponse.Error == null)
                     {
-                        throw new OneDriveException(error.Error);
-                    }
-
-                    if (response != null && response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        throw new OneDriveException(new Error { Code = OneDriveErrorCode.ItemNotFound.ToString() });
-                    }
-
-                    throw new OneDriveException(
-                        new Error
+                        if (response != null && response.StatusCode == HttpStatusCode.NotFound)
                         {
-                            Code = OneDriveErrorCode.GeneralException.ToString(),
-                            Message = "Unexpected exception returned from the service."
-                        });
+                            error = new Error { Code = OneDriveErrorCode.ItemNotFound.ToString() };
+                        }
+                        else
+                        {
+                            error = new Error
+                            {
+                                Code = OneDriveErrorCode.GeneralException.ToString(),
+                                Message = "Unexpected exception returned from the service."
+                            };
+                        }
+                    }
+                    else
+                    {
+                        error = errorResponse.Error;
+                    }
+
+                    if (string.IsNullOrEmpty(error.ThrowSite))
+                    {
+                        IEnumerable<string> throwsiteValues;
+
+                        if (response.Headers.TryGetValues(Constants.Headers.ThrowSiteHeaderName, out throwsiteValues))
+                        {
+                            error.ThrowSite = throwsiteValues.FirstOrDefault();
+                        }
+                    }
+
+                    throw new OneDriveException(error);
                 }
             }
 

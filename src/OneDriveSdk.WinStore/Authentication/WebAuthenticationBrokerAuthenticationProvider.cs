@@ -23,6 +23,7 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
+    using System.Net;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.Security.Authentication.Web;
@@ -65,28 +66,22 @@ namespace Microsoft.OneDrive.Sdk
 
         internal async Task<AccountSession> GetAccountSessionAsync()
         {
-            var returnUrlForRequest = string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
+            var returnUrl = string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
                 ? WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString()
                 : this.ServiceInfo.ReturnUrl;
 
-            var requestUriStringBuilder = new StringBuilder();
-            requestUriStringBuilder.Append(this.ServiceInfo.AuthenticationServiceUrl);
-            requestUriStringBuilder.AppendFormat("?{0}={1}", Constants.Authentication.RedirectUriKeyName, returnUrlForRequest);
-            requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
-            requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, string.Join("%20", this.ServiceInfo.Scopes));
-            requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ResponseTypeKeyName, Constants.Authentication.TokenResponseTypeValueName);
+            // Log the user in if we haven't already pulled their credentials from the cache.
+            var code = await this.GetAuthorizationCodeAsync(returnUrl);
 
-            var requestUri = new Uri(requestUriStringBuilder.ToString());
+            if (!string.IsNullOrEmpty(code))
+            {
+                var authResult = await this.SendTokenRequestAsync(this.GetCodeRedemptionRequestBody(code, returnUrl));
+                authResult.CanSignOut = true;
 
-            var authenticationResponseValues = await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(
-                requestUri,
-                string.IsNullOrEmpty(this.ServiceInfo.ReturnUrl)
-                    ? null
-                    : new Uri(this.ServiceInfo.ReturnUrl));
+                return authResult;
+            }
 
-            OAuthErrorHandler.ThrowIfError(authenticationResponseValues);
-
-            return new AccountSession(authenticationResponseValues, this.ServiceInfo.AppId, AccountType.MicrosoftAccount) { CanSignOut = true };
+            return null;
         }
     }
 }

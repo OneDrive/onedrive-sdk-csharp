@@ -28,12 +28,9 @@ namespace Microsoft.OneDrive.Sdk
 
     public class MicrosoftAccountAuthenticationProvider : AuthenticationProvider
     {
-        private readonly Uri callbackUri;
-
         public MicrosoftAccountAuthenticationProvider(ServiceInfo serviceInfo)
             : base (serviceInfo)
         {
-            this.callbackUri = new Uri(serviceInfo.ReturnUrl);
         }
 
         /// <summary>
@@ -51,34 +48,12 @@ namespace Microsoft.OneDrive.Sdk
                     this.ServiceInfo.AppId,
                     this.ServiceInfo.ReturnUrl));
 
-                    await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(requestUri, this.callbackUri);
+                    await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(requestUri, new Uri(ServiceInfo.ReturnUrl));
                 }
                 
                 this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
                 this.CurrentAccountSession = null;
             }
-        }
-
-        internal string GetCodeRedemptionRequestBody(string code)
-        {
-            var requestBodyString = string.Format(
-                "{0}={1}&{2}={3}&{4}={5}&{6}={7}&{8}=authorization_code",
-                Constants.Authentication.RedirectUriKeyName,
-                this.ServiceInfo.ReturnUrl,
-                Constants.Authentication.ClientIdKeyName,
-                this.ServiceInfo.AppId,
-                Constants.Authentication.ScopeKeyName,
-                WebUtility.UrlEncode(string.Join(" ", this.ServiceInfo.Scopes)),
-                Constants.Authentication.CodeKeyName,
-                code,
-                Constants.Authentication.GrantTypeKeyName);
-
-            if (!string.IsNullOrEmpty(this.ServiceInfo.ClientSecret))
-            {
-                requestBodyString += "&client_secret=" + this.ServiceInfo.ClientSecret;
-            }
-
-            return requestBodyString;
         }
 
         protected override async Task<AccountSession> GetAuthenticationResultAsync()
@@ -100,39 +75,6 @@ namespace Microsoft.OneDrive.Sdk
             }
 
             return authResult;
-        }
-
-        private async Task<string> GetAuthorizationCodeAsync()
-        {
-            if (this.ServiceInfo.WebAuthenticationUi != null)
-            {
-                var requestUriString = string.Format(
-                    "{0}?{1}={2}&{3}={4}&{5}={6}&{7}={8}",
-                    this.ServiceInfo.AuthenticationServiceUrl,
-                    Constants.Authentication.RedirectUriKeyName,
-                    this.ServiceInfo.ReturnUrl,
-                    Constants.Authentication.ClientIdKeyName,
-                    this.ServiceInfo.AppId,
-                    Constants.Authentication.ScopeKeyName,
-                    string.Join("%20", this.ServiceInfo.Scopes),
-                    Constants.Authentication.ResponseTypeKeyName,
-                    Constants.Authentication.CodeKeyName);
-
-                var requestUri = new Uri(requestUriString);
-
-                var authenticationResponseValues = await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(
-                    requestUri,
-                    this.callbackUri);
-                OAuthErrorHandler.ThrowIfError(authenticationResponseValues);
-
-                string code;
-                if (authenticationResponseValues != null && authenticationResponseValues.TryGetValue("code", out code))
-                {
-                    return code;
-                }
-            }
-
-            return null;
         }
         
         private Task<AccountSession> RedeemAuthorizationCodeAsync(string code)

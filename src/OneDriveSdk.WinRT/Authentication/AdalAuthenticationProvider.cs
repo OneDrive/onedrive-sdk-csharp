@@ -60,10 +60,11 @@ namespace Microsoft.OneDrive.Sdk
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;
+            var userIdentifier = this.GetUserIdentifierForAuthentication();
 
             try
             {
-                authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId);
+                authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId, userIdentifier);
             }
             catch (Exception)
             {
@@ -78,7 +79,9 @@ namespace Microsoft.OneDrive.Sdk
             authenticationResult = await this.authenticationContextWrapper.AcquireTokenAsync(
                 resource,
                 this.ServiceInfo.AppId,
-                new Uri(this.ServiceInfo.ReturnUrl));
+                new Uri(this.ServiceInfo.ReturnUrl),
+                PromptBehavior.Auto,
+                userIdentifier);
 
             if (authenticationResult == null || authenticationResult.Status != AuthenticationStatus.Success)
             {

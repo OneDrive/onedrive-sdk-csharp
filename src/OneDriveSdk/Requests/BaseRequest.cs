@@ -281,6 +281,16 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The request URL minus query string.</returns>
         private string InitializeUrl(string requestUrl)
         {
+            if (string.IsNullOrEmpty(requestUrl))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.InvalidRequest.ToString(),
+                        Message = "Base URL is not initialized for the request.",
+                    });
+            }
+
             var uri = new Uri(requestUrl);
             
             if (!string.IsNullOrEmpty(uri.Query))

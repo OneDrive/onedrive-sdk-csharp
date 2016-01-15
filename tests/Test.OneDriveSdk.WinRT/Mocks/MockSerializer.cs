@@ -22,35 +22,54 @@
 
 namespace Test.OneDriveSdk.WinRT.Mocks
 {
-    using System.Net.Http;
-    using System.Threading.Tasks;
+    using System.IO;
 
     using Microsoft.OneDrive.Sdk;
 
-    public delegate void SendAsyncCallback(HttpRequestMessage request);
+    public delegate void DeserializeObjectStreamCallback(Stream stream);
+    public delegate void DeserializeObjectStringCallback(string inputString);
+    public delegate string SerializeObjectCallback(object serializableObject);
 
-    public class MockHttpProvider : IHttpProvider
+    public class MockSerializer : ISerializer
     {
-        private HttpResponseMessage httpResponseMessage;
+        public object DeserializeObjectResponse { get; set; }
 
-        public MockHttpProvider(HttpResponseMessage httpResponseMessage, ISerializer serializer = null)
+        public string SerializeObjectResponse { get; set; }
+
+        public DeserializeObjectStreamCallback OnDeserializeObjectStream { get; set; }
+
+        public DeserializeObjectStringCallback OnDeserializeObjectString { get; set; }
+
+        public SerializeObjectCallback OnSerializeObject { get; set; }
+
+        public T DeserializeObject<T>(string inputString)
         {
-            this.httpResponseMessage = httpResponseMessage;
-            this.Serializer = serializer;
-        }
-
-        public SendAsyncCallback OnSendAsync { get; set; }
-
-        public ISerializer Serializer { get; private set; }
-
-        public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
-        {
-            if (this.OnSendAsync != null)
+            if (this.OnDeserializeObjectString != null)
             {
-                this.OnSendAsync(request);
+                this.OnDeserializeObjectString(inputString);
             }
 
-            return Task.FromResult(this.httpResponseMessage);
+            return (T)this.DeserializeObjectResponse;
+        }
+
+        public T DeserializeObject<T>(Stream stream)
+        {
+            if (this.OnDeserializeObjectStream != null)
+            {
+                this.OnDeserializeObjectStream(stream);
+            }
+
+            return (T)this.DeserializeObjectResponse;
+        }
+
+        public string SerializeObject(object serializeableObject)
+        {
+            if (this.OnSerializeObject != null)
+            {
+                this.OnSerializeObject(serializeableObject);
+            }
+
+            return this.SerializeObjectResponse;
         }
     }
 }

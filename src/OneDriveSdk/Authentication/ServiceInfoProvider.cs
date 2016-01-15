@@ -63,7 +63,15 @@ namespace Microsoft.OneDrive.Sdk
             this.webAuthenticationUi = webAuthenticationUi;
         }
 
+        /// <summary>
+        /// Gets the <see cref="IAuthenticationProvider"/> for authenticating requests.
+        /// </summary>
         public IAuthenticationProvider AuthenticationProvider { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the sign in name of the authenticating user.
+        /// </summary>
+        public string UserSignInName { get; set; }
 
         /// <summary>
         /// Generates the <see cref="ServiceInfo"/> for the current application configuration.
@@ -89,6 +97,7 @@ namespace Microsoft.OneDrive.Sdk
                     HttpProvider = httpProvider,
                     ReturnUrl = appConfig.MicrosoftAccountReturnUrl,
                     Scopes = appConfig.MicrosoftAccountScopes,
+                    UserId = this.UserSignInName,
                     WebAuthenticationUi = this.webAuthenticationUi,
                 };
 
@@ -104,6 +113,7 @@ namespace Microsoft.OneDrive.Sdk
                 CredentialCache = credentialCache,
                 HttpProvider = httpProvider,
                 ReturnUrl = appConfig.ActiveDirectoryReturnUrl,
+                UserId = this.UserSignInName,
             };
             
             return Task.FromResult<ServiceInfo>(activeDirectoryServiceInfo);

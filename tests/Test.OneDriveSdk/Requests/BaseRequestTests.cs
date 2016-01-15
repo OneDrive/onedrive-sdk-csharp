@@ -38,6 +38,22 @@ namespace Test.OneDriveSdk.Requests
     public class BaseRequestTests : RequestTestBase
     {
         [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public void BaseRequest_InitializeWithEmptyBaseUrl()
+        {
+            try
+            {
+                var baseRequest = new BaseRequest(null, this.oneDriveClient);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.InvalidRequest.ToString(), exception.Error.Code, "Unexpected error code.");
+                Assert.AreEqual("Base URL is not initialized for the request.", exception.Error.Message, "Unexpected error message.");
+                throw;
+            }
+        }
+
+        [TestMethod]
         public void BaseRequest_InitializeWithQueryStringAndOptions()
         {
             var baseUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
