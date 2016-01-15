@@ -274,7 +274,7 @@ namespace Microsoft.OneDrive.Sdk
                 if (responseValues != null)
                 {
                     OAuthErrorHandler.ThrowIfError(responseValues);
-                    return new AccountSession(responseValues, this.ServiceInfo.AppId, AccountType.MicrosoftAccount);
+                    return new AccountSession(responseValues, this.ServiceInfo.AppId, AccountType.MicrosoftAccount) { CanSignOut = true };
                 }
 
                 throw new OneDriveException(
