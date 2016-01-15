@@ -60,9 +60,7 @@ namespace Microsoft.OneDrive.Sdk
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;
-            var userIdentifier = string.IsNullOrEmpty(this.serviceInfo.UserId)
-                ? UserIdentifier.AnyUser
-                : new UserIdentifier(this.serviceInfo.UserId, UserIdentifierType.OptionalDisplayableId);
+            var userIdentifier = this.GetUserIdentifierForAuthentication();
 
             try
             {

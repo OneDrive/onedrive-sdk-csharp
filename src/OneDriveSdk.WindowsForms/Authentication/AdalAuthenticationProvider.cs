@@ -64,9 +64,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             IAuthenticationResult authenticationResult = null;
             var clientCredential = string.IsNullOrEmpty(this.serviceInfo.ClientSecret) ? null : new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
-            var userIdentifier = string.IsNullOrEmpty(this.serviceInfo.UserId)
-                ? UserIdentifier.AnyUser
-                : new UserIdentifier(this.serviceInfo.UserId, UserIdentifierType.OptionalDisplayableId);
+            var userIdentifier = this.GetUserIdentifierForAuthentication();
 
             try
             {
