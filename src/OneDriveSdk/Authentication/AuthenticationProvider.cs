@@ -160,7 +160,7 @@ namespace Microsoft.OneDrive.Sdk
                 requestUriStringBuilder.Append(this.ServiceInfo.AuthenticationServiceUrl);
                 requestUriStringBuilder.AppendFormat("?{0}={1}", Constants.Authentication.RedirectUriKeyName, returnUrl);
                 requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
-                requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, string.Join("%20", this.ServiceInfo.Scopes));
+                requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, WebUtility.UrlEncode(string.Join(" ", this.ServiceInfo.Scopes));
 
                 if (!string.IsNullOrEmpty(this.ServiceInfo.UserId))
                 {
