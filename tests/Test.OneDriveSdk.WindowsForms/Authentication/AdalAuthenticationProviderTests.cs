@@ -173,11 +173,20 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 It.Is<string>(resource => resource.Equals(serviceResourceId)),
                 It.Is<string>(clientId => clientId.Equals(this.serviceInfo.AppId)))).Throws(new Exception());
 
-            mockAuthenticationContextWrapper.Setup(wrapper => wrapper.AcquireTokenAsync(
-                It.Is<string>(resource => resource.Equals(serviceResourceId)),
+            mockAuthenticationContextWrapper.Setup(wrapper => wrapper.AcquireTokenByAuthorizationCodeAsync(
+                It.Is<string>(code => code.Equals(Constants.Authentication.CodeKeyName)),
+                It.Is<Uri>(returnUri => returnUri.ToString().Equals(this.serviceInfo.ReturnUrl)),
                 It.Is<ClientCredential>(credential => credential.ClientId.Equals(this.serviceInfo.AppId))))
                 .Returns(Task.FromResult(mockAuthenticationResult.Object));
 
+            var webAuthenticationUi = new MockWebAuthenticationUi(
+                new Dictionary<string, string>
+                {
+                    { Constants.Authentication.CodeKeyName, Constants.Authentication.CodeKeyName }
+                });
+
+            this.serviceInfo.WebAuthenticationUi = webAuthenticationUi.Object;
+            
             await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService(
                 mockAuthenticationContextWrapper.Object,
                 mockAuthenticationResult.Object);

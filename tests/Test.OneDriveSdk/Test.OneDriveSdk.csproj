@@ -65,6 +65,7 @@
     <Compile Include="Authentication\CredentialCacheTests.cs" />
     <Compile Include="Authentication\AuthenticationProviderTests.cs" />
     <Compile Include="Authentication\AccountSessionTests.cs" />
+    <Compile Include="Authentication\OAuthRequestStringBuilderTests.cs" />
     <Compile Include="Authentication\MicrosoftAccountAuthenticationProviderTests.cs" />
     <Compile Include="Authentication\MicrosoftAccountServiceInfoTests.cs" />
     <Compile Include="Authentication\OAuthErrorHandlerTests.cs" />

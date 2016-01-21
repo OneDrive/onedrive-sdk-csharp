@@ -95,7 +95,7 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
-        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenAsync(string, ClientCredential)"/>.
+        /// Authenticates the user using <see cref="AuthenticationContext.AcquireTokenAsync(string, ClientCredential)"/>.
         /// </summary>
         /// <param name="resource">The resource to authenticate against.</param>
         /// <param name="clientCredential">The client credential of the application.</param>
@@ -103,6 +103,20 @@ namespace Microsoft.OneDrive.Sdk
         public async Task<IAuthenticationResult> AcquireTokenAsync(string resource, ClientCredential clientCredential)
         {
             var result = await this.authenticationContext.AcquireTokenAsync(resource, clientCredential);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
+        }
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByAuthorizationCodeAsync(string, Uri,, ClientCredential)"/>.
+        /// </summary>
+        /// <param name="code">The authorization code.</param>
+        /// <param name="redirectUri">The redirect URI for the application.</param>
+        /// <param name="clientCredential">The client credential of the application.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        public async Task<IAuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string code, Uri redirectUri, ClientCredential clientCredential)
+        {
+            var result = await this.authenticationContext.AcquireTokenByAuthorizationCodeAsync(code, redirectUri, clientCredential);
 
             return result == null ? null : new AuthenticationResultWrapper(result);
         }

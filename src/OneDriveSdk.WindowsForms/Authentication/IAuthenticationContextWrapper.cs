@@ -47,7 +47,7 @@ namespace Microsoft.OneDrive.Sdk
         Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, ClientCredential clientCredential, UserIdentifier userIdentifier);
 
         /// <summary>
-        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireToken(string, string, Uri, PromptBehavior, UserIdentifier)"/>.
+        /// Authenticates the user using <see cref="AuthenticationContext.AcquireToken(string, string, Uri, PromptBehavior, UserIdentifier)"/>.
         /// </summary>
         /// <param name="resource">The resource to authenticate against.</param>
         /// <param name="clientId">The client ID of the application.</param>
@@ -58,11 +58,20 @@ namespace Microsoft.OneDrive.Sdk
         IAuthenticationResult AcquireToken(string resource, string clientId, Uri redirectUri, PromptBehavior promptBehavior, UserIdentifier userIdentifier);
 
         /// <summary>
-        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenAsync(string, ClientCredential)"/>.
+        /// Authenticates the user using <see cref="AuthenticationContext.AcquireTokenAsync(string, ClientCredential)"/>.
         /// </summary>
         /// <param name="resource">The resource to authenticate against.</param>
         /// <param name="clientCredential">The client credential of the application.</param>
         /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
         Task<IAuthenticationResult> AcquireTokenAsync(string resource, ClientCredential clientCredential);
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByAuthorizationCodeAsync(string, Uri,, ClientCredential)"/>.
+        /// </summary>
+        /// <param name="code">The authorization code.</param>
+        /// <param name="redirectUri">The redirect URI for the application.</param>
+        /// <param name="clientCredential">The client credential of the application.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        Task<IAuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string code, Uri redirectUri, ClientCredential clientCredential);
     }
 }

@@ -27,38 +27,17 @@ namespace Microsoft.OneDrive.Sdk
     using System.Threading.Tasks;
 
     using IdentityModel.Clients.ActiveDirectory;
-    using WindowsForms;
 
-    public class AdalAuthenticationProvider : AdalAuthenticationProviderBase
+    public class AdalAppOnlyAuthenticationProvider : AdalAuthenticationProviderBase
     {
-        private IOAuthRequestStringBuilder oAuthRequestStringBuilder;
-
         /// <summary>
-        /// Constructs an <see cref="AdalAuthenticationProvider"/>.
+        /// Constructs an <see cref="AdalAppOnlyAuthenticationProvider"/>.
         /// </summary>
         /// <param name="serviceInfo">The information for authenticating against the service.</param>
-        /// <param name="currentAccountSession">The current account session, used for initializing an already logged in user.</param>
-        public AdalAuthenticationProvider(ServiceInfo serviceInfo, AccountSession currentAccountSession = null)
+        /// <param name="currentAccountSession">The current account session, used for initializing an already logged in application.</param>
+        public AdalAppOnlyAuthenticationProvider(ServiceInfo serviceInfo, AccountSession currentAccountSession = null)
             : base(serviceInfo, currentAccountSession)
         {
-        }
-
-        internal IOAuthRequestStringBuilder OAuthRequestStringBuilder
-        {
-            get
-            {
-                if (this.oAuthRequestStringBuilder == null)
-                {
-                    this.oAuthRequestStringBuilder = new OAuthRequestStringBuilder(this.ServiceInfo);
-                }
-
-                return this.oAuthRequestStringBuilder;
-            }
-
-            set
-            {
-                this.oAuthRequestStringBuilder = value;
-            }
         }
 
         /// <summary>
@@ -84,63 +63,24 @@ namespace Microsoft.OneDrive.Sdk
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;
-            var clientCredential = string.IsNullOrEmpty(this.serviceInfo.ClientSecret)
-                ? null
-                : new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
+
+            if (string.IsNullOrEmpty(this.ServiceInfo.ClientSecret))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Client secret is required for app-only authentication.",
+                    });
+            }
+
+            var clientCredential = new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
 
             var returnUri = new Uri(this.ServiceInfo.ReturnUrl);
 
-            var userIdentifier = this.GetUserIdentifierForAuthentication();
-
             try
             {
-                authenticationResult = clientCredential == null
-                    ? await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId)
-                    : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier);
-            }
-            catch (Exception)
-            {
-                // If an exception happens during silent authentication try interactive authentication.
-            }
-
-            if (authenticationResult != null)
-            {
-                return authenticationResult;
-            }
-
-            try
-            {
-                if (clientCredential != null)
-                {
-                    var webAuthenticationUi = this.serviceInfo.WebAuthenticationUi ?? new FormsWebAuthenticationUi();
-                    var redirectUri = new Uri(this.ServiceInfo.ReturnUrl);
-
-                    var requestUri = new Uri(this.OAuthRequestStringBuilder.GetAuthorizationCodeRequestUrl());
-
-                    var authenticationResponseValues = await webAuthenticationUi.AuthenticateAsync(
-                        requestUri,
-                        redirectUri);
-
-                    OAuthErrorHandler.ThrowIfError(authenticationResponseValues);
-
-                    string code;
-                    if (authenticationResponseValues != null && authenticationResponseValues.TryGetValue("code", out code))
-                    {
-                        authenticationResult = await this.authenticationContextWrapper.AcquireTokenByAuthorizationCodeAsync(
-                            code,
-                            redirectUri,
-                            clientCredential);
-                    }
-                }
-                else
-                {
-                    authenticationResult = this.authenticationContextWrapper.AcquireToken(
-                        resource,
-                        this.ServiceInfo.AppId,
-                        returnUri,
-                        PromptBehavior.Auto,
-                        userIdentifier);
-                }
+                authenticationResult = await this.authenticationContextWrapper.AcquireTokenAsync(resource, clientCredential);
             }
             catch (AdalException adalException)
             {
