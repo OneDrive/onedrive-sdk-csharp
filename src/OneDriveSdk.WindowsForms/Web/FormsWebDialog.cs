@@ -59,7 +59,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                     StringComparison.OrdinalIgnoreCase);
 
             this.ShowInTaskbar = !isSignOutRequest;
-            this.WindowState = !isSignOutRequest ? FormWindowState.Normal : FormWindowState.Minimized;
+            this.WindowState = isSignOutRequest ? FormWindowState.Minimized : FormWindowState.Normal;
 
             this.RequestUri = requestUri;
             this.CallbackUri = callbackUri;
