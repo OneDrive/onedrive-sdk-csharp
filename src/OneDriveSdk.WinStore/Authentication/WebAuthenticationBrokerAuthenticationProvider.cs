@@ -34,7 +34,7 @@ namespace Microsoft.OneDrive.Sdk
             : base(serviceInfo)
         {
         }
-
+        
         /// <summary>
         /// Signs the current user out.
         /// </summary>
@@ -75,7 +75,7 @@ namespace Microsoft.OneDrive.Sdk
 
             if (!string.IsNullOrEmpty(code))
             {
-                var authResult = await this.SendTokenRequestAsync(this.GetCodeRedemptionRequestBody(code, returnUrl));
+                var authResult = await this.SendTokenRequestAsync(this.OAuthRequestStringBuilder.GetCodeRedemptionRequestBody(code, returnUrl));
                 authResult.CanSignOut = true;
 
                 return authResult;

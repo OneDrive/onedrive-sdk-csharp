@@ -79,7 +79,7 @@ namespace Microsoft.OneDrive.Sdk
         
         private Task<AccountSession> RedeemAuthorizationCodeAsync(string code)
         {
-            return this.SendTokenRequestAsync(this.GetCodeRedemptionRequestBody(code));
+            return this.SendTokenRequestAsync(this.OAuthRequestStringBuilder.GetCodeRedemptionRequestBody(code));
         }
     }
 }

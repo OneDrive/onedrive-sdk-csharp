@@ -96,6 +96,7 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\TokenCacheWrapper.cs">
       <Link>Authentication\TokenCacheWrapper.cs</Link>
     </Compile>
+    <Compile Include="Authentication\AdalAppOnlyAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalServiceInfoProvider.cs" />
     <Compile Include="Authentication\AuthenticationContextWrapper.cs" />

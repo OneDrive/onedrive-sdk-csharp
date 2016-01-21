@@ -69,27 +69,6 @@ namespace Test.OneDriveSdk
         }
 
         [TestMethod]
-        public void GetCodeRedemptionRequestBody_ClientSecret()
-        {
-            this.serviceInfo.ClientSecret = "secret";
-            var code = "code";
-            var requestBodyString = ((MicrosoftAccountAuthenticationProvider)this.authenticationProvider).GetCodeRedemptionRequestBody(code);
-            Assert.IsTrue(requestBodyString.Contains("code=" + code), "Code not set correctly.");
-            Assert.IsTrue(
-                requestBodyString.Contains("client_secret=" + this.serviceInfo.ClientSecret),
-                "Client secret not set correctly.");
-        }
-
-        [TestMethod]
-        public void GetCodeRedemptionRequestBody_NoClientSecret()
-        {
-            var code = "code";
-            var requestBodyString = ((MicrosoftAccountAuthenticationProvider)this.authenticationProvider).GetCodeRedemptionRequestBody(code);
-            Assert.IsTrue(requestBodyString.Contains("code=" + code), "Code not set correctly.");
-            Assert.IsFalse(requestBodyString.Contains("client_secret"), "Client secret set.");
-        }
-
-        [TestMethod]
         public async Task SignOutAsync()
         {
             var expectedSignOutUrl = string.Format(
