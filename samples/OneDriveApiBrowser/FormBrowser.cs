@@ -314,7 +314,7 @@ namespace OneDriveApiBrowser
             }
             catch (OneDriveException exception)
             {
-                // Swallow authentication cancelled exceptions
+                // Swallow authentication cancelled exceptions, but reset the client
                 if (!exception.IsMatch(OneDriveErrorCode.AuthenticationCancelled.ToString()))
                 {
                     if (exception.IsMatch(OneDriveErrorCode.AuthenticationFailure.ToString()))
@@ -324,14 +324,18 @@ namespace OneDriveApiBrowser
                             "Authentication failed",
                             MessageBoxButtons.OK);
 
-                        var httpProvider = this.oneDriveClient.HttpProvider as HttpProvider;
-                        httpProvider.Dispose();
+                        ((OneDriveClient)this.oneDriveClient).Dispose();
                         this.oneDriveClient = null;
                     }
                     else
                     {
                         PresentOneDriveException(exception);
                     }
+                }
+                else
+                {
+                    ((OneDriveClient)this.oneDriveClient).Dispose();
+                    this.oneDriveClient = null;
                 }
             }
         }
