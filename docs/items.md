@@ -30,7 +30,7 @@ var item = await oneDriveClient
 var item = await oneDriveClient
                      .Drive
                      .Root
-                     .ItemWithPath("path/to/file/txt)
+                     .ItemWithPath("path/to/file/txt")
                      .Request()
                      .GetAsync();
 ```
