@@ -53,9 +53,12 @@ namespace Microsoft.OneDrive.Sdk
             }
 
             var serviceInfo = await base.GetServiceInfo(appConfig, credentialCache, httpProvider, clientType);
-
-            serviceInfo.BaseUrl = appConfig.ActiveDirectoryServiceEndpointUrl;
+            
             serviceInfo.ServiceResource = appConfig.ActiveDirectoryServiceResource;
+            serviceInfo.BaseUrl = string.Format(
+                Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                appConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
+                serviceInfo.OneDriveServiceEndpointVersion);
 
             if (serviceInfo.AuthenticationProvider == null)
             {

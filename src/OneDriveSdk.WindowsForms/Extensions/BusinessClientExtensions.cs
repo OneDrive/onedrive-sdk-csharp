@@ -95,7 +95,9 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
         /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
         /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
+        /// <param name="serviceResource">The service resource for Azure Active Directory authentication.</param>
         /// <param name="tenantId">The ID of the tenant to authenticate.</param>
+        /// <param name="tenantId">The ID of the site to access.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
@@ -103,10 +105,22 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
             string appId,
             string returnUrl,
             string clientSecret,
+            string serviceResource,
+            string siteId,
             string tenantId,
             AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
+            if (string.IsNullOrEmpty(serviceResource))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Service resource ID is required for app-only authentication.",
+                    });
+            }
+
             if (string.IsNullOrEmpty(tenantId))
             {
                 throw new OneDriveException(
@@ -123,6 +137,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                     ActiveDirectoryAppId = appId,
                     ActiveDirectoryClientSecret = clientSecret,
                     ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(tenantId),
+                    ActiveDirectoryServiceResource = serviceResource,
                     ActiveDirectoryReturnUrl = returnUrl
                 },
                 credentialCache ?? new AdalCredentialCache(),
@@ -148,6 +163,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
             string appId,
             string returnUrl,
             string clientSecret,
+            string serviceResource,
             string code,
             AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
@@ -158,6 +174,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                     ActiveDirectoryAppId = appId,
                     ActiveDirectoryClientSecret = clientSecret,
                     ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(),
+                    ActiveDirectoryServiceResource = serviceResource,
                     ActiveDirectoryReturnUrl = returnUrl
                 },
                 credentialCache ?? new AdalCredentialCache(),
