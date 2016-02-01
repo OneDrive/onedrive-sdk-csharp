@@ -64,7 +64,9 @@ namespace Microsoft.OneDrive.Sdk
         {
             IAuthenticationResult authenticationResult = null;
 
-            if (string.IsNullOrEmpty(this.ServiceInfo.ClientSecret))
+            var clientCredential = this.GetClientCredentialForAuthentication();
+
+            if (clientCredential == null)
             {
                 throw new OneDriveException(
                     new Error
@@ -73,8 +75,6 @@ namespace Microsoft.OneDrive.Sdk
                         Message = "Client secret is required for app-only authentication.",
                     });
             }
-
-            var clientCredential = new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
 
             var returnUri = new Uri(this.ServiceInfo.ReturnUrl);
 

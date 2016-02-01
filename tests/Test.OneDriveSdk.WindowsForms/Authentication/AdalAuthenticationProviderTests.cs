@@ -176,7 +176,8 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             mockAuthenticationContextWrapper.Setup(wrapper => wrapper.AcquireTokenByAuthorizationCodeAsync(
                 It.Is<string>(code => code.Equals(Constants.Authentication.CodeKeyName)),
                 It.Is<Uri>(returnUri => returnUri.ToString().Equals(this.serviceInfo.ReturnUrl)),
-                It.Is<ClientCredential>(credential => credential.ClientId.Equals(this.serviceInfo.AppId))))
+                It.Is<ClientCredential>(credential => credential.ClientId.Equals(this.serviceInfo.AppId)),
+                It.Is<string>(resource => resource.Equals(serviceResourceId))))
                 .Returns(Task.FromResult(mockAuthenticationResult.Object));
 
             var webAuthenticationUi = new MockWebAuthenticationUi(

@@ -162,6 +162,15 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+#if WINFORMS
+        protected ClientCredential GetClientCredentialForAuthentication()
+        {
+            return string.IsNullOrEmpty(this.serviceInfo.ClientSecret)
+                ? null
+                : new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
+        }
+#endif
+
         protected UserIdentifier GetUserIdentifierForAuthentication()
         {
             return string.IsNullOrEmpty(this.serviceInfo.UserId)

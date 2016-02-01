@@ -66,12 +66,13 @@ namespace Microsoft.OneDrive.Sdk
         Task<IAuthenticationResult> AcquireTokenAsync(string resource, ClientCredential clientCredential);
 
         /// <summary>
-        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByAuthorizationCodeAsync(string, Uri,, ClientCredential)"/>.
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByAuthorizationCodeAsync(string, Uri, ClientCredential, string)"/>.
         /// </summary>
         /// <param name="code">The authorization code.</param>
         /// <param name="redirectUri">The redirect URI for the application.</param>
         /// <param name="clientCredential">The client credential of the application.</param>
+        /// <param name="resource">The resource to authenticate against.</param>
         /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
-        Task<IAuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string code, Uri redirectUri, ClientCredential clientCredential);
+        Task<IAuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string code, Uri redirectUri, ClientCredential clientCredential, string resource);
     }
 }
