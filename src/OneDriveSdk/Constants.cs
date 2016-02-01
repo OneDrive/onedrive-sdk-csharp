@@ -70,15 +70,17 @@ namespace Microsoft.OneDrive.Sdk
             
             public const string UserIdKeyName = "user_id";
 
-            internal const string ActiveDirectoryAuthenticationServiceUrl = "https://login.windows.net/common/oauth2/authorize";
+            internal const string ActiveDirectoryAuthenticationServiceUrl = "https://login.microsoftonline.com/common/oauth2/authorize";
+
+            internal const string ActiveDirectoryAuthenticationServiceUrlFormatString = "https://login.microsoftonline.com/{0}";
 
             internal const string ActiveDirectoryDiscoveryResource = "https://api.office.com/discovery/";
 
             internal const string ActiveDirectoryDiscoveryServiceUrl = "https://api.office.com/discovery/v2.0/me/services";
 
-            internal const string ActiveDirectorySignOutUrl = "https://login.windows.net/common/oauth2/logout";
+            internal const string ActiveDirectorySignOutUrl = "https://login.microsoftonline.com/common/oauth2/logout";
 
-            internal const string ActiveDirectoryTokenServiceUrl = "https://login.windows.net/common/oauth2/token";
+            internal const string ActiveDirectoryTokenServiceUrl = "https://login.microsoftonline.com/common/oauth2/token";
 
             internal const string MicrosoftAccountAuthenticationServiceUrl = "https://login.live.com/oauth20_authorize.srf";
 
