@@ -69,8 +69,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Authentication\AdalAppOnlyAuthenticationProviderTests.cs" />
+    <Compile Include="Authentication\AdalAuthenticationByCodeAuthenticationProviderTests.cs" />
+    <Compile Include="Authentication\AdalAuthenticationProviderTestBase.cs" />
     <Compile Include="Authentication\AdalAuthenticationProviderTests.cs" />
     <Compile Include="Authentication\AdalCredentialCacheTests.cs" />
+    <Compile Include="Extensions\BusinessClientExtensionsTests.cs" />
     <Compile Include="Mocks\MockAdalCredentialCache.cs" />
     <Compile Include="Mocks\MockAuthenticationContextWrapper.cs" />
     <Compile Include="Mocks\MockAuthenticationResult.cs" />
@@ -93,6 +97,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Certs\testwebapplication.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>

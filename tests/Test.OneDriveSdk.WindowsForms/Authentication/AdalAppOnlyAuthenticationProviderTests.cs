@@ -35,7 +35,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
     using Test.OneDriveSdk.Mocks;
 
     [TestClass]
-    public class AdalAuthenticationProviderTests : AdalAuthenticationProviderTestBase
+    public class AdalAppOnlyAuthenticationProviderTests : AdalAuthenticationProviderTestBase
     {
         [TestMethod]
         public async Task AppendAuthenticationHeader()
