@@ -58,6 +58,14 @@ namespace Microsoft.OneDrive.Sdk
         IAuthenticationResult AcquireToken(string resource, string clientId, Uri redirectUri, PromptBehavior promptBehavior, UserIdentifier userIdentifier);
 
         /// <summary>
+        /// Authenticates the user using <see cref="AuthenticationContext.AcquireTokenAsync(string, ClientAssertionCertificate)"/>.
+        /// </summary>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <param name="clientAssertionCertificate">The client assertion certificate of the application.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        Task<IAuthenticationResult> AcquireTokenAsync(string resource, ClientAssertionCertificate clientAssertionCertificate);
+
+        /// <summary>
         /// Authenticates the user using <see cref="AuthenticationContext.AcquireTokenAsync(string, ClientCredential)"/>.
         /// </summary>
         /// <param name="resource">The resource to authenticate against.</param>

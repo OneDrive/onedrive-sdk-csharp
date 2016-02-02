@@ -163,7 +163,7 @@ namespace Microsoft.OneDrive.Sdk
         }
 
 #if WINFORMS
-        protected ClientCredential GetClientCredentialForAuthentication()
+        protected virtual ClientCredential GetClientCredentialForAuthentication()
         {
             return string.IsNullOrEmpty(this.serviceInfo.ClientSecret)
                 ? null
