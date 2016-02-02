@@ -22,6 +22,7 @@
 
 namespace Microsoft.OneDrive.Sdk.WindowsForms
 {
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
 
     public static class BusinessClientExtensions
@@ -45,7 +46,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
             IHttpProvider httpProvider = null)
         {
             return new OneDriveClient(
-                new AppConfig
+                new AdalAppConfig
                 {
                     ActiveDirectoryAppId = appId,
                     ActiveDirectoryReturnUrl = returnUrl,
@@ -53,7 +54,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                     ActiveDirectoryServiceResource = serviceResource,
                 },
                 credentialCache ?? new AdalCredentialCache(),
-                new HttpProvider(),
+                httpProvider ?? new HttpProvider(),
                 new AdalServiceInfoProvider(),
                 ClientType.Business);
         }
@@ -94,17 +95,17 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// </summary>
         /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
         /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
+        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
         /// <param name="serviceResource">The service resource for Azure Active Directory authentication.</param>
+        /// <param name="siteId">The ID of the site to access.</param>
         /// <param name="tenantId">The ID of the tenant to authenticate.</param>
-        /// <param name="tenantId">The ID of the site to access.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static async Task<IOneDriveClient> GetAuthenticatedClientUsingAppOnlyAuthentication(
             string appId,
             string returnUrl,
-            string clientSecret,
+            X509Certificate2 clientCertificate,
             string serviceResource,
             string siteId,
             string tenantId,
@@ -121,6 +122,16 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                     });
             }
 
+            if (string.IsNullOrEmpty(siteId))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Site ID is required for app-only authentication.",
+                    });
+            }
+
             if (string.IsNullOrEmpty(tenantId))
             {
                 throw new OneDriveException(
@@ -132,18 +143,21 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
             }
 
             var client = new OneDriveClient(
-                new AppConfig
+                new AdalAppConfig
                 {
                     ActiveDirectoryAppId = appId,
-                    ActiveDirectoryClientSecret = clientSecret,
+                    ActiveDirectoryClientCertificate = clientCertificate,
                     ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(tenantId),
                     ActiveDirectoryServiceResource = serviceResource,
+                    ActiveDirectorySiteId = siteId,
                     ActiveDirectoryReturnUrl = returnUrl
                 },
                 credentialCache ?? new AdalCredentialCache(),
-                new HttpProvider(),
+                httpProvider ?? new HttpProvider(),
                 new AdalAppOnlyServiceInfoProvider(),
                 ClientType.Business);
+
+
 
             await client.AuthenticateAsync();
 
@@ -169,7 +183,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
             IHttpProvider httpProvider = null)
         {
             var client = new OneDriveClient(
-                new AppConfig
+                new AdalAppConfig
                 {
                     ActiveDirectoryAppId = appId,
                     ActiveDirectoryClientSecret = clientSecret,
@@ -178,7 +192,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                     ActiveDirectoryReturnUrl = returnUrl
                 },
                 credentialCache ?? new AdalCredentialCache(),
-                new HttpProvider(),
+                httpProvider ?? new HttpProvider(),
                 new AdalAuthenticationByCodeServiceInfoProvider(code),
                 ClientType.Business);
 
@@ -198,16 +212,18 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         public static Task<IOneDriveClient> GetAuthenticatedClient(
             string appId,
             string returnUrl,
+            string userId = null,
             AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
             return BusinessClientExtensions.GetAuthenticatedClient(
                 appId,
                 returnUrl,
-                null,
-                null,
+                /* clientSecret */ null,
+                userId,
                 credentialCache,
-                httpProvider);
+                httpProvider,
+                serviceInfoProvider: null);
         }
 
         /// <summary>
@@ -218,21 +234,25 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <param name="webAuthenticationUi">The <see cref="IWebAuthenticationUi"/> instance for displaying the Discovery Service login screen to the user.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static Task<IOneDriveClient> GetAuthenticatedClient(
             string appId,
             string returnUrl,
             string clientSecret,
+            string userId = null,
             AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
+            IHttpProvider httpProvider = null,
+            IWebAuthenticationUi webAuthenticationUi = null)
         {
             return BusinessClientExtensions.GetAuthenticatedClient(
                 appId,
                 returnUrl,
                 clientSecret,
-                null,
+                userId,
                 credentialCache,
-                httpProvider);
+                httpProvider,
+                serviceInfoProvider: new AdalServiceInfoProvider(webAuthenticationUi));
         }
 
         /// <summary>
@@ -241,29 +261,30 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
         /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
         /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
-        /// <param name="tenantId">The ID of the tenant to authenticate. If not provided, will be retrieved using the Discovery service.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static async Task<IOneDriveClient> GetAuthenticatedClient(
             string appId,
             string returnUrl,
             string clientSecret,
-            string tenantId,
+            string userId = null,
             AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
+            IHttpProvider httpProvider = null,
+            IServiceInfoProvider serviceInfoProvider = null)
         {
             var client = new OneDriveClient(
-                new AppConfig
+                new AdalAppConfig
                 {
                     ActiveDirectoryAppId = appId,
                     ActiveDirectoryClientSecret = clientSecret,
-                    ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(tenantId),
-                    ActiveDirectoryReturnUrl = returnUrl
+                    ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(),
+                    ActiveDirectoryReturnUrl = returnUrl,
                 },
                 credentialCache ?? new AdalCredentialCache(),
-                new HttpProvider(),
-                new AdalServiceInfoProvider(),
+                httpProvider ?? new HttpProvider(),
+                serviceInfoProvider ?? new AdalServiceInfoProvider { UserSignInName = userId },
                 ClientType.Business);
 
             await client.AuthenticateAsync();
@@ -277,7 +298,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// </summary>
         /// <param name="tenantId">The ID of the tenant to authenticate.</param>
         /// <returns>The authentication service URL.</returns>
-        public static string GetAuthenticationServiceUrl(string tenantId = null)
+        private static string GetAuthenticationServiceUrl(string tenantId = null)
         {
             return string.IsNullOrEmpty(tenantId)
                 ? Constants.Authentication.ActiveDirectoryAuthenticationServiceUrl

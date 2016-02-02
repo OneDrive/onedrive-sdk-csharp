@@ -52,20 +52,38 @@ namespace Microsoft.OneDrive.Sdk
                     });
             }
 
-            var serviceInfo = await base.GetServiceInfo(appConfig, credentialCache, httpProvider, clientType);
-            
-            serviceInfo.ServiceResource = appConfig.ActiveDirectoryServiceResource;
-            serviceInfo.BaseUrl = string.Format(
-                Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
-                appConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
-                serviceInfo.OneDriveServiceEndpointVersion);
+            var adalAppConfig = appConfig as AdalAppConfig;
 
-            if (serviceInfo.AuthenticationProvider == null)
+            if (adalAppConfig == null)
             {
-                serviceInfo.AuthenticationProvider = new AdalAppOnlyAuthenticationProvider(serviceInfo);
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "AdalAppOnlyServiceInfoProvider requires an AdalAppConfig."
+                    });
             }
 
-            return serviceInfo;
+            var serviceInfo = await base.GetServiceInfo(adalAppConfig, credentialCache, httpProvider, clientType);
+
+            var adalServiceInfo = new AdalServiceInfo();
+            adalServiceInfo.CopyFrom(serviceInfo);
+
+            adalServiceInfo.ServiceResource = adalAppConfig.ActiveDirectoryServiceResource;
+            adalServiceInfo.BaseUrl = string.Format(
+                Constants.Authentication.OneDriveBusinessBaseUrlForSiteFormatString,
+                adalAppConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
+                adalAppConfig.ActiveDirectorySiteId,
+                serviceInfo.OneDriveServiceEndpointVersion);
+
+            adalServiceInfo.ClientCertificate = adalAppConfig.ActiveDirectoryClientCertificate;
+
+            if (adalServiceInfo.AuthenticationProvider == null)
+            {
+                adalServiceInfo.AuthenticationProvider = new AdalAppOnlyAuthenticationProvider(adalServiceInfo);
+            }
+
+            return adalServiceInfo;
         }
     }
 }

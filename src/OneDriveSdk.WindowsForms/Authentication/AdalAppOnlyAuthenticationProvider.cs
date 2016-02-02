@@ -35,7 +35,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="serviceInfo">The information for authenticating against the service.</param>
         /// <param name="currentAccountSession">The current account session, used for initializing an already logged in application.</param>
-        public AdalAppOnlyAuthenticationProvider(ServiceInfo serviceInfo, AccountSession currentAccountSession = null)
+        public AdalAppOnlyAuthenticationProvider(AdalServiceInfo serviceInfo, AccountSession currentAccountSession = null)
             : base(serviceInfo, currentAccountSession)
         {
         }
@@ -64,23 +64,35 @@ namespace Microsoft.OneDrive.Sdk
         {
             IAuthenticationResult authenticationResult = null;
 
-            var clientCredential = this.GetClientCredentialForAuthentication();
+            var adalServiceInfo = this.ServiceInfo as AdalServiceInfo;
 
-            if (clientCredential == null)
+            if (adalServiceInfo == null)
             {
                 throw new OneDriveException(
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Client secret is required for app-only authentication.",
+                        Message = "AdalAppOnlyServiceInfoProvider requires an AdalServiceInfo."
                     });
             }
+
+            if (adalServiceInfo.ClientCertificate == null)
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "App-only authentication requires a client certificate."
+                    });
+            }
+
+            var clientAssertionCertificate = new ClientAssertionCertificate(adalServiceInfo.AppId, adalServiceInfo.ClientCertificate);
 
             var returnUri = new Uri(this.ServiceInfo.ReturnUrl);
 
             try
             {
-                authenticationResult = await this.authenticationContextWrapper.AcquireTokenAsync(resource, clientCredential);
+                authenticationResult = await this.authenticationContextWrapper.AcquireTokenAsync(resource, clientAssertionCertificate);
             }
             catch (AdalException adalException)
             {

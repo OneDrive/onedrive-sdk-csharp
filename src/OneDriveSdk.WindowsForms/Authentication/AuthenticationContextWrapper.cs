@@ -95,6 +95,19 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
+        /// Authenticates the user using <see cref="AuthenticationContext.AcquireTokenAsync(string, ClientAssertionCertificate)"/>.
+        /// </summary>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <param name="clientAssertionCertificate">The client assertion certificate of the application.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        public async Task<IAuthenticationResult> AcquireTokenAsync(string resource, ClientAssertionCertificate clientAssertionCertificate)
+        {
+            var result = await this.authenticationContext.AcquireTokenAsync(resource, clientAssertionCertificate);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
+        }
+
+        /// <summary>
         /// Authenticates the user using <see cref="AuthenticationContext.AcquireTokenAsync(string, ClientCredential)"/>.
         /// </summary>
         /// <param name="resource">The resource to authenticate against.</param>
