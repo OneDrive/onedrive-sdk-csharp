@@ -55,6 +55,16 @@ namespace Microsoft.OneDrive.Sdk
                     });
             }
 
+            if (string.IsNullOrEmpty(appConfig.ActiveDirectoryServiceResource))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Service resource ID is required for authentication by code.",
+                    });
+            }
+
             var serviceInfo = await base.GetServiceInfo(appConfig, credentialCache, httpProvider, clientType);
 
             serviceInfo.BaseUrl = serviceInfo.BaseUrl = string.Format(

@@ -64,6 +64,26 @@ namespace Microsoft.OneDrive.Sdk
                     });
             }
 
+            if (string.IsNullOrEmpty(appConfig.ActiveDirectoryServiceResource))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Service resource ID is required for app-only authentication.",
+                    });
+            }
+
+            if (string.IsNullOrEmpty(adalAppConfig.ActiveDirectorySiteId))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Site ID is required for app-only authentication.",
+                    });
+            }
+
             var serviceInfo = await base.GetServiceInfo(adalAppConfig, credentialCache, httpProvider, clientType);
 
             var adalServiceInfo = new AdalServiceInfo();

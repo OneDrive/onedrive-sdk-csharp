@@ -29,7 +29,7 @@ namespace Microsoft.OneDrive.Sdk
 
     public class AdalAuthenticationByCodeAuthenticationProvider : AdalAuthenticationProviderBase
     {
-        private string authenticationCode;
+        internal string authenticationCode;
 
         /// <summary>
         /// Constructs an <see cref="AdalAuthenticationByCodeAuthenticationProvider"/> for use with web apps that perform their own initial login
