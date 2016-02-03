@@ -23,7 +23,6 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using System.Net.Http;
     using System.Threading.Tasks;
 
     using IdentityModel.Clients.ActiveDirectory;
@@ -38,12 +37,10 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="serviceInfo">The information for authenticating against the service.</param>
         /// <param name="authenticationCode">The code for retrieving the authentication token.</param>
-        /// <param name="currentAccountSession">The current account session, used for initializing an already logged in application.</param>
         public AdalAuthenticationByCodeAuthenticationProvider(
             ServiceInfo serviceInfo,
-            string authenticationCode,
-            AccountSession currentAccountSession = null)
-            : base(serviceInfo, currentAccountSession)
+            string authenticationCode)
+            : base(serviceInfo, currentAccountSession: null)
         {
             if (string.IsNullOrEmpty(authenticationCode))
             {
@@ -58,57 +55,32 @@ namespace Microsoft.OneDrive.Sdk
             this.authenticationCode = authenticationCode;
         }
 
-        /// <summary>
-        /// Signs the current user out.
-        /// </summary>
-        public override async Task SignOutAsync()
-        {
-            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
-            {
-                if (this.ServiceInfo.HttpProvider != null)
-                {
-                    using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.ServiceInfo.SignOutUrl))
-                    {
-                        await this.ServiceInfo.HttpProvider.SendAsync(httpRequestMessage);
-                    }
-                }
-
-                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
-                this.CurrentAccountSession = null;
-            }
-        }
-
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;
 
-            var clientCredential = this.GetClientCredentialForAuthentication();
-
-            if (clientCredential == null)
-            {
-                throw new OneDriveException(
-                    new Error
-                    {
-                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Client secret is required for authentication by code.",
-                    });
-            }
-
-            var userIdentifier = this.GetUserIdentifierForAuthentication();
-
-            var returnUri = new Uri(this.ServiceInfo.ReturnUrl);
-
             try
             {
-                authenticationResult = await this.authenticationContextWrapper.AcquireTokenByAuthorizationCodeAsync(
-                    this.authenticationCode,
-                    returnUri,
-                    clientCredential,
-                    resource);
+                var adalServiceInfo = this.ServiceInfo as AdalServiceInfo;
+
+                // If we have a client certificate authenticate using it. Use client secret authentication if not.
+                if (adalServiceInfo != null && adalServiceInfo.ClientCertificate != null)
+                {
+                    authenticationResult = await this.AuthenticateUsingCertificate(adalServiceInfo, resource);
+                }
+                else
+                {
+                    authenticationResult = await this.AuthenticateUsingClientSecret(resource);
+                }
             }
             catch (AdalException adalException)
             {
                 throw this.GetAuthenticationException(string.Equals(adalException.ErrorCode, Constants.Authentication.AuthenticationCancelled), adalException);
+            }
+            catch (OneDriveException)
+            {
+                // If authentication threw a OneDriveException assume we already handled it and let it bubble up.
+                throw;
             }
             catch (Exception exception)
             {
@@ -123,26 +95,42 @@ namespace Microsoft.OneDrive.Sdk
             return authenticationResult;
         }
 
-        internal OneDriveException GetAuthenticationException(bool isCancelled = false, Exception innerException = null)
+        private Task<IAuthenticationResult> AuthenticateUsingCertificate(AdalServiceInfo adalServiceInfo, string resource)
         {
-            if (isCancelled)
+            var returnUri = new Uri(this.ServiceInfo.ReturnUrl);
+
+            var clientAssertionCertificate = new ClientAssertionCertificate(adalServiceInfo.AppId, adalServiceInfo.ClientCertificate);
+
+            return this.authenticationContextWrapper.AcquireTokenByAuthorizationCodeAsync(
+                this.authenticationCode,
+                returnUri,
+                clientAssertionCertificate,
+                resource);
+        }
+
+        private Task<IAuthenticationResult> AuthenticateUsingClientSecret(string resource)
+        {
+            var clientCredential = this.GetClientCredentialForAuthentication();
+
+            if (clientCredential == null)
             {
-                return new OneDriveException(
+                throw new OneDriveException(
                     new Error
                     {
-                        Code = OneDriveErrorCode.AuthenticationCancelled.ToString(),
-                        Message = "User cancelled authentication.",
-                    },
-                    innerException);
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Client secret or certificate is required for authentication by code.",
+                    });
             }
 
-            return new OneDriveException(
-                new Error
-                {
-                    Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                    Message = "An error occurred during active directory authentication.",
-                },
-                innerException);
+            var userIdentifier = this.GetUserIdentifierForAuthentication();
+
+            var returnUri = new Uri(this.ServiceInfo.ReturnUrl);
+
+            return this.authenticationContextWrapper.AcquireTokenByAuthorizationCodeAsync(
+                    this.authenticationCode,
+                    returnUri,
+                    clientCredential,
+                    resource);
         }
     }
 }

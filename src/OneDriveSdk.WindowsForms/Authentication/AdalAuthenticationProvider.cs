@@ -61,26 +61,6 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
-        /// <summary>
-        /// Signs the current user out.
-        /// </summary>
-        public override async Task SignOutAsync()
-        {
-            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
-            {
-                if (this.ServiceInfo.HttpProvider != null)
-                {
-                    using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.ServiceInfo.SignOutUrl))
-                    {
-                        await this.ServiceInfo.HttpProvider.SendAsync(httpRequestMessage);
-                    }
-                }
-
-                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
-                this.CurrentAccountSession = null;
-            }
-        }
-
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;
@@ -156,28 +136,6 @@ namespace Microsoft.OneDrive.Sdk
             }
 
             return authenticationResult;
-        }
-
-        internal OneDriveException GetAuthenticationException(bool isCancelled = false, Exception innerException = null)
-        {
-            if (isCancelled)
-            {
-                return new OneDriveException(
-                    new Error
-                    {
-                        Code = OneDriveErrorCode.AuthenticationCancelled.ToString(),
-                        Message = "User cancelled authentication.",
-                    },
-                    innerException);
-            }
-
-            return new OneDriveException(
-                new Error
-                {
-                    Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                    Message = "An error occurred during active directory authentication.",
-                },
-                innerException);
         }
     }
 }

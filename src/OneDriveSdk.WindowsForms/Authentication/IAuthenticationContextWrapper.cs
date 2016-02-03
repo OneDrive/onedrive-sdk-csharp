@@ -82,5 +82,19 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="resource">The resource to authenticate against.</param>
         /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
         Task<IAuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string code, Uri redirectUri, ClientCredential clientCredential, string resource);
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByAuthorizationCodeAsync(string, Uri, ClientAssertionCertificate, string)"/>.
+        /// </summary>
+        /// <param name="code">The authorization code.</param>
+        /// <param name="redirectUri">The redirect URI for the application.</param>
+        /// <param name="clientAssertionCertificate">The client assertion certificate of the application.</param>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        Task<IAuthenticationResult> AcquireTokenByAuthorizationCodeAsync(
+            string code,
+            Uri redirectUri,
+            ClientAssertionCertificate clientAssertionCertificate,
+            string resource);
     }
 }
