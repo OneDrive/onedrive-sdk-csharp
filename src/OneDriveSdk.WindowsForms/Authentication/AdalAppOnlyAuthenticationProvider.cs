@@ -34,30 +34,9 @@ namespace Microsoft.OneDrive.Sdk
         /// Constructs an <see cref="AdalAppOnlyAuthenticationProvider"/>.
         /// </summary>
         /// <param name="serviceInfo">The information for authenticating against the service.</param>
-        /// <param name="currentAccountSession">The current account session, used for initializing an already logged in application.</param>
-        public AdalAppOnlyAuthenticationProvider(AdalServiceInfo serviceInfo, AccountSession currentAccountSession = null)
-            : base(serviceInfo, currentAccountSession)
+        public AdalAppOnlyAuthenticationProvider(AdalServiceInfo serviceInfo)
+            : base(serviceInfo, currentAccountSession: null)
         {
-        }
-
-        /// <summary>
-        /// Signs the current user out.
-        /// </summary>
-        public override async Task SignOutAsync()
-        {
-            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
-            {
-                if (this.ServiceInfo.HttpProvider != null)
-                {
-                    using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.ServiceInfo.SignOutUrl))
-                    {
-                        await this.ServiceInfo.HttpProvider.SendAsync(httpRequestMessage);
-                    }
-                }
-
-                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
-                this.CurrentAccountSession = null;
-            }
         }
 
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
@@ -88,8 +67,6 @@ namespace Microsoft.OneDrive.Sdk
 
             var clientAssertionCertificate = new ClientAssertionCertificate(adalServiceInfo.AppId, adalServiceInfo.ClientCertificate);
 
-            var returnUri = new Uri(this.ServiceInfo.ReturnUrl);
-
             try
             {
                 authenticationResult = await this.authenticationContextWrapper.AcquireTokenAsync(resource, clientAssertionCertificate);
@@ -97,6 +74,11 @@ namespace Microsoft.OneDrive.Sdk
             catch (AdalException adalException)
             {
                 throw this.GetAuthenticationException(string.Equals(adalException.ErrorCode, Constants.Authentication.AuthenticationCancelled), adalException);
+            }
+            catch (OneDriveException)
+            {
+                // If authentication threw a OneDriveException assume we already handled it and let it bubble up.
+                throw;
             }
             catch (Exception exception)
             {
@@ -109,28 +91,6 @@ namespace Microsoft.OneDrive.Sdk
             }
 
             return authenticationResult;
-        }
-
-        internal OneDriveException GetAuthenticationException(bool isCancelled = false, Exception innerException = null)
-        {
-            if (isCancelled)
-            {
-                return new OneDriveException(
-                    new Error
-                    {
-                        Code = OneDriveErrorCode.AuthenticationCancelled.ToString(),
-                        Message = "User cancelled authentication.",
-                    },
-                    innerException);
-            }
-
-            return new OneDriveException(
-                new Error
-                {
-                    Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                    Message = "An error occurred during active directory authentication.",
-                },
-                innerException);
         }
     }
 }

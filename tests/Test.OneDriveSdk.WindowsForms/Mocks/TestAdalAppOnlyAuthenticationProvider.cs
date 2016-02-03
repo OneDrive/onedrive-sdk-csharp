@@ -20,15 +20,34 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk
+namespace Test.OneDriveSdk.WindowsForms.Mocks
 {
-    using System.Security.Cryptography.X509Certificates;
+    using System.Threading.Tasks;
+    using Microsoft.OneDrive.Sdk;
 
-    public class AdalServiceInfo : ActiveDirectoryServiceInfo
+    public class TestAdalAppOnlyAuthenticationProvider : AdalAppOnlyAuthenticationProvider
     {
         /// <summary>
-        /// Gets or sets the client certificate for Active Directory authentication.
+        /// Constructs an <see cref="TestAdalAppOnlyAuthenticationProvider"/>.
         /// </summary>
-        public X509Certificate2 ClientCertificate { get; set; }
+        public TestAdalAppOnlyAuthenticationProvider()
+            : base(null)
+        {
+        }
+
+        /// <summary>
+        /// Constructs an <see cref="TestAdalAppOnlyAuthenticationProvider"/>.
+        /// </summary>
+        /// <param name="serviceInfo">The information for authenticating against the service.</param>
+        /// <param name="currentAccountSession">The current account session, used for initializing an already logged in application.</param>
+        public TestAdalAppOnlyAuthenticationProvider(AdalServiceInfo serviceInfo)
+            : base(serviceInfo)
+        {
+        }
+
+        public Task<IAuthenticationResult> AuthenticateResourceAsyncWrapper(string resource)
+        {
+            return base.AuthenticateResourceAsync(resource);
+        }
     }
 }

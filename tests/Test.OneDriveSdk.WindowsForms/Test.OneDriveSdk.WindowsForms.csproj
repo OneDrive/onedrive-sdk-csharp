@@ -80,6 +80,8 @@
     <Compile Include="Mocks\MockAuthenticationResult.cs" />
     <Compile Include="Mocks\MockTokenCache.cs" />
     <Compile Include="Mocks\MockTokenCacheItem.cs" />
+    <Compile Include="Mocks\TestAdalAuthenticationByCodeAuthenticationProvider.cs" />
+    <Compile Include="Mocks\TestAdalAppOnlyAuthenticationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

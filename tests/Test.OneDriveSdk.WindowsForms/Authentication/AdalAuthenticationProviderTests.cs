@@ -37,24 +37,15 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
     [TestClass]
     public class AdalAuthenticationProviderTests : AdalAuthenticationProviderTestBase
     {
-        [TestMethod]
-        public async Task AppendAuthenticationHeader()
+        private AdalAuthenticationProvider authenticationProvider;
+
+
+        [TestInitialize]
+        public override void Setup()
         {
-            var cachedAccountSession = new AccountSession
-            {
-                AccessToken = "token",
-            };
+            base.Setup();
 
-            this.authenticationProvider.CurrentAccountSession = cachedAccountSession;
-
-            using (var httpRequestMessage = new HttpRequestMessage())
-            {
-                await this.authenticationProvider.AppendAuthHeaderAsync(httpRequestMessage);
-                Assert.AreEqual(
-                    string.Format("{0} {1}", Constants.Headers.Bearer, cachedAccountSession.AccessToken),
-                    httpRequestMessage.Headers.Authorization.ToString(),
-                    "Unexpected authorization header set.");
-            }
+            this.authenticationProvider = new AdalAuthenticationProvider(this.serviceInfo);
         }
 
         [TestMethod]
@@ -540,6 +531,95 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             Assert.IsNull(this.authenticationProvider.CurrentAccountSession, "Current account session not cleared.");
 
             this.credentialCache.Verify(cache => cache.OnDeleteFromCache(), Times.Once);
+        }
+
+        public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService(
+    IAuthenticationContextWrapper authenticationContextWrapper,
+    IAuthenticationResult authenticationResult)
+        {
+            this.serviceInfo.BaseUrl = "https://localhost";
+            this.serviceInfo.ServiceResource = serviceResourceId;
+
+            this.authenticationProvider.authenticationContextWrapper = authenticationContextWrapper;
+
+            var accountSession = await this.authenticationProvider.AuthenticateAsync();
+
+            Assert.AreEqual(accountSession, this.authenticationProvider.CurrentAccountSession, "Account session not cached correctly.");
+            Assert.AreEqual(authenticationResult.AccessToken, accountSession.AccessToken, "Unexpected access token set.");
+            Assert.AreEqual(authenticationResult.AccessTokenType, accountSession.AccessTokenType, "Unexpected access token type set.");
+            Assert.AreEqual(AccountType.ActiveDirectory, accountSession.AccountType, "Unexpected account type set.");
+            Assert.IsTrue(accountSession.CanSignOut, "CanSignOut set to false.");
+            Assert.AreEqual(this.serviceInfo.AppId, accountSession.ClientId, "Unexpected client ID set.");
+            Assert.AreEqual(authenticationResult.ExpiresOn, accountSession.ExpiresOnUtc, "Unexpected expiration set.");
+            Assert.IsNull(accountSession.UserId, "Unexpected user ID set.");
+        }
+
+        public async Task AuthenticateAsync_AuthenticateWithDiscoveryService(
+            MockAuthenticationContextWrapper mockAuthenticationContextWrapper,
+            IAuthenticationResult authenticationResult)
+        {
+            var accountSession = await this.AuthenticateWithDiscoveryService(mockAuthenticationContextWrapper);
+
+            Assert.AreEqual(accountSession, this.authenticationProvider.CurrentAccountSession, "Account session not cached correctly.");
+            Assert.AreEqual(serviceEndpointUri, this.serviceInfo.BaseUrl, "Base URL not set.");
+            Assert.AreEqual(serviceResourceId, this.serviceInfo.ServiceResource, "Service resource not set.");
+            Assert.AreEqual(authenticationResult.AccessToken, accountSession.AccessToken, "Unexpected access token set.");
+            Assert.AreEqual(authenticationResult.AccessTokenType, accountSession.AccessTokenType, "Unexpected access token type set.");
+            Assert.AreEqual(AccountType.ActiveDirectory, accountSession.AccountType, "Unexpected account type set.");
+            Assert.IsTrue(accountSession.CanSignOut, "CanSignOut set to false.");
+            Assert.AreEqual(this.serviceInfo.AppId, accountSession.ClientId, "Unexpected client ID set.");
+            Assert.AreEqual(authenticationResult.ExpiresOn, accountSession.ExpiresOnUtc, "Unexpected expiration set.");
+            Assert.IsNull(accountSession.UserId, "Unexpected user ID set.");
+        }
+
+        public async Task<AccountSession> AuthenticateWithDiscoveryService(
+            MockAuthenticationContextWrapper mockAuthenticationContextWrapper,
+            DiscoveryServiceResponse discoveryServiceResponse = null)
+        {
+            var mockAuthenticationResult = new MockAuthenticationResult();
+            mockAuthenticationResult.SetupGet(result => result.AccessToken).Returns("discoveryResource");
+
+            mockAuthenticationContextWrapper.Setup(wrapper => wrapper.AcquireTokenSilentAsync(
+                It.Is<string>(resource => resource.Equals(Constants.Authentication.ActiveDirectoryDiscoveryResource)),
+                It.Is<string>(clientId => clientId.Equals(this.serviceInfo.AppId)))).Throws(new Exception());
+
+            mockAuthenticationContextWrapper.Setup(wrapper => wrapper.AcquireToken(
+                It.Is<string>(resource => resource.Equals(Constants.Authentication.ActiveDirectoryDiscoveryResource)),
+                It.Is<string>(clientId => clientId.Equals(this.serviceInfo.AppId)),
+                It.Is<Uri>(returnUri => returnUri.ToString().Equals(this.serviceInfo.ReturnUrl)),
+                PromptBehavior.Auto,
+                UserIdentifier.AnyUser)).Returns(mockAuthenticationResult.Object);
+
+            if (discoveryServiceResponse == null)
+            {
+                discoveryServiceResponse = new DiscoveryServiceResponse
+                {
+                    Value = new List<DiscoveryService>
+                    {
+                        new DiscoveryService
+                        {
+                            Capability = Constants.Authentication.MyFilesCapability,
+                            ServiceApiVersion = this.serviceInfo.OneDriveServiceEndpointVersion,
+                            ServiceEndpointUri = serviceEndpointUri,
+                            ServiceResourceId = serviceResourceId,
+                        }
+                    }
+                };
+            }
+
+            var requestBodyString = this.serializer.SerializeObject(discoveryServiceResponse);
+
+            AccountSession accountSession;
+
+            using (var stringContent = new StringContent(requestBodyString))
+            {
+                this.httpResponseMessage.Content = stringContent;
+                this.authenticationProvider.authenticationContextWrapper = mockAuthenticationContextWrapper.Object;
+
+                accountSession = await this.authenticationProvider.AuthenticateAsync();
+            }
+
+            return accountSession;
         }
     }
 }
