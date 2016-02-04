@@ -61,7 +61,7 @@ namespace Microsoft.OneDrive.Sdk
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "App-only authentication requires a client certificate."
+                        Message = "Client certificate is required for app-only authentication."
                     });
             }
 

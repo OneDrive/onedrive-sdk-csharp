@@ -65,6 +65,23 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenSilentAsync(string, ClientAssertionCertificate, UserIdentifier)"/>.
+        /// </summary>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <param name="clientAssertionCertificate">The client assertion certificate of the application.</param>
+        /// <param name="userIdentifier">The <see cref="UserIdentifier"/> of the user.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        public async Task<IAuthenticationResult> AcquireTokenSilentAsync(
+            string resource,
+            ClientAssertionCertificate clientAssertionCertificate,
+            UserIdentifier userIdentifier)
+        {
+            var result = await this.authenticationContext.AcquireTokenSilentAsync(resource, clientAssertionCertificate, userIdentifier);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
+        }
+
+        /// <summary>
         /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenSilentAsync(string, ClientCredential, UserIdentifier)"/>.
         /// </summary>
         /// <param name="resource">The resource to authenticate against.</param>

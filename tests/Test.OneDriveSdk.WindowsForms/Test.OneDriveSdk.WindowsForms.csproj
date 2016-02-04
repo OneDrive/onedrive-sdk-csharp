@@ -70,6 +70,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Authentication\AdalAppOnlyAuthenticationProviderTests.cs" />
+    <Compile Include="Authentication\AdalServiceInfoProviderTests.cs" />
     <Compile Include="Authentication\AdalAuthenticationByCodeServiceInfoProviderTests.cs" />
     <Compile Include="Authentication\AdalAuthenticationByCodeAuthenticationProviderTests.cs" />
     <Compile Include="Authentication\AdalAuthenticationProviderTestBase.cs" />
