@@ -108,7 +108,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             catch (OneDriveException exception)
             {
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
-                Assert.AreEqual("App-only authentication requires a client certificate.", exception.Error.Message, "Unexpected error thrown.");
+                Assert.AreEqual("Client certificate is required for app-only authentication.", exception.Error.Message, "Unexpected error thrown.");
                 throw;
             }
         }

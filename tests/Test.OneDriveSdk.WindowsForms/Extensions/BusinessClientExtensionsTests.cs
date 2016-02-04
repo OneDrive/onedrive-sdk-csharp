@@ -31,9 +31,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Mocks;
     using Moq;
-    using Test.OneDriveSdk.Mocks;
-    using System.Reflection;
-    using System.IO;
+    using OneDriveSdk.Mocks;
 
     [TestClass]
     public class BusinessClientExtensionsTests
@@ -82,12 +80,12 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
         }
 
         [TestMethod]
-        public async Task GetAuthenticatedClient_NoSecret()
+        public async Task GetAuthenticatedClient_NoSecretOrCertificate()
         {
             var appId = "appId";
             var returnUrl = "returnUrl";
 
-            this.SetupServiceInfoProvider(appId, null, returnUrl, serviceResourceId);
+            this.SetupServiceInfoProvider(appId, null, null, returnUrl, serviceResourceId);
 
             var client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
                 appId,
@@ -109,12 +107,36 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             var returnUrl = "returnUrl";
             var clientSecret = "secret";
 
-            this.SetupServiceInfoProvider(appId, clientSecret, returnUrl, serviceResourceId);
+            this.SetupServiceInfoProvider(appId, null, clientSecret, returnUrl, serviceResourceId);
 
             var client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
                 appId,
                 returnUrl,
+                /* clientCertificate */ null,
                 clientSecret,
+                serviceResourceId,
+                /* userId */ null,
+                this.credentialCache.Object,
+                this.httpProvider.Object,
+                this.serviceInfoProvider.Object);
+
+            this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetAuthenticatedClient_WithCertificate()
+        {
+            var appId = "appId";
+            var returnUrl = "returnUrl";
+            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
+
+            this.SetupServiceInfoProvider(appId, clientCertificate, null, returnUrl, serviceResourceId);
+
+            var client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
+                appId,
+                returnUrl,
+                clientCertificate,
+                /* clientSecret */ null,
                 serviceResourceId,
                 /* userId */ null,
                 this.credentialCache.Object,
@@ -128,11 +150,10 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
         public async Task GetAuthenticatedClientUsingAppOnlyAuthentication()
         {
             var appId = "appId";
-
-            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
-
             var siteId = "site_id";
             var tenant = "tenant";
+
+            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
 
             this.serviceInfoProvider.Setup(provider => provider.GetServiceInfo(It.Is<AdalAppConfig>(
                         config => config.ActiveDirectoryAppId.Equals(appId)
@@ -169,16 +190,15 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             var appId = "appId";
             var returnUrl = "returnUrl";
 
-            this.SetupServiceInfoProvider(appId, null, returnUrl, null);
+            this.SetupServiceInfoProvider(appId, null, null, returnUrl, null);
 
             var client = await BusinessClientExtensions.GetAuthenticatedClientUsingDiscoveryServiceAsync(
                 appId,
                 returnUrl,
+                this.serviceInfoProvider.Object,
                 /* userId */ null,
                 this.credentialCache.Object,
-                this.httpProvider.Object,
-                this.serviceInfoProvider.Object);
-
+                this.httpProvider.Object);
 
             this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
         }
@@ -190,16 +210,16 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             var returnUrl = "returnUrl";
             var clientSecret = "secret";
 
-            this.SetupServiceInfoProvider(appId, clientSecret, returnUrl, null);
+            this.SetupServiceInfoProvider(appId, null, clientSecret, returnUrl, null);
 
-            var client = await BusinessClientExtensions.GetAuthenticatedClientUsingDiscoveryServiceAsync(
+            var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingDiscoveryServiceAsync(
                 appId,
                 returnUrl,
                 clientSecret,
+                this.serviceInfoProvider.Object,
                 /* userId */ null,
                 this.credentialCache.Object,
-                this.httpProvider.Object,
-                this.serviceInfoProvider.Object);
+                this.httpProvider.Object);
 
             this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
         }
@@ -208,9 +228,10 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
         public void GetClientUsingAppOnlyAuthentication_InitializeDefaults()
         {
             var appId = "appId";
-            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
             var siteId = "site_id";
             var tenant = "tenant";
+
+            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
 
             var client = BusinessClientExtensions.GetClientUsingAppOnlyAuthentication(
                 appId,
@@ -245,14 +266,20 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             Assert.IsInstanceOfType(client.serviceInfoProvider, typeof(AdalAppOnlyServiceInfoProvider), "Unexpected service info provider initialized.");
         }
 
-        private void SetupServiceInfoProvider(string appId, string clientSecret, string returnUrl, string serviceResource)
+        private void SetupServiceInfoProvider(
+            string appId,
+            X509Certificate2 clientCertificate,
+            string clientSecret,
+            string returnUrl,
+            string serviceResource)
         {
             this.serviceInfoProvider.Setup(provider => provider.GetServiceInfo(It.Is<AdalAppConfig>(
                         config => config.ActiveDirectoryAppId.Equals(appId)
                             && config.ActiveDirectoryReturnUrl.Equals(returnUrl)
+                            && config.ActiveDirectoryClientCertificate == clientCertificate
                             && string.Equals(config.ActiveDirectoryClientSecret, clientSecret)
                             && string.Equals(config.ActiveDirectoryServiceResource, serviceResource)
-                            && (serviceResource == null || string.Equals(config.ActiveDirectoryServiceEndpointUrl, string.Format("{0}/_api/v2.0", serviceResource)))),
+                            && (serviceResource == null || string.Equals(config.ActiveDirectoryServiceEndpointUrl, string.Format("{0}_api/v2.0", serviceResource)))),
                     this.credentialCache.Object,
                     this.httpProvider.Object,
                     ClientType.Business))

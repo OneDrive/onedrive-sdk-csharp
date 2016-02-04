@@ -23,7 +23,7 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using System.Net.Http;
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
 
     using IdentityModel.Clients.ActiveDirectory;
@@ -64,17 +64,26 @@ namespace Microsoft.OneDrive.Sdk
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;
-            var clientCredential = this.GetClientCredentialForAuthentication();
 
-            var returnUri = new Uri(this.ServiceInfo.ReturnUrl);
+            var adalServiceInfo = this.ServiceInfo as AdalServiceInfo;
+
+            ClientAssertionCertificate clientAssertionCertificate = null;
+            ClientCredential clientCredential = this.GetClientCredentialForAuthentication();
+
+            if (adalServiceInfo != null && adalServiceInfo.ClientCertificate != null)
+            {
+                clientAssertionCertificate = new ClientAssertionCertificate(this.serviceInfo.AppId, adalServiceInfo.ClientCertificate);
+            }
 
             var userIdentifier = this.GetUserIdentifierForAuthentication();
 
             try
             {
-                authenticationResult = clientCredential == null
-                    ? await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId)
-                    : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier);
+                authenticationResult = clientAssertionCertificate == null
+                    ?  clientCredential == null
+                        ? await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId)
+                        : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier)
+                    : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientAssertionCertificate, userIdentifier);
             }
             catch (Exception)
             {
@@ -88,11 +97,12 @@ namespace Microsoft.OneDrive.Sdk
 
             try
             {
-                if (clientCredential != null)
+                var redirectUri = new Uri(this.ServiceInfo.ReturnUrl);
+
+                if (clientAssertionCertificate != null || clientCredential != null)
                 {
                     var webAuthenticationUi = this.serviceInfo.WebAuthenticationUi ?? new FormsWebAuthenticationUi();
-                    var redirectUri = new Uri(this.ServiceInfo.ReturnUrl);
-
+                    
                     var requestUri = new Uri(this.OAuthRequestStringBuilder.GetAuthorizationCodeRequestUrl());
 
                     var authenticationResponseValues = await webAuthenticationUi.AuthenticateAsync(
@@ -104,11 +114,22 @@ namespace Microsoft.OneDrive.Sdk
                     string code;
                     if (authenticationResponseValues != null && authenticationResponseValues.TryGetValue("code", out code))
                     {
-                        authenticationResult = await this.authenticationContextWrapper.AcquireTokenByAuthorizationCodeAsync(
-                            code,
-                            redirectUri,
-                            clientCredential,
-                            resource);
+                        if (clientAssertionCertificate != null)
+                        {
+                            authenticationResult = await this.authenticationContextWrapper.AcquireTokenByAuthorizationCodeAsync(
+                                code,
+                                redirectUri,
+                                clientAssertionCertificate,
+                                resource);
+                        }
+                        else
+                        {
+                            authenticationResult = await this.authenticationContextWrapper.AcquireTokenByAuthorizationCodeAsync(
+                                code,
+                                redirectUri,
+                                clientCredential,
+                                resource);
+                        }
                     }
                 }
                 else
@@ -116,7 +137,7 @@ namespace Microsoft.OneDrive.Sdk
                     authenticationResult = this.authenticationContextWrapper.AcquireToken(
                         resource,
                         this.ServiceInfo.AppId,
-                        returnUri,
+                        redirectUri,
                         PromptBehavior.Auto,
                         userIdentifier);
                 }
