@@ -22,9 +22,9 @@
 
 namespace Test.OneDriveSdk.WindowsForms.Authentication
 {
-    using System.Threading.Tasks;
     using System.Net.Http;
     using System.Security.Cryptography.X509Certificates;
+    using System.Threading.Tasks;
 
     using Microsoft.OneDrive.Sdk;
     using Microsoft.OneDrive.Sdk.WindowsForms;

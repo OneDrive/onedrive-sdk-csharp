@@ -67,19 +67,29 @@ namespace Microsoft.OneDrive.Sdk
 
             var serviceInfo = await base.GetServiceInfo(appConfig, credentialCache, httpProvider, clientType);
 
-            serviceInfo.BaseUrl = serviceInfo.BaseUrl = string.Format(
+            var adalServiceInfo = new AdalServiceInfo();
+            adalServiceInfo.CopyFrom(serviceInfo);
+
+            adalServiceInfo.BaseUrl = serviceInfo.BaseUrl = string.Format(
                 Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
                 appConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
                 serviceInfo.OneDriveServiceEndpointVersion);
 
-            serviceInfo.ServiceResource = appConfig.ActiveDirectoryServiceResource;
+            adalServiceInfo.ServiceResource = appConfig.ActiveDirectoryServiceResource;
 
-            if (serviceInfo.AuthenticationProvider == null)
+            var adalAppConfig = appConfig as AdalAppConfig;
+
+            if (adalAppConfig != null)
             {
-                serviceInfo.AuthenticationProvider = new AdalAuthenticationByCodeAuthenticationProvider(serviceInfo, authenticationCode);
+                adalServiceInfo.ClientCertificate = adalAppConfig.ActiveDirectoryClientCertificate;
             }
 
-            return serviceInfo;
+            if (adalServiceInfo.AuthenticationProvider == null)
+            {
+                adalServiceInfo.AuthenticationProvider = new AdalAuthenticationByCodeAuthenticationProvider(adalServiceInfo, authenticationCode);
+            }
+
+            return adalServiceInfo;
         }
     }
 }
