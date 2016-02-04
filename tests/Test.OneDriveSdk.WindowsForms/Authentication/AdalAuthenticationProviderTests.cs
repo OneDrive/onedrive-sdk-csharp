@@ -28,11 +28,11 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
 
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
     using Microsoft.OneDrive.Sdk;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Mocks;
     using Moq;
-    using Microsoft.IdentityModel.Clients.ActiveDirectory;
     using OneDriveSdk.Mocks;
 
     [TestClass]
