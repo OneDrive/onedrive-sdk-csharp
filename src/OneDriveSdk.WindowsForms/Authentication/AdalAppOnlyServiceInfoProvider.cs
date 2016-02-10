@@ -24,18 +24,40 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// A <see cref="ServiceInfoProvider"/> implementation for initializing a <see cref="ServiceInfo"/> for app-only authentication.
+    /// </summary>
     public class AdalAppOnlyServiceInfoProvider : ServiceInfoProvider
     {
+        /// <summary>
+        /// Initializes an <see cref="AdalAppOnlyServiceInfoProvider"/> that uses an
+        /// <see cref="AdalAppOnlyAuthenticationProvider"/> for authentication.
+        /// </summary>
         public AdalAppOnlyServiceInfoProvider()
             : this(null)
         {
         }
 
-        public AdalAppOnlyServiceInfoProvider(IAuthenticationProvider authenticationProvider)
+        /// <summary>
+        /// Initializes an <see cref="AdalAppOnlyServiceInfoProvider"/> that uses a custom
+        /// <see cref="IAuthenticationProvider"/> for authentication.
+        /// 
+        /// Used for unit testing.
+        /// </summary>
+        /// <param name="authenticationProvider">The custom <see cref="IAuthenticationProvider"/> for authentication.</param>
+        internal AdalAppOnlyServiceInfoProvider(IAuthenticationProvider authenticationProvider)
             : base(authenticationProvider, null)
         {
         }
 
+        /// <summary>
+        /// Generates the <see cref="ServiceInfo"/> for the current application configuration.
+        /// </summary>
+        /// <param name="appConfig">The <see cref="AppConfig"/> for the current application.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <param name="clientType">The <see cref="ClientType"/> to specify the business or consumer service.</param>
+        /// <returns>The <see cref="ServiceInfo"/> for the current session.</returns>
         public async override Task<ServiceInfo> GetServiceInfo(
             AppConfig appConfig,
             CredentialCache credentialCache,
@@ -52,7 +74,7 @@ namespace Microsoft.OneDrive.Sdk
                     });
             }
 
-            var adalAppConfig = appConfig as AdalAppConfig;
+            var adalAppConfig = appConfig as BusinessAppConfig;
 
             if (adalAppConfig == null)
             {
@@ -70,17 +92,7 @@ namespace Microsoft.OneDrive.Sdk
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Service resource ID is required for app-only authentication.",
-                    });
-            }
-
-            if (string.IsNullOrEmpty(adalAppConfig.ActiveDirectorySiteId))
-            {
-                throw new OneDriveException(
-                    new Error
-                    {
-                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Site ID is required for app-only authentication.",
+                        Message = "Service resource ID is required for app-only authentication when service endpoint URL is not initialized.",
                     });
             }
 
@@ -90,11 +102,14 @@ namespace Microsoft.OneDrive.Sdk
             adalServiceInfo.CopyFrom(serviceInfo);
 
             adalServiceInfo.ServiceResource = adalAppConfig.ActiveDirectoryServiceResource;
-            adalServiceInfo.BaseUrl = string.Format(
-                Constants.Authentication.OneDriveBusinessBaseUrlForSiteFormatString,
-                adalAppConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
-                adalAppConfig.ActiveDirectorySiteId,
-                serviceInfo.OneDriveServiceEndpointVersion);
+
+            if (string.IsNullOrEmpty(adalServiceInfo.BaseUrl))
+            {
+                adalServiceInfo.BaseUrl = string.Format(
+                    Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                    adalAppConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
+                    serviceInfo.OneDriveServiceEndpointVersion);
+            }
 
             adalServiceInfo.ClientCertificate = adalAppConfig.ActiveDirectoryClientCertificate;
 

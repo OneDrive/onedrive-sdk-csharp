@@ -79,7 +79,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             Assert.AreEqual(
                 string.Format(
                     Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
-                    this.appConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
+                    this.appConfig.ActiveDirectoryServiceResource,
                     serviceInfo.OneDriveServiceEndpointVersion),
                 serviceInfo.BaseUrl,
                 "Unexpected base URL set.");

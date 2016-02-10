@@ -24,16 +24,14 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System.Security.Cryptography.X509Certificates;
 
-    public class AdalAppConfig : AppConfig
+    /// <summary>
+    /// An implementation of <see cref="AppConfig"/> for use with business applications.
+    /// </summary>
+    public class BusinessAppConfig : AppConfig
     {
         /// <summary>
         /// Gets or sets the client certificate for Active Directory authentication.
         /// </summary>
         public X509Certificate2 ActiveDirectoryClientCertificate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the site ID for Active Directory authentication.
-        /// </summary>
-        public string ActiveDirectorySiteId { get; set; }
     }
 }

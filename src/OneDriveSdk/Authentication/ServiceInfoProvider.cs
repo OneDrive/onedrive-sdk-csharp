@@ -112,10 +112,12 @@ namespace Microsoft.OneDrive.Sdk
                 AuthenticationServiceUrl = string.IsNullOrEmpty(appConfig.ActiveDirectoryAuthenticationServiceUrl)
                     ? Constants.Authentication.ActiveDirectoryAuthenticationServiceUrl
                     : appConfig.ActiveDirectoryAuthenticationServiceUrl,
+                BaseUrl = appConfig.ActiveDirectoryServiceEndpointUrl,
                 ClientSecret = appConfig.ActiveDirectoryClientSecret,
                 CredentialCache = credentialCache,
                 HttpProvider = httpProvider,
                 ReturnUrl = appConfig.ActiveDirectoryReturnUrl,
+                ServiceResource = appConfig.ActiveDirectoryServiceResource,
                 UserId = this.UserSignInName,
             };
             

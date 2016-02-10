@@ -27,7 +27,6 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
     using System.Threading.Tasks;
 
     using Microsoft.OneDrive.Sdk;
-    using Microsoft.OneDrive.Sdk.WindowsForms;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Mocks;
     using Moq;
@@ -44,8 +43,6 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
         protected MockHttpProvider httpProvider;
         protected HttpResponseMessage httpResponseMessage;
         protected MockSerializer serializer;
-        protected ServiceInfo serviceInfo;
-        protected MockServiceInfoProvider serviceInfoProvider;
 
         [TestInitialize]
         public void Setup()
@@ -57,20 +54,6 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
 
             this.authenticationProvider = new MockAuthenticationProvider();
             this.authenticationProvider.Setup(provider => provider.AuthenticateAsync()).Returns(Task.FromResult(new AccountSession()));
-
-            this.serviceInfoProvider = new MockServiceInfoProvider();
-            this.serviceInfo = new ActiveDirectoryServiceInfo
-            {
-                AppId = "12345",
-                AuthenticationProvider = this.authenticationProvider.Object,
-                AuthenticationServiceUrl = "https://login.live.com/authenticate",
-                BaseUrl = serviceEndpointUri,
-                CredentialCache = this.credentialCache.Object,
-                HttpProvider = this.httpProvider.Object,
-                ReturnUrl = "https://login.live.com/return",
-                SignOutUrl = "https://login.live.com/signout",
-                TokenServiceUrl = "https://login.live.com/token"
-            };
         }
 
         [TestCleanup]
@@ -80,181 +63,409 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
         }
 
         [TestMethod]
-        public async Task GetAuthenticatedClient_NoSecretOrCertificate()
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedClientAsync_AppIdRequired()
         {
-            var appId = "appId";
-            var returnUrl = "returnUrl";
-
-            this.SetupServiceInfoProvider(appId, null, null, returnUrl, serviceResourceId);
-
-            var client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                serviceResourceId,
-                /* userId */ null,
-                this.credentialCache.Object,
-                this.httpProvider.Object,
-                this.serviceInfoProvider.Object);
-
-
-            this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task GetAuthenticatedClient_WithSecret()
-        {
-            var appId = "appId";
-            var returnUrl = "returnUrl";
-            var clientSecret = "secret";
-
-            this.SetupServiceInfoProvider(appId, null, clientSecret, returnUrl, serviceResourceId);
-
-            var client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                /* clientCertificate */ null,
-                clientSecret,
-                serviceResourceId,
-                /* userId */ null,
-                this.credentialCache.Object,
-                this.httpProvider.Object,
-                this.serviceInfoProvider.Object);
-
-            this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task GetAuthenticatedClient_WithCertificate()
-        {
-            var appId = "appId";
-            var returnUrl = "returnUrl";
-            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
-
-            this.SetupServiceInfoProvider(appId, clientCertificate, null, returnUrl, serviceResourceId);
-
-            var client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                clientCertificate,
-                /* clientSecret */ null,
-                serviceResourceId,
-                /* userId */ null,
-                this.credentialCache.Object,
-                this.httpProvider.Object,
-                this.serviceInfoProvider.Object);
-
-            this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task GetAuthenticatedClientUsingAppOnlyAuthentication()
-        {
-            var appId = "appId";
-            var siteId = "site_id";
-            var tenant = "tenant";
-
-            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
-
-            this.serviceInfoProvider.Setup(provider => provider.GetServiceInfo(It.Is<AdalAppConfig>(
-                        config => config.ActiveDirectoryAppId.Equals(appId)
-                            && config.ActiveDirectoryClientCertificate == clientCertificate
-                            && string.Equals(config.ActiveDirectoryServiceResource, serviceResourceId)
-                            && string.Equals(config.ActiveDirectorySiteId, siteId)
-                            && string.Equals(
-                                string.Format(
-                                    Constants.Authentication.ActiveDirectoryAuthenticationServiceUrlFormatString,
-                                    tenant),
-                                config.ActiveDirectoryAuthenticationServiceUrl)),
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryReturnUrl = "https://return"
+                    },
+                    /* userId */ null,
                     this.credentialCache.Object,
-                    this.httpProvider.Object,
-                    ClientType.Business))
-                .Returns(Task.FromResult<ServiceInfo>(
-                    this.serviceInfo));
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("ActiveDirectoryAppId is required for authentication.", exception.Error.Message, "Unexpected error thrown.");
 
-            var client = await BusinessClientExtensions.GetAuthenticatedClientUsingAppOnlyAuthenticationAsync(
-                appId,
-                clientCertificate,
-                serviceResourceId,
-                siteId,
-                tenant,
-                this.credentialCache.Object,
-                this.httpProvider.Object,
-                this.serviceInfoProvider.Object);
-
-            this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
+                throw;
+            }
         }
 
         [TestMethod]
-        public async Task GetAuthenticatedClientUsingDiscoveryService_NoSecret()
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedClientAsync_ReturnUrlRequired()
+        {
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
+                    new BusinessAppConfig(),
+                    /* userId */ null,
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("ActiveDirectoryReturnUrl is required for authenticating a business client.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedWebClientAsync_ClientCertificateOrSecretRequired()
         {
             var appId = "appId";
-            var returnUrl = "returnUrl";
 
-            this.SetupServiceInfoProvider(appId, null, null, returnUrl, null);
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedWebClientAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryAppId = appId,
+                    },
+                    /* userId */ null,
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("Client certificate or client secret is required for authenticating a business web client.", exception.Error.Message, "Unexpected error thrown.");
 
-            var client = await BusinessClientExtensions.GetAuthenticatedClientUsingDiscoveryServiceAsync(
-                appId,
-                returnUrl,
-                this.serviceInfoProvider.Object,
-                /* userId */ null,
-                this.credentialCache.Object,
-                this.httpProvider.Object);
-
-            this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
+                throw;
+            }
         }
 
         [TestMethod]
-        public async Task GetAuthenticatedClientUsingDiscoveryService_WithSecret()
-        {
-            var appId = "appId";
-            var returnUrl = "returnUrl";
-            var clientSecret = "secret";
-
-            this.SetupServiceInfoProvider(appId, null, clientSecret, returnUrl, null);
-
-            var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingDiscoveryServiceAsync(
-                appId,
-                returnUrl,
-                clientSecret,
-                this.serviceInfoProvider.Object,
-                /* userId */ null,
-                this.credentialCache.Object,
-                this.httpProvider.Object);
-
-            this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
-        }
-
-        [TestMethod]
-        public void GetClientUsingAppOnlyAuthentication_InitializeDefaults()
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync_ClientCertificateRequired()
         {
             var appId = "appId";
             var siteId = "site_id";
             var tenant = "tenant";
+            
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync(
+                new BusinessAppConfig
+                {
+                    ActiveDirectoryAppId = appId,
+                    ActiveDirectoryServiceResource = serviceResourceId,
+                },
+                siteId,
+                tenant,
+                this.credentialCache.Object,
+                this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("ActiveDirectoryClientCertificate is required for app-only authentication.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync_ServiceEndpointBaseUrlRequired()
+        {
+            var appId = "appId";
+            var tenant = "tenant";
 
             var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
 
-            var client = BusinessClientExtensions.GetClientUsingAppOnlyAuthentication(
-                appId,
-                clientCertificate,
-                serviceResourceId,
-                siteId,
-                tenant,
-                credentialCache: null,
-                httpProvider: null,
-                serviceInfoProvider: null) as OneDriveClient;
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryAppId = appId,
+                        ActiveDirectoryClientCertificate = clientCertificate,
+                        ActiveDirectoryServiceResource = serviceResourceId,
+                    },
+                    /* serviceEndpointBaseUrl */ null,
+                    tenant,
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("Service endpoint base URL is required for app-only authentication.", exception.Error.Message, "Unexpected error thrown.");
 
-            var adalAppConfig = client.appConfig as AdalAppConfig;
+                throw;
+            }
+        }
 
-            Assert.IsNotNull(adalAppConfig, "Unexpected app configuration initialized.");
-            Assert.AreEqual(appId, adalAppConfig.ActiveDirectoryAppId, "Unexpected app ID initialized.");
-            Assert.AreEqual(clientCertificate, adalAppConfig.ActiveDirectoryClientCertificate, "Unexpected client certificate initialized.");
-            Assert.AreEqual(siteId, adalAppConfig.ActiveDirectorySiteId, "Unexpected site ID initialized.");
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync_ServiceResourceRequired()
+        {
+            var appId = "appId";
+            var tenant = "tenant";
+
+            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
+
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryAppId = appId,
+                        ActiveDirectoryClientCertificate = clientCertificate,
+                    },
+                    serviceResourceId,
+                    tenant,
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("ActiveDirectoryServiceResource is required for app-only authentication.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync_TenantIdRequired()
+        {
+            var appId = "appId";
+
+            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
+
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryAppId = appId,
+                        ActiveDirectoryClientCertificate = clientCertificate,
+                        ActiveDirectoryServiceResource = serviceResourceId,
+                    },
+                    serviceResourceId,
+                    /* tenantId */ null,
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("Tenant ID is required for app-only authentication.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        public async Task GetAuthenticatedClientUsingCustomAuthenticationAsync()
+        {
+            var baseEndpointUrl = "https://resource/";
+
+            var client = await BusinessClientExtensions.GetAuthenticatedClientUsingCustomAuthenticationAsync(
+                baseEndpointUrl,
+                this.authenticationProvider.Object,
+                this.httpProvider.Object) as OneDriveClient;
+
+            var clientServiceInfoProvider = client.serviceInfoProvider as ServiceInfoProvider;
+
+            Assert.IsNotNull(clientServiceInfoProvider, "Unexpected service info provider initialized for client.");
+            Assert.AreEqual(this.authenticationProvider.Object, clientServiceInfoProvider.AuthenticationProvider, "Unexpected authentication provider set.");
+            Assert.AreEqual(this.httpProvider.Object, client.HttpProvider, "Unexpected HTTP provider set.");
+            Assert.IsNull(client.credentialCache, "Unexpected credential cache set.");
+
             Assert.AreEqual(
                 string.Format(
-                    Constants.Authentication.ActiveDirectoryAuthenticationServiceUrlFormatString,
-                    tenant),
-                adalAppConfig.ActiveDirectoryAuthenticationServiceUrl,
-                "Unexpected authentication service URL initialized.");
+                    Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                    baseEndpointUrl.TrimEnd('/'),
+                    "v2.0"),
+                client.BaseUrl,
+                "Unexpected base service URL initialized.");
+
+            this.authenticationProvider.Verify(provider => provider.AuthenticateAsync(), Times.Once);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedClientUsingCustomAuthenticationAsync_AuthenticationProviderRequired()
+        {
+            var baseEndpointUrl = "https://resource/";
+
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedClientUsingCustomAuthenticationAsync(
+                    baseEndpointUrl,
+                    /* authenticationProvider */ null,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("An authentication provider is required for a client using custom authentication.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedClientUsingCustomAuthenticationAsync_ServiceEndpointBaseUrlRequired()
+        {
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedClientUsingCustomAuthenticationAsync(
+                    /* serviceEndpointBaseUrl */ null,
+                    this.authenticationProvider.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("Service endpoint base URL is required when using custom authentication.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedWebClientUsingAuthenticationByCodeAsync_AppIdRequired()
+        {
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingAuthenticationByCodeAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryReturnUrl = "https://return"
+                    },
+                    "code",
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("ActiveDirectoryAppId is required for authentication.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedWebClientUsingAuthenticationByCodeAsync_CodeRequired()
+        {
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingAuthenticationByCodeAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryAppId = "appId",
+                        ActiveDirectoryReturnUrl = "https://return",
+                        ActiveDirectoryServiceResource = "https://resource/",
+                    },
+                    /* code */ null,
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("Authorization code is required for authentication by code.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedWebClientUsingAuthenticationByCodeAsync_ReturnUrlRequired()
+        {
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
+                    new BusinessAppConfig(),
+                    "code",
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("ActiveDirectoryReturnUrl is required for authenticating a business client.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetAuthenticatedWebClientUsingAuthenticationByCodeAsync_ServiceResourceRequired()
+        {
+            try
+            {
+                var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingAuthenticationByCodeAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryAppId = "appId",
+                        ActiveDirectoryReturnUrl = "https://return",
+                    },
+                    /* code */ null,
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("Service resource ID is required for authentication by code.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        public void GetClient()
+        {
+            var appId = "appId";
+            var returnUrl = "returnUrl";
+            var userId = "userId";
+            
+            var client = BusinessClientExtensions.GetClient(
+                new BusinessAppConfig
+                {
+                    ActiveDirectoryAppId = appId,
+                    ActiveDirectoryReturnUrl = returnUrl,
+                    ActiveDirectoryServiceResource = serviceResourceId,
+                },
+                userId,
+                this.credentialCache.Object,
+                this.httpProvider.Object) as OneDriveClient;
+
+            var clientServiceInfoProvider = client.serviceInfoProvider as ServiceInfoProvider;
+
+            Assert.IsNotNull(clientServiceInfoProvider, "Unexpected service info provider initialized for client.");
+            Assert.AreEqual(userId, clientServiceInfoProvider.UserSignInName, "Unexpected user sign-in name set.");
+            Assert.AreEqual(this.httpProvider.Object, client.HttpProvider, "Unexpected HTTP provider set.");
+            Assert.AreEqual(this.credentialCache.Object, client.credentialCache, "Unexpected credential cache set.");
+        }
+
+        [TestMethod]
+        public void GetClient_InitializeDefaults()
+        {
+            var appId = "appId";
+
+            var client = BusinessClientExtensions.GetClientInternal(
+                new BusinessAppConfig
+                {
+                    ActiveDirectoryAppId = appId,
+                },
+                serviceInfoProvider: null,
+                credentialCache: null,
+                httpProvider: null) as OneDriveClient;
+
+            var adalAppConfig = client.appConfig as BusinessAppConfig;
+
+            Assert.IsNotNull(adalAppConfig, "Unexpected app configuration initialized.");
 
             Assert.IsNotNull(client.credentialCache, "Credential cache not initialized.");
             Assert.IsInstanceOfType(client.credentialCache, typeof(AdalCredentialCache), "Unexpected credential cache initialized.");
@@ -263,28 +474,63 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             Assert.IsInstanceOfType(client.HttpProvider, typeof(HttpProvider), "Unexpected HTTP provider initialized.");
 
             Assert.IsNotNull(client.serviceInfoProvider, "Service info provider not initialized.");
-            Assert.IsInstanceOfType(client.serviceInfoProvider, typeof(AdalAppOnlyServiceInfoProvider), "Unexpected service info provider initialized.");
+            Assert.IsInstanceOfType(client.serviceInfoProvider, typeof(AdalServiceInfoProvider), "Unexpected service info provider initialized.");
+
+            Assert.AreEqual(ClientType.Business, client.ClientType, "Unexpected client type set.");
         }
 
-        private void SetupServiceInfoProvider(
-            string appId,
-            X509Certificate2 clientCertificate,
-            string clientSecret,
-            string returnUrl,
-            string serviceResource)
+        [TestMethod]
+        public void GetClientUsingCustomAuthentication_InitializeDefaults()
         {
-            this.serviceInfoProvider.Setup(provider => provider.GetServiceInfo(It.Is<AdalAppConfig>(
-                        config => config.ActiveDirectoryAppId.Equals(appId)
-                            && config.ActiveDirectoryReturnUrl.Equals(returnUrl)
-                            && config.ActiveDirectoryClientCertificate == clientCertificate
-                            && string.Equals(config.ActiveDirectoryClientSecret, clientSecret)
-                            && string.Equals(config.ActiveDirectoryServiceResource, serviceResource)
-                            && (serviceResource == null || string.Equals(config.ActiveDirectoryServiceEndpointUrl, string.Format("{0}_api/v2.0", serviceResource)))),
-                    this.credentialCache.Object,
-                    this.httpProvider.Object,
-                    ClientType.Business))
-                .Returns(Task.FromResult<ServiceInfo>(
-                    this.serviceInfo));
+            var baseEndpointUrl = "https://resource/";
+
+            var client = BusinessClientExtensions.GetClientUsingCustomAuthentication(
+                baseEndpointUrl,
+                this.authenticationProvider.Object) as OneDriveClient;
+
+            var clientServiceInfoProvider = client.serviceInfoProvider as ServiceInfoProvider;
+
+            Assert.IsNotNull(clientServiceInfoProvider, "Unexpected service info provider initialized for client.");
+            Assert.AreEqual(this.authenticationProvider.Object, clientServiceInfoProvider.AuthenticationProvider, "Unexpected authentication provider set.");
+            Assert.IsInstanceOfType(client.HttpProvider, typeof(HttpProvider), "Unexpected HTTP provider set.");
+            Assert.IsNull(client.credentialCache, "Unexpected credential cache set.");
+            Assert.AreEqual(ClientType.Business, client.ClientType, "Unexpected client type set.");
+        }
+
+        [TestMethod]
+        public void GetWebClientUsingAppOnlyAuthentication()
+        {
+            var appId = "appId";
+            var tenant = "tenant";
+
+            var clientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
+
+            var client = BusinessClientExtensions.GetWebClientUsingAppOnlyAuthentication(
+                new BusinessAppConfig
+                {
+                    ActiveDirectoryAppId = appId,
+                    ActiveDirectoryClientCertificate = clientCertificate,
+                    ActiveDirectoryServiceResource = serviceResourceId,
+                },
+                serviceResourceId,
+                tenant,
+                this.credentialCache.Object,
+                this.httpProvider.Object) as OneDriveClient;
+
+            Assert.AreEqual(
+                string.Format(
+                Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                serviceResourceId.TrimEnd('/'),
+                "v2.0"),
+                client.appConfig.ActiveDirectoryServiceEndpointUrl,
+                "Unexpected service endpoint URL initialized for app config.");
+
+            Assert.AreEqual(
+                string.Format(Constants.Authentication.ActiveDirectoryAuthenticationServiceUrlFormatString, tenant),
+                client.appConfig.ActiveDirectoryAuthenticationServiceUrl,
+                "Unexpected authentication service URL.");
+
+            Assert.IsInstanceOfType(client.serviceInfoProvider, typeof(AdalAppOnlyServiceInfoProvider), "Unexpected authentication provider.");
         }
     }
 }

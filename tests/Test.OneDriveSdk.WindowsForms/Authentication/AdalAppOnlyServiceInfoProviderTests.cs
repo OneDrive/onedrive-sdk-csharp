@@ -33,7 +33,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
     [TestClass]
     public class AdalAppOnlyServiceInfoProviderTests
     {
-        private AdalAppConfig appConfig;
+        private BusinessAppConfig appConfig;
         private MockAdalCredentialCache credentialCache;
         private MockHttpProvider httpProvider;
         private AdalAppOnlyServiceInfoProvider serviceInfoProvider;
@@ -41,12 +41,11 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
         [TestInitialize]
         public void Setup()
         {
-            this.appConfig = new AdalAppConfig
+            this.appConfig = new BusinessAppConfig
             {
                 ActiveDirectoryAppId = "12345",
                 ActiveDirectoryReturnUrl = "https://localhost/return",
                 ActiveDirectoryServiceResource = "https://resource/",
-                ActiveDirectorySiteId = "siteId",
             };
             
             this.credentialCache = new MockAdalCredentialCache();
@@ -82,9 +81,8 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             Assert.AreEqual(this.serviceInfoProvider.UserSignInName, serviceInfo.UserId, "Unexpected user ID set.");
             Assert.AreEqual(
                 string.Format(
-                    Constants.Authentication.OneDriveBusinessBaseUrlForSiteFormatString,
+                    Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
                     this.appConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
-                    this.appConfig.ActiveDirectorySiteId,
                     serviceInfo.OneDriveServiceEndpointVersion),
                 serviceInfo.BaseUrl,
                 "Unexpected base URL set.");
@@ -154,7 +152,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
 
         [TestMethod]
         [ExpectedException(typeof(OneDriveException))]
-        public async Task GetServiceInfo_MissingServiceResource()
+        public async Task GetServiceInfo_MissingServiceResourceAndBaseUrl()
         {
             try
             {
@@ -170,32 +168,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             {
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
                 Assert.AreEqual(
-                    "Service resource ID is required for app-only authentication.",
-                    exception.Error.Message,
-                    "Unexpected error thrown.");
-                throw;
-            }
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(OneDriveException))]
-        public async Task GetServiceInfo_MissingSiteId()
-        {
-            try
-            {
-                this.appConfig.ActiveDirectorySiteId = null;
-
-                var serviceInfo = await this.serviceInfoProvider.GetServiceInfo(
-                    this.appConfig,
-                    /* credentialCache */ null,
-                    /* httpProvider */ null,
-                    ClientType.Business);
-            }
-            catch (OneDriveException exception)
-            {
-                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
-                Assert.AreEqual(
-                    "Site ID is required for app-only authentication.",
+                    "Service resource ID is required for app-only authentication when service endpoint URL is not initialized.",
                     exception.Error.Message,
                     "Unexpected error thrown.");
                 throw;

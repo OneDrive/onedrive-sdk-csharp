@@ -23,11 +23,13 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using System.Net.Http;
     using System.Threading.Tasks;
 
     using IdentityModel.Clients.ActiveDirectory;
 
+    /// <summary>
+    /// Authenticates an application using app-only authentication tokens.
+    /// </summary>
     public class AdalAppOnlyAuthenticationProvider : AdalAuthenticationProviderBase
     {
         /// <summary>
@@ -37,8 +39,14 @@ namespace Microsoft.OneDrive.Sdk
         public AdalAppOnlyAuthenticationProvider(AdalServiceInfo serviceInfo)
             : base(serviceInfo, currentAccountSession: null)
         {
+            this.allowDiscoveryService = false;
         }
 
+        /// <summary>
+        /// Retrieves an authentication result for the specified resource.
+        /// </summary>
+        /// <param name="resource">The resource to authenticate.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/> returned for the resource.</returns>
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;

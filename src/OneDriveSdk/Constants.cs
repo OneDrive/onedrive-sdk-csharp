@@ -92,8 +92,6 @@ namespace Microsoft.OneDrive.Sdk
 
             internal const string OneDriveBusinessBaseUrlFormatString = "{0}/_api/{1}";
 
-            internal const string OneDriveBusinessBaseUrlForSiteFormatString = "{0}/personal/{1}/_api/{2}";
-
             internal const string OneDriveConsumerBaseUrlFormatString = "https://api.onedrive.com/{0}";
         }
 

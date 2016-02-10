@@ -34,7 +34,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
     [TestClass]
     public class AdalServiceInfoProviderTests
     {
-        private AdalAppConfig appConfig;
+        private BusinessAppConfig appConfig;
         private MockAdalCredentialCache credentialCache;
         private MockHttpProvider httpProvider;
         private AdalServiceInfoProvider serviceInfoProvider;
@@ -42,12 +42,11 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
         [TestInitialize]
         public void Setup()
         {
-            this.appConfig = new AdalAppConfig
+            this.appConfig = new BusinessAppConfig
             {
                 ActiveDirectoryAppId = "12345",
                 ActiveDirectoryReturnUrl = "https://localhost/return",
                 ActiveDirectoryServiceResource = "https://resource/",
-                ActiveDirectorySiteId = "siteId",
             };
             
             this.credentialCache = new MockAdalCredentialCache();

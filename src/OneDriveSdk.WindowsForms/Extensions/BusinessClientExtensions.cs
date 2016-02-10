@@ -20,9 +20,9 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WindowsForms
+namespace Microsoft.OneDrive.Sdk
 {
-    using System.Security.Cryptography.X509Certificates;
+    using System;
     using System.Threading.Tasks;
 
     public static class BusinessClientExtensions
@@ -43,6 +43,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        [Obsolete("Please use the GetClient method instead to retrieve a OneDrive for Business client.", false)]
         public static IOneDriveClient GetActiveDirectoryClient(
             string appId,
             string returnUrl,
@@ -51,17 +52,17 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
             AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
-            return BusinessClientExtensions.GetClient(
-                new AdalAppConfig
+            return BusinessClientExtensions.GetClientInternal(
+                new BusinessAppConfig
                 {
                     ActiveDirectoryAppId = appId,
                     ActiveDirectoryReturnUrl = returnUrl,
                     ActiveDirectoryServiceEndpointUrl = serviceEndpointUrl,
                     ActiveDirectoryServiceResource = serviceResource,
                 },
+                /* serviceInfoProvider */ null,
                 credentialCache,
-                httpProvider,
-                serviceInfoProvider: null);
+                httpProvider);
         }
 
         /// <summary>
@@ -80,6 +81,7 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        [Obsolete("Please use the GetAuthenticatedClientAsync method instead to retrieve a OneDrive for Business client.", false)]
         public static async Task<IOneDriveClient> GetAuthenticatedActiveDirectoryClient(
             string appId,
             string returnUrl,
@@ -102,521 +104,55 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         }
 
         /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
+        /// Creates an unauthenticated client using ADAL for authentication.
         /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
-        ///     If not provided, will be retrieved using the Discovery service.
-        /// </param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedClientAsync(
-            string appId,
-            string returnUrl,
-            string serviceResource,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null,
-            IServiceInfoProvider serviceInfoProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                /* clientCertificate */ null,
-                /* clientSecret */ null,
-                serviceResource,
-                userId,
-                credentialCache,
-                httpProvider,
-                serviceInfoProvider);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
-        ///     If not provided, will be retrieved using the Discovery service.
+        /// <param name="appConfig">
+        ///     The <see cref="BusinessAppConfig"/> for the application configuration.
+        ///     Authentication requires the following to be initialized:
+        ///         - ActiveDirectoryAppId
+        ///         - ActiveDirectoryReturnUrl
+        ///     To bypass using the Discovery Service for service endpoint lookup ActiveDirectoryServiceResource must also be set.
         /// </param>
         /// <param name="userId">The ID of the user to authenticate.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedClientAsync(
-            string appId,
-            string returnUrl,
-            string serviceResource,
+        public static async Task<IOneDriveClient> GetAuthenticatedClientAsync(
+            BusinessAppConfig appConfig,
             string userId = null,
             AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                /* clientCertificate */ null,
-                /* clientSecret */ null,
-                serviceResource,
-                userId,
-                credentialCache,
-                httpProvider,
-                serviceInfoProvider: null);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using the ADAL app-only authentication flow.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
-        /// </param>
-        /// <param name="siteId">The ID of the site to access.</param>
-        /// <param name="tenantId">The ID of the tenant to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedClientUsingAppOnlyAuthenticationAsync(
-            string appId,
-            X509Certificate2 clientCertificate,
-            string serviceResource,
-            string siteId,
-            string tenantId,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientUsingAppOnlyAuthenticationAsync(
-                appId,
-                clientCertificate,
-                serviceResource,
-                siteId,
-                tenantId,
-                credentialCache,
-                httpProvider,
-                serviceInfoProvider: null);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedClientUsingDiscoveryServiceAsync(
-            string appId,
-            string returnUrl,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                /* clientCertificate */ null,
-                /* clientSecret */ null,
-                /* serviceResource */ null,
-                userId,
-                credentialCache,
-                httpProvider,
-                serviceInfoProvider: null);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedClientUsingDiscoveryServiceAsync(
-            string appId,
-            string returnUrl,
-            IServiceInfoProvider serviceInfoProvider,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                /* clientCertificate */ null,
-                /* clientSecret */ null,
-                /* serviceResource */ null,
-                userId,
-                credentialCache,
-                httpProvider,
-                serviceInfoProvider);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
-        ///     If not provided, will be retrieved using the Discovery service.
-        /// </param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedWebClientAsync(
-            string appId,
-            string returnUrl,
-            X509Certificate2 clientCertificate,
-            string serviceResource,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null,
-            IServiceInfoProvider serviceInfoProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                clientCertificate,
-                /* clientSecret */ null,
-                serviceResource,
-                userId,
-                credentialCache,
-                httpProvider,
-                serviceInfoProvider);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
-        ///     If not provided, will be retrieved using the Discovery service.
-        /// </param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedWebClientAsync(
-            string appId,
-            string returnUrl,
-            string clientSecret,
-            string serviceResource,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null,
-            IServiceInfoProvider serviceInfoProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                /* clientCertificate */ null,
-                clientSecret,
-                serviceResource,
-                userId,
-                credentialCache,
-                httpProvider,
-                serviceInfoProvider);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using the ADAL authentication by code flow.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
-        /// </param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static async Task<IOneDriveClient> GetAuthenticatedWebClientUsingAuthenticationByCodeAsync(
-            string appId,
-            string returnUrl,
-            string clientSecret,
-            string serviceResource,
-            string code,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            var client = BusinessClientExtensions.GetClientUsingAuthenticationByCode(
-                appId,
-                returnUrl,
-                clientSecret,
-                /* clientCertificate */ null,
-                serviceResource,
-                code,
-                credentialCache,
-                httpProvider,
-                serviceInfoProvider: null);
-
-            await client.AuthenticateAsync();
-
-            return client;
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using the ADAL authentication by code flow.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
-        /// </param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static async Task<IOneDriveClient> GetAuthenticatedWebClientUsingAuthenticationByCodeAsync(
-            string appId,
-            string returnUrl,
-            X509Certificate2 clientCertificate,
-            string serviceResource,
-            string code,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            var client = BusinessClientExtensions.GetClientUsingAuthenticationByCode(
-                appId,
-                returnUrl,
-                /* clientSecret */ null,
-                clientCertificate,
-                serviceResource,
-                code,
-                credentialCache,
-                httpProvider,
-                serviceInfoProvider: null);
-
-            await client.AuthenticateAsync();
-
-            return client;
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedWebClientUsingDiscoveryServiceAsync(
-            string appId,
-            string returnUrl,
-            string clientSecret,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                /* clientCertificate */ null,
-                clientSecret,
-                serviceResource: null,
-                userId: userId,
-                credentialCache: credentialCache,
-                httpProvider: httpProvider,
-                serviceInfoProvider: null);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
-        /// <param name="webAuthenticationUi">The <see cref="IWebAuthenticationUi"/> instance for displaying the Discovery Service login screen to the user.</param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedWebClientUsingDiscoveryServiceAsync(
-            string appId,
-            string returnUrl,
-            string clientSecret,
-            IWebAuthenticationUi webAuthenticationUi,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                /* clientCertificate */ null,
-                clientSecret,
-                serviceResource: null,
-                userId: userId,
-                credentialCache: credentialCache,
-                httpProvider: httpProvider,
-                serviceInfoProvider: new AdalServiceInfoProvider(webAuthenticationUi));
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedWebClientUsingDiscoveryServiceAsync(
-            string appId,
-            string returnUrl,
-            string clientSecret,
-            IServiceInfoProvider serviceInfoProvider,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                /* clientCertificate */ null,
-                clientSecret,
-                serviceResource: null,
-                userId: userId,
-                credentialCache: credentialCache,
-                httpProvider: httpProvider,
-                serviceInfoProvider: serviceInfoProvider);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="webAuthenticationUi">The <see cref="IWebAuthenticationUi"/> instance for displaying the Discovery Service login screen to the user.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedWebClientUsingDiscoveryServiceAsync(
-            string appId,
-            string returnUrl,
-            X509Certificate2 clientCertificate,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null,
-            IWebAuthenticationUi webAuthenticationUi = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                clientCertificate,
-                clientSecret: null,
-                serviceResource: null,
-                userId: userId,
-                credentialCache: credentialCache,
-                httpProvider: httpProvider,
-                serviceInfoProvider: new AdalServiceInfoProvider(webAuthenticationUi));
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        public static Task<IOneDriveClient> GetAuthenticatedWebClientUsingDiscoveryServiceAsync(
-            string appId,
-            string returnUrl,
-            X509Certificate2 clientCertificate,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null,
-            IServiceInfoProvider serviceInfoProvider = null)
-        {
-            return BusinessClientExtensions.GetAuthenticatedClientAsync(
-                appId,
-                returnUrl,
-                clientCertificate,
-                clientSecret: null,
-                serviceResource: null,
-                userId: userId,
-                credentialCache: credentialCache,
-                httpProvider: httpProvider,
-                serviceInfoProvider: serviceInfoProvider);
-        }
-
-        /// <summary>
-        /// Creates an authenticated client using ADAL for authentication.
-        /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
-        ///     If not provided, will be retrieved using the Discovery service.
-        /// </param>
-        /// <param name="userId">The ID of the user to authenticate.</param>
-        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
-        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
-        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        internal static async Task<IOneDriveClient> GetAuthenticatedClientAsync(
-            string appId,
-            string returnUrl,
-            X509Certificate2 clientCertificate,
-            string clientSecret,
-            string serviceResource,
-            string userId = null,
-            AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null,
-            IServiceInfoProvider serviceInfoProvider = null)
-        {
-            var appConfig = new AdalAppConfig
-            {
-                ActiveDirectoryAppId = appId,
-                ActiveDirectoryClientCertificate = clientCertificate,
-                ActiveDirectoryClientSecret = clientSecret,
-                ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(),
-                ActiveDirectoryReturnUrl = returnUrl,
-            };
-
-            if (!string.IsNullOrEmpty(serviceResource))
-            {
-                appConfig.ActiveDirectoryServiceEndpointUrl = string.Format(
-                    Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
-                    serviceResource.TrimEnd('/'),
-                    "v2.0");
-                appConfig.ActiveDirectoryServiceResource = serviceResource;
-            }
-
             var client = BusinessClientExtensions.GetClient(
                 appConfig,
+                userId,
                 credentialCache,
-                httpProvider,
-                serviceInfoProvider ?? new AdalServiceInfoProvider { UserSignInName = userId });
+                httpProvider);
+
+            await client.AuthenticateAsync();
+
+            return client;
+        }
+
+        /// <summary>
+        /// Creates an authenticated client using a custom <see cref="IAuthenticationProvider"/> for authentication.
+        /// </summary>
+        /// <param name="serviceEndpointBaseUrl">
+        ///     The endpoint base URL for the service before. For example, "https://resource-my.sharepoint.com/"
+        ///     or "https://resource-my.sharepoint.com/personal/site_id".
+        /// </param>
+        /// <param name="authenticationProvider">The <see cref="IAuthenticationProvider"/> for authenticating requests.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static async Task<IOneDriveClient> GetAuthenticatedClientUsingCustomAuthenticationAsync(
+            string serviceEndpointBaseUrl,
+            IAuthenticationProvider authenticationProvider,
+            IHttpProvider httpProvider = null)
+        {
+            var client = BusinessClientExtensions.GetClientUsingCustomAuthentication(
+                serviceEndpointBaseUrl,
+                authenticationProvider,
+                httpProvider);
 
             await client.AuthenticateAsync();
 
@@ -626,36 +162,35 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <summary>
         /// Creates an authenticated client using the ADAL app-only authentication flow.
         /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
+        /// <param name="appConfig">
+        ///     The <see cref="BusinessAppConfig"/> for the application configuration.
+        ///     Web client app-only authentication requires the following to be initialized:
+        ///         - ActiveDirectoryAppId
+        ///         - ActiveDirectoryClientCertificate
+        ///         - ActiveDirectoryReturnUrl
+        ///         - ActiveDirectoryServiceResource
         /// </param>
-        /// <param name="siteId">The ID of the site to access. For example, "user_domain_com".</param>
+        /// <param name="serviceEndpointBaseUrl">
+        ///     The endpoint base URL for the service before. For example, "https://resource-my.sharepoint.com/"
+        ///     or "https://resource-my.sharepoint.com/personal/site_id/".
+        /// </param>
         /// <param name="tenantId">The ID of the tenant to authenticate.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        internal static async Task<IOneDriveClient> GetAuthenticatedClientUsingAppOnlyAuthenticationAsync(
-            string appId,
-            X509Certificate2 clientCertificate,
-            string serviceResource,
-            string siteId,
+        public static async Task<IOneDriveClient> GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync(
+            BusinessAppConfig appConfig,
+            string serviceEndpointBaseUrl,
             string tenantId,
-            AdalCredentialCache credentialCache,
-            IHttpProvider httpProvider,
-            IServiceInfoProvider serviceInfoProvider)
+            AdalCredentialCache credentialCache = null,
+            IHttpProvider httpProvider = null)
         {
-            var client = BusinessClientExtensions.GetClientUsingAppOnlyAuthentication(
-                appId,
-                clientCertificate,
-                serviceResource,
-                siteId,
+            var client = BusinessClientExtensions.GetWebClientUsingAppOnlyAuthentication(
+                appConfig,
+                serviceEndpointBaseUrl,
                 tenantId,
                 credentialCache,
-                httpProvider,
-                serviceInfoProvider);
+                httpProvider);
 
             await client.AuthenticateAsync();
 
@@ -663,58 +198,213 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         }
 
         /// <summary>
+        /// Creates an authenticated client using ADAL for authentication.
+        /// </summary>
+        /// <param name="appConfig">
+        ///     The <see cref="BusinessAppConfig"/> for the application configuration.
+        ///     Web client authentication requires the following to be initialized:
+        ///         - ActiveDirectoryAppId
+        ///         - ActiveDirectoryClientCertificate or ActiveDirectoryClientSecret
+        ///         - ActiveDirectoryReturnUrl
+        ///         - ActiveDirectoryServiceResource
+        /// </param>
+        /// <param name="userId">The ID of the user to authenticate.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static Task<IOneDriveClient> GetAuthenticatedWebClientAsync(
+            BusinessAppConfig appConfig,
+            string userId = null,
+            AdalCredentialCache credentialCache = null,
+            IHttpProvider httpProvider = null)
+        {
+            if (appConfig.ActiveDirectoryClientCertificate == null && string.IsNullOrEmpty(appConfig.ActiveDirectoryClientSecret))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Client certificate or client secret is required for authenticating a business web client.",
+                    });
+            }
+
+            return BusinessClientExtensions.GetAuthenticatedClientAsync(
+                appConfig,
+                userId,
+                credentialCache,
+                httpProvider);
+        }
+
+        /// <summary>
         /// Creates an authenticated client using the ADAL authentication by code flow.
         /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="returnUrl">The application return URL for Azure Active Directory authentication.</param>
-        /// <param name="clientSecret">The client secret for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
+        /// <param name="appConfig">
+        ///     The <see cref="BusinessAppConfig"/> for the application configuration.
+        ///     Web client authentication by code requires the following to be initialized:
+        ///         - ActiveDirectoryAppId
+        ///         - ActiveDirectoryClientCertificate or ActiveDirectoryClientSecret
+        ///         - ActiveDirectoryReturnUrl
+        ///         - ActiveDirectoryServiceResource
+        /// </param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static async Task<IOneDriveClient> GetAuthenticatedWebClientUsingAuthenticationByCodeAsync(
+            BusinessAppConfig appConfig,
+            string code,
+            AdalCredentialCache credentialCache = null,
+            IHttpProvider httpProvider = null)
+        {
+            var client = BusinessClientExtensions.GetClientUsingAuthenticationByCode(
+                appConfig,
+                code,
+                credentialCache,
+                httpProvider);
+
+            await client.AuthenticateAsync();
+
+            return client;
+        }
+
+        /// <summary>
+        /// Creates an unauthenticated client using ADAL for authentication.
+        /// </summary>
+        /// <param name="appConfig">
+        ///     The <see cref="BusinessAppConfig"/> for the application configuration.
+        ///     Authentication requires the following to be initialized:
+        ///         - ActiveDirectoryAppId
+        ///         - ActiveDirectoryReturnUrl
+        ///     To bypass using the Discovery Service for service endpoint lookup ActiveDirectoryServiceResource must also be set.
+        /// </param>
+        /// <param name="userId">The ID of the user to authenticate.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static IOneDriveClient GetClient(
+            BusinessAppConfig appConfig,
+            string userId = null,
+            AdalCredentialCache credentialCache = null,
+            IHttpProvider httpProvider = null)
+        {
+            if (string.IsNullOrEmpty(appConfig.ActiveDirectoryReturnUrl))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "ActiveDirectoryReturnUrl is required for authenticating a business client.",
+                    });
+            }
+
+            appConfig.ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl();
+
+            return BusinessClientExtensions.GetClientInternal(
+                appConfig,
+                new AdalServiceInfoProvider() { UserSignInName = userId },
+                credentialCache,
+                httpProvider);
+        }
+
+        /// <summary>
+        /// Creates an unauthenticated client using a custom <see cref="IAuthenticationProvider"/> for authentication.
+        /// </summary>
+        /// <param name="serviceEndpointBaseUrl">
+        ///     The endpoint base URL for the service before. For example, "https://resource-my.sharepoint.com/"
+        ///     or "https://resource-my.sharepoint.com/personal/site_id".
+        /// </param>
+        /// <param name="authenticationProvider">The <see cref="IAuthenticationProvider"/> for authenticating requests.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static IOneDriveClient GetClientUsingCustomAuthentication(
+            string serviceEndpointBaseUrl,
+            IAuthenticationProvider authenticationProvider,
+            IHttpProvider httpProvider = null)
+        {
+            if (authenticationProvider == null)
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "An authentication provider is required for a client using custom authentication.",
+                    });
+            }
+
+            if (string.IsNullOrEmpty(serviceEndpointBaseUrl))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Service endpoint base URL is required when using custom authentication.",
+                    });
+            }
+
+            return new OneDriveClient(
+                new BusinessAppConfig
+                {
+                    ActiveDirectoryServiceEndpointUrl = string.Format(
+                        Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                        serviceEndpointBaseUrl.TrimEnd('/'),
+                        "v2.0")
+                },
+                /* credentialCache */ null,
+                httpProvider ?? new HttpProvider(),
+                new AdalServiceInfoProvider(authenticationProvider),
+                ClientType.Business);
+        }
+
+        /// <summary>
+        /// Creates an authenticated client using the ADAL authentication by code flow.
+        /// </summary>
+        /// <param name="appConfig">
+        ///     The <see cref="BusinessAppConfig"/> for the application configuration.
         /// </param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         internal static IOneDriveClient GetClientUsingAuthenticationByCode(
-            string appId,
-            string returnUrl,
-            string clientSecret,
-            X509Certificate2 clientCertificate,
-            string serviceResource,
+            BusinessAppConfig appConfig,
             string code,
             AdalCredentialCache credentialCache = null,
-            IHttpProvider httpProvider = null,
-            IServiceInfoProvider serviceInfoProvider = null)
+            IHttpProvider httpProvider = null)
         {
-            return BusinessClientExtensions.GetClient(
-                new AdalAppConfig
-                {
-                    ActiveDirectoryAppId = appId,
-                    ActiveDirectoryClientCertificate = clientCertificate,
-                    ActiveDirectoryClientSecret = clientSecret,
-                    ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(),
-                    ActiveDirectoryServiceResource = serviceResource,
-                    ActiveDirectoryReturnUrl = returnUrl
-                },
+            appConfig.ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl();
+
+            return BusinessClientExtensions.GetClientInternal(
+                appConfig,
+                new AdalAuthenticationByCodeServiceInfoProvider(code),
                 credentialCache,
-                httpProvider,
-                serviceInfoProvider ?? new AdalAuthenticationByCodeServiceInfoProvider(code));
+                httpProvider);
         }
 
         /// <summary>
         /// Creates an authenticated client using the ADAL app-only authentication flow.
         /// </summary>
-        /// <param name="appConfig">The configuration for the application.</param>
+        /// <param name="appConfig">
+        ///     The <see cref="BusinessAppConfig"/> for the application configuration.
+        /// </param>
+        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        internal static IOneDriveClient GetClient(
+        internal static IOneDriveClient GetClientInternal(
             AppConfig appConfig,
+            IServiceInfoProvider serviceInfoProvider,
             AdalCredentialCache credentialCache,
-            IHttpProvider httpProvider,
-            IServiceInfoProvider serviceInfoProvider)
+            IHttpProvider httpProvider)
         {
+            if (string.IsNullOrEmpty(appConfig.ActiveDirectoryAppId))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "ActiveDirectoryAppId is required for authentication."
+                    });
+            }
+
             return new OneDriveClient(
                 appConfig,
                 credentialCache ?? new AdalCredentialCache(),
@@ -726,39 +416,75 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <summary>
         /// Creates an unauthenticated client using the ADAL app-only authentication flow.
         /// </summary>
-        /// <param name="appId">The application ID for Azure Active Directory authentication.</param>
-        /// <param name="clientCertificate">The client certificate for Azure Active Directory authentication.</param>
-        /// <param name="serviceResource">
-        ///     The service resource for Azure Active Directory authentication. For example, "https://microsoft-my.sharepoint.com/".
+        /// <param name="appConfig">
+        ///     The <see cref="BusinessAppConfig"/> for the application configuration.
         /// </param>
-        /// <param name="siteId">The ID of the site to access. For example, "user_domain_com".</param>
+        /// <param name="serviceEndpointBaseUrl">
+        ///     The endpoint base URL for the service before. For example, "https://resource-my.sharepoint.com/"
+        ///     or "https://resource-my.sharepoint.com/personal/site_id".
+        /// </param>
         /// <param name="tenantId">The ID of the tenant to authenticate.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
-        /// <param name="serviceInfoProvider">The <see cref="IServiceInfoProvider"/> for initializing the <see cref="IServiceInfo"/> for the session.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
-        internal static IOneDriveClient GetClientUsingAppOnlyAuthentication(
-            string appId,
-            X509Certificate2 clientCertificate,
-            string serviceResource,
-            string siteId,
+        internal static IOneDriveClient GetWebClientUsingAppOnlyAuthentication(
+            BusinessAppConfig appConfig,
+            string serviceEndpointBaseUrl,
             string tenantId,
             AdalCredentialCache credentialCache,
-            IHttpProvider httpProvider,
-            IServiceInfoProvider serviceInfoProvider)
+            IHttpProvider httpProvider)
         {
-            return BusinessClientExtensions.GetClient(
-                new AdalAppConfig
-                {
-                    ActiveDirectoryAppId = appId,
-                    ActiveDirectoryClientCertificate = clientCertificate,
-                    ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(tenantId),
-                    ActiveDirectoryServiceResource = serviceResource,
-                    ActiveDirectorySiteId = siteId,
-                },
+            if (appConfig.ActiveDirectoryClientCertificate == null)
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "ActiveDirectoryClientCertificate is required for app-only authentication."
+                    });
+            }
+
+            if (string.IsNullOrEmpty(serviceEndpointBaseUrl))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Service endpoint base URL is required for app-only authentication."
+                    });
+            }
+
+            if (string.IsNullOrEmpty(appConfig.ActiveDirectoryServiceResource))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "ActiveDirectoryServiceResource is required for app-only authentication."
+                    });
+            }
+
+            if (string.IsNullOrEmpty(tenantId))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Tenant ID is required for app-only authentication."
+                    });
+            }
+
+            appConfig.ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(tenantId);
+            appConfig.ActiveDirectoryServiceEndpointUrl = string.Format(
+                Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                serviceEndpointBaseUrl.TrimEnd('/'),
+                "v2.0");
+
+            return BusinessClientExtensions.GetClientInternal(
+                appConfig,
+                new AdalAppOnlyServiceInfoProvider(),
                 credentialCache,
-                httpProvider,
-                serviceInfoProvider ?? new AdalAppOnlyServiceInfoProvider());
+                httpProvider);
         }
 
         /// <summary>
