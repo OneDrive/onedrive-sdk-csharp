@@ -69,10 +69,14 @@ namespace Microsoft.OneDrive.Sdk
             var adalServiceInfo = new AdalServiceInfo();
             adalServiceInfo.CopyFrom(serviceInfo);
 
-            adalServiceInfo.BaseUrl = appConfig.ActiveDirectoryServiceEndpointUrl;
+            if (!string.IsNullOrEmpty(appConfig.ActiveDirectoryServiceEndpointUrl))
+            {
+                adalServiceInfo.BaseUrl = appConfig.ActiveDirectoryServiceEndpointUrl;
+            }
+
             adalServiceInfo.ServiceResource = appConfig.ActiveDirectoryServiceResource;
 
-            var adalAppConfig = appConfig as AdalAppConfig;
+            var adalAppConfig = appConfig as BusinessAppConfig;
 
             if (adalAppConfig != null)
             {

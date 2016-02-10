@@ -120,7 +120,7 @@ namespace Microsoft.OneDrive.Sdk
             this.AppId = serviceInfo.AppId;
             this.AuthenticationProvider = serviceInfo.AuthenticationProvider;
             this.AuthenticationServiceUrl = serviceInfo.AuthenticationServiceUrl;
-            this.BaseUrl = serviceInfo.AuthenticationServiceUrl;
+            this.BaseUrl = serviceInfo.BaseUrl;
             this.ClientSecret = serviceInfo.ClientSecret;
             this.CredentialCache = serviceInfo.CredentialCache;
             this.DiscoveryServiceResource = serviceInfo.DiscoveryServiceResource;

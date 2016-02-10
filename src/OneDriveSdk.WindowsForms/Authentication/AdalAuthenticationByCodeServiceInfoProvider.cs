@@ -24,21 +24,43 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// A <see cref="ServiceInfoProvider"/> implementation for initializing a <see cref="ServiceInfo"/> to use
+    /// an authorization code for authentication.
+    /// </summary>
     public class AdalAuthenticationByCodeServiceInfoProvider : ServiceInfoProvider
     {
-        private string authenticationCode;
+        private string authorizationCode;
 
+        /// <summary>
+        /// Initializes an <see cref="AdalAuthenticationByCodeServiceInfoProvider"/> that uses an
+        /// <see cref="AdalAuthenticationByCodeAuthenticationProvider"/> for authentication.
+        /// </summary>
         public AdalAuthenticationByCodeServiceInfoProvider(string authenticationCode)
             : this(authenticationCode, null)
         {
         }
 
-        public AdalAuthenticationByCodeServiceInfoProvider(string authenticationCode, IAuthenticationProvider authenticationProvider)
+        /// <summary>
+        /// Initializes an <see cref="AdalAuthenticationByCodeServiceInfoProvider"/> that uses a custom
+        /// <see cref="IAuthenticationProvider"/> for authentication.
+        /// 
+        /// Used for unit testing.
+        /// </summary>
+        internal AdalAuthenticationByCodeServiceInfoProvider(string authorizationCode, IAuthenticationProvider authenticationProvider)
             : base(authenticationProvider, null)
         {
-            this.authenticationCode = authenticationCode;
+            this.authorizationCode = authorizationCode;
         }
 
+        /// <summary>
+        /// Generates the <see cref="ServiceInfo"/> for the current application configuration.
+        /// </summary>
+        /// <param name="appConfig">The <see cref="AppConfig"/> for the current application.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <param name="clientType">The <see cref="ClientType"/> to specify the business or consumer service.</param>
+        /// <returns>The <see cref="ServiceInfo"/> for the current session.</returns>
         public async override Task<ServiceInfo> GetServiceInfo(
             AppConfig appConfig,
             CredentialCache credentialCache,
@@ -70,14 +92,7 @@ namespace Microsoft.OneDrive.Sdk
             var adalServiceInfo = new AdalServiceInfo();
             adalServiceInfo.CopyFrom(serviceInfo);
 
-            adalServiceInfo.BaseUrl = serviceInfo.BaseUrl = string.Format(
-                Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
-                appConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
-                serviceInfo.OneDriveServiceEndpointVersion);
-
-            adalServiceInfo.ServiceResource = appConfig.ActiveDirectoryServiceResource;
-
-            var adalAppConfig = appConfig as AdalAppConfig;
+            var adalAppConfig = appConfig as BusinessAppConfig;
 
             if (adalAppConfig != null)
             {
@@ -86,7 +101,7 @@ namespace Microsoft.OneDrive.Sdk
 
             if (adalServiceInfo.AuthenticationProvider == null)
             {
-                adalServiceInfo.AuthenticationProvider = new AdalAuthenticationByCodeAuthenticationProvider(adalServiceInfo, authenticationCode);
+                adalServiceInfo.AuthenticationProvider = new AdalAuthenticationByCodeAuthenticationProvider(adalServiceInfo, authorizationCode);
             }
 
             return adalServiceInfo;

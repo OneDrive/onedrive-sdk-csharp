@@ -27,6 +27,9 @@ namespace Microsoft.OneDrive.Sdk
 
     using IdentityModel.Clients.ActiveDirectory;
 
+    /// <summary>
+    /// Authenticates an application by retrieving an authentication token using a provided authorization code.
+    /// </summary>
     public class AdalAuthenticationByCodeAuthenticationProvider : AdalAuthenticationProviderBase
     {
         internal string authenticationCode;
@@ -48,13 +51,18 @@ namespace Microsoft.OneDrive.Sdk
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Authentication code is required for authentication by code.",
+                        Message = "Authorization code is required for authentication by code.",
                     });
             }
 
             this.authenticationCode = authenticationCode;
         }
 
+        /// <summary>
+        /// Retrieves an authentication result for the specified resource.
+        /// </summary>
+        /// <param name="resource">The resource to authenticate.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/> returned for the resource.</returns>
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;
@@ -118,7 +126,7 @@ namespace Microsoft.OneDrive.Sdk
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Client secret or certificate is required for authentication by code.",
+                        Message = "Client certificate or client secret is required for authentication by code.",
                     });
             }
 

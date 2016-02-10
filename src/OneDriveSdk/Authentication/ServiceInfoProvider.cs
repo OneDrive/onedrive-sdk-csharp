@@ -116,8 +116,17 @@ namespace Microsoft.OneDrive.Sdk
                 CredentialCache = credentialCache,
                 HttpProvider = httpProvider,
                 ReturnUrl = appConfig.ActiveDirectoryReturnUrl,
+                ServiceResource = appConfig.ActiveDirectoryServiceResource,
                 UserId = this.UserSignInName,
             };
+
+            if (!string.IsNullOrEmpty(appConfig.ActiveDirectoryServiceResource))
+            {
+                activeDirectoryServiceInfo.BaseUrl = string.Format(
+                    Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                    appConfig.ActiveDirectoryServiceResource,
+                    activeDirectoryServiceInfo.OneDriveServiceEndpointVersion);
+            }
             
             return Task.FromResult<ServiceInfo>(activeDirectoryServiceInfo);
         }
