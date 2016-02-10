@@ -112,6 +112,7 @@ namespace Microsoft.OneDrive.Sdk
                 AuthenticationServiceUrl = string.IsNullOrEmpty(appConfig.ActiveDirectoryAuthenticationServiceUrl)
                     ? Constants.Authentication.ActiveDirectoryAuthenticationServiceUrl
                     : appConfig.ActiveDirectoryAuthenticationServiceUrl,
+                BaseUrl = appConfig.ActiveDirectoryServiceEndpointUrl,
                 ClientSecret = appConfig.ActiveDirectoryClientSecret,
                 CredentialCache = credentialCache,
                 HttpProvider = httpProvider,
@@ -119,14 +120,6 @@ namespace Microsoft.OneDrive.Sdk
                 ServiceResource = appConfig.ActiveDirectoryServiceResource,
                 UserId = this.UserSignInName,
             };
-
-            if (!string.IsNullOrEmpty(appConfig.ActiveDirectoryServiceResource))
-            {
-                activeDirectoryServiceInfo.BaseUrl = string.Format(
-                    Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
-                    appConfig.ActiveDirectoryServiceResource,
-                    activeDirectoryServiceInfo.OneDriveServiceEndpointVersion);
-            }
             
             return Task.FromResult<ServiceInfo>(activeDirectoryServiceInfo);
         }

@@ -92,17 +92,7 @@ namespace Microsoft.OneDrive.Sdk
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Service resource ID is required for app-only authentication.",
-                    });
-            }
-
-            if (string.IsNullOrEmpty(adalAppConfig.ActiveDirectorySiteId))
-            {
-                throw new OneDriveException(
-                    new Error
-                    {
-                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Site ID is required for app-only authentication.",
+                        Message = "Service resource ID is required for app-only authentication when service endpoint URL is not initialized.",
                     });
             }
 
@@ -112,11 +102,14 @@ namespace Microsoft.OneDrive.Sdk
             adalServiceInfo.CopyFrom(serviceInfo);
 
             adalServiceInfo.ServiceResource = adalAppConfig.ActiveDirectoryServiceResource;
-            adalServiceInfo.BaseUrl = string.Format(
-                Constants.Authentication.OneDriveBusinessBaseUrlForSiteFormatString,
-                adalAppConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
-                adalAppConfig.ActiveDirectorySiteId,
-                serviceInfo.OneDriveServiceEndpointVersion);
+
+            if (string.IsNullOrEmpty(adalServiceInfo.BaseUrl))
+            {
+                adalServiceInfo.BaseUrl = string.Format(
+                    Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                    adalAppConfig.ActiveDirectoryServiceResource.TrimEnd('/'),
+                    serviceInfo.OneDriveServiceEndpointVersion);
+            }
 
             adalServiceInfo.ClientCertificate = adalAppConfig.ActiveDirectoryClientCertificate;
 

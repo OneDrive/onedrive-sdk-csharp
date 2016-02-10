@@ -33,10 +33,5 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets the client certificate for Active Directory authentication.
         /// </summary>
         public X509Certificate2 ActiveDirectoryClientCertificate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the site ID for Active Directory authentication.
-        /// </summary>
-        internal string ActiveDirectorySiteId { get; set; }
     }
 }

@@ -28,7 +28,6 @@ namespace OneDriveApiBrowser
     using System.Windows.Forms;
     using Microsoft.OneDrive.Sdk;
     using Microsoft.OneDrive.Sdk.WindowsForms;
-    using System.Threading;
 
     public partial class FormBrowser : Form
     {
@@ -298,7 +297,14 @@ namespace OneDriveApiBrowser
                         FormBrowser.MsaReturnUrl,
                         FormBrowser.Scopes,
                         webAuthenticationUi: new FormsWebAuthenticationUi())
-                    : BusinessClientExtensions.GetActiveDirectoryClient(FormBrowser.AadClientId, FormBrowser.AadReturnUrl);
+                    : await BusinessClientExtensions.GetAuthenticatedClientAsync
+                    (
+                        new BusinessAppConfig
+                        {
+                            ActiveDirectoryAppId = FormBrowser.AadClientId,
+                            ActiveDirectoryReturnUrl = FormBrowser.AadReturnUrl,
+                        }
+                    );
             }
 
             try

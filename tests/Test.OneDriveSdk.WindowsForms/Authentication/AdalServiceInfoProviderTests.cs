@@ -47,7 +47,6 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 ActiveDirectoryAppId = "12345",
                 ActiveDirectoryReturnUrl = "https://localhost/return",
                 ActiveDirectoryServiceResource = "https://resource/",
-                ActiveDirectorySiteId = "siteId",
             };
             
             this.credentialCache = new MockAdalCredentialCache();
