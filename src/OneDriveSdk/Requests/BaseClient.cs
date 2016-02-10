@@ -47,7 +47,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             this.appConfig = appConfig;
             this.ClientType = clientType;
-            this.credentialCache = credentialCache ?? new CredentialCache();
+            this.credentialCache = credentialCache;
             this.HttpProvider = httpProvider ?? new HttpProvider(new Serializer());
             this.serviceInfoProvider = serviceInfoProvider ?? new ServiceInfoProvider();
         }

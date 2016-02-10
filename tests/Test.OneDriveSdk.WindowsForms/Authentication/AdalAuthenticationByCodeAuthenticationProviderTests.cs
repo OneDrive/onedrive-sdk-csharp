@@ -115,7 +115,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             catch (OneDriveException exception)
             {
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
-                Assert.AreEqual("Authentication code is required for authentication by code.", exception.Error.Message, "Unexpected error thrown.");
+                Assert.AreEqual("Authorization code is required for authentication by code.", exception.Error.Message, "Unexpected error thrown.");
                 throw;
             }
         }
@@ -131,7 +131,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             catch (OneDriveException exception)
             {
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
-                Assert.AreEqual("Client secret or certificate is required for authentication by code.", exception.Error.Message, "Unexpected error thrown.");
+                Assert.AreEqual("Client certificate or client secret is required for authentication by code.", exception.Error.Message, "Unexpected error thrown.");
                 throw;
             }
         }
