@@ -39,6 +39,7 @@ namespace Microsoft.OneDrive.Sdk
         public AdalAppOnlyAuthenticationProvider(AdalServiceInfo serviceInfo)
             : base(serviceInfo, currentAccountSession: null)
         {
+            this.allowDiscoveryService = false;
         }
 
         /// <summary>

@@ -55,6 +55,7 @@ namespace Microsoft.OneDrive.Sdk
                     });
             }
 
+            this.allowDiscoveryService = false;
             this.authenticationCode = authenticationCode;
         }
 

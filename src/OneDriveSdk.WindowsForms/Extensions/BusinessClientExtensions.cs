@@ -20,7 +20,7 @@
 //  THE SOFTWARE.
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.OneDrive.Sdk.WindowsForms
+namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Threading.Tasks;
@@ -137,19 +137,20 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <summary>
         /// Creates an authenticated client using a custom <see cref="IAuthenticationProvider"/> for authentication.
         /// </summary>
-        /// <param name="serviceEndpointUrl">
-        ///     The endpoint URL for the service. For example, "https://resource-my.sharepoint.com/".
+        /// <param name="serviceEndpointBaseUrl">
+        ///     The endpoint base URL for the service before. For example, "https://resource-my.sharepoint.com/"
+        ///     or "https://resource-my.sharepoint.com/personal/site_id".
         /// </param>
         /// <param name="authenticationProvider">The <see cref="IAuthenticationProvider"/> for authenticating requests.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static async Task<IOneDriveClient> GetAuthenticatedClientUsingCustomAuthenticationAsync(
-            string serviceEndpointUrl,
+            string serviceEndpointBaseUrl,
             IAuthenticationProvider authenticationProvider,
             IHttpProvider httpProvider = null)
         {
             var client = BusinessClientExtensions.GetClientUsingCustomAuthentication(
-                serviceEndpointUrl,
+                serviceEndpointBaseUrl,
                 authenticationProvider,
                 httpProvider);
 
@@ -169,21 +170,24 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         ///         - ActiveDirectoryReturnUrl
         ///         - ActiveDirectoryServiceResource
         /// </param>
-        /// <param name="siteId">The ID of the site to access.</param>
+        /// <param name="serviceEndpointBaseUrl">
+        ///     The endpoint base URL for the service before. For example, "https://resource-my.sharepoint.com/"
+        ///     or "https://resource-my.sharepoint.com/personal/site_id/".
+        /// </param>
         /// <param name="tenantId">The ID of the tenant to authenticate.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static async Task<IOneDriveClient> GetAuthenticatedWebClientUsingAppOnlyAuthenticationAsync(
             BusinessAppConfig appConfig,
-            string siteId,
+            string serviceEndpointBaseUrl,
             string tenantId,
             AdalCredentialCache credentialCache = null,
             IHttpProvider httpProvider = null)
         {
             var client = BusinessClientExtensions.GetWebClientUsingAppOnlyAuthentication(
                 appConfig,
-                siteId,
+                serviceEndpointBaseUrl,
                 tenantId,
                 credentialCache,
                 httpProvider);
@@ -305,14 +309,15 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <summary>
         /// Creates an unauthenticated client using a custom <see cref="IAuthenticationProvider"/> for authentication.
         /// </summary>
-        /// <param name="serviceEndpointUrl">
-        ///     The endpoint URL for the service. For example, "https://resource-my.sharepoint.com/".
+        /// <param name="serviceEndpointBaseUrl">
+        ///     The endpoint base URL for the service before. For example, "https://resource-my.sharepoint.com/"
+        ///     or "https://resource-my.sharepoint.com/personal/site_id".
         /// </param>
         /// <param name="authenticationProvider">The <see cref="IAuthenticationProvider"/> for authenticating requests.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static IOneDriveClient GetClientUsingCustomAuthentication(
-            string serviceEndpointUrl,
+            string serviceEndpointBaseUrl,
             IAuthenticationProvider authenticationProvider,
             IHttpProvider httpProvider = null)
         {
@@ -326,20 +331,23 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                     });
             }
 
-            if (string.IsNullOrEmpty(serviceEndpointUrl))
+            if (string.IsNullOrEmpty(serviceEndpointBaseUrl))
             {
                 throw new OneDriveException(
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Service endpoint URL is required when using custom authentication.",
+                        Message = "Service endpoint base URL is required when using custom authentication.",
                     });
             }
 
             return new OneDriveClient(
                 new BusinessAppConfig
                 {
-                    ActiveDirectoryServiceResource = serviceEndpointUrl,
+                    ActiveDirectoryServiceEndpointUrl = string.Format(
+                        Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                        serviceEndpointBaseUrl.TrimEnd('/'),
+                        "v2.0")
                 },
                 /* credentialCache */ null,
                 httpProvider ?? new HttpProvider(),
@@ -411,28 +419,21 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
         /// <param name="appConfig">
         ///     The <see cref="BusinessAppConfig"/> for the application configuration.
         /// </param>
-        /// <param name="siteId">The ID of the site to access. For example, "user_domain_com".</param>
+        /// <param name="serviceEndpointBaseUrl">
+        ///     The endpoint base URL for the service before. For example, "https://resource-my.sharepoint.com/"
+        ///     or "https://resource-my.sharepoint.com/personal/site_id".
+        /// </param>
         /// <param name="tenantId">The ID of the tenant to authenticate.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         internal static IOneDriveClient GetWebClientUsingAppOnlyAuthentication(
             BusinessAppConfig appConfig,
-            string siteId,
+            string serviceEndpointBaseUrl,
             string tenantId,
             AdalCredentialCache credentialCache,
             IHttpProvider httpProvider)
         {
-            if (string.IsNullOrEmpty(appConfig.ActiveDirectoryServiceResource))
-            {
-                throw new OneDriveException(
-                    new Error
-                    {
-                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "ActiveDirectoryServiceResource is required for app-only authentication."
-                    });
-            }
-
             if (appConfig.ActiveDirectoryClientCertificate == null)
             {
                 throw new OneDriveException(
@@ -443,13 +444,23 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                     });
             }
 
-            if (string.IsNullOrEmpty(siteId))
+            if (string.IsNullOrEmpty(serviceEndpointBaseUrl))
             {
                 throw new OneDriveException(
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Site ID is required for app-only authentication."
+                        Message = "Service endpoint base URL is required for app-only authentication."
+                    });
+            }
+
+            if (string.IsNullOrEmpty(appConfig.ActiveDirectoryServiceResource))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "ActiveDirectoryServiceResource is required for app-only authentication."
                     });
             }
 
@@ -464,7 +475,10 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
             }
 
             appConfig.ActiveDirectoryAuthenticationServiceUrl = BusinessClientExtensions.GetAuthenticationServiceUrl(tenantId);
-            appConfig.ActiveDirectorySiteId = siteId;
+            appConfig.ActiveDirectoryServiceEndpointUrl = string.Format(
+                Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                serviceEndpointBaseUrl.TrimEnd('/'),
+                "v2.0");
 
             return BusinessClientExtensions.GetClientInternal(
                 appConfig,

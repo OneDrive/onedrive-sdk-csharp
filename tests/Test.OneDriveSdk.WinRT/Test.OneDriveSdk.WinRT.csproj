@@ -117,8 +117,10 @@
   <ItemGroup>
     <Compile Include="Authentication\AdalAuthenticationProviderTests.cs" />
     <Compile Include="Authentication\WebAuthenticationBrokerAuthenticationProviderTests.cs" />
+    <Compile Include="Extensions\BusinessClientExtensionsTests.cs" />
     <Compile Include="Mocks\MockAuthenticationContextWrapper.cs" />
     <Compile Include="Mocks\MockAdalCredentialCache.cs" />
+    <Compile Include="Mocks\MockAuthenticationProvider.cs" />
     <Compile Include="Mocks\MockAuthenticationResult.cs" />
     <Compile Include="Mocks\MockCredentialCache.cs" />
     <Compile Include="Mocks\MockSerializer.cs" />

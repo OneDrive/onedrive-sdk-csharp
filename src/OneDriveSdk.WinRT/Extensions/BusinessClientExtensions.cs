@@ -188,31 +188,44 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Creates a client using a custom <see cref="IAuthenticationProvider"/> for authentication.
         /// </summary>
-        /// <param name="serviceEndpointUrl">
+        /// <param name="serviceEndpointBaseUrl">
         ///     The endpoint URL for the service. For example, "https://resource-my.sharepoint.com/".
         /// </param>
         /// <param name="authenticationProvider">The <see cref="IAuthenticationProvider"/> for authenticating requests.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static IOneDriveClient GetClientUsingCustomAuthentication(
-            string serviceEndpointUrl,
+            string serviceEndpointBaseUrl,
             IAuthenticationProvider authenticationProvider,
             IHttpProvider httpProvider = null)
         {
-            if (string.IsNullOrEmpty(serviceEndpointUrl))
+            if (authenticationProvider == null)
             {
                 throw new OneDriveException(
                     new Error
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                        Message = "Service endpoint URL is required when using custom authentication.",
+                        Message = "An authentication provider is required for a client using custom authentication.",
+                    });
+            }
+
+            if (string.IsNullOrEmpty(serviceEndpointBaseUrl))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Service endpoint base URL is required when using custom authentication.",
                     });
             }
 
             return new OneDriveClient(
                 new AppConfig
                 {
-                    ActiveDirectoryServiceResource = serviceEndpointUrl,
+                    ActiveDirectoryServiceEndpointUrl = string.Format(
+                        Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                        serviceEndpointBaseUrl,
+                        "v2.0")
                 },
                 /* credentialCache */ null,
                 httpProvider ?? new HttpProvider(),

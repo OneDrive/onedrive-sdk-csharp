@@ -99,6 +99,14 @@ namespace Microsoft.OneDrive.Sdk
                 adalServiceInfo.ClientCertificate = adalAppConfig.ActiveDirectoryClientCertificate;
             }
 
+            if (string.IsNullOrEmpty(adalServiceInfo.BaseUrl) && !string.IsNullOrEmpty(adalServiceInfo.ServiceResource))
+            {
+                adalServiceInfo.BaseUrl = string.Format(
+                    Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                    adalServiceInfo.ServiceResource,
+                    "v2.0");
+            }
+
             if (adalServiceInfo.AuthenticationProvider == null)
             {
                 adalServiceInfo.AuthenticationProvider = new AdalAuthenticationByCodeAuthenticationProvider(adalServiceInfo, authorizationCode);

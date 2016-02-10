@@ -32,6 +32,8 @@ namespace Microsoft.OneDrive.Sdk
     public abstract class AdalAuthenticationProviderBase : IAuthenticationProvider
     {
         protected ServiceInfo serviceInfo;
+
+        protected bool allowDiscoveryService = true;
         
         internal IAuthenticationContextWrapper authenticationContextWrapper;
 
@@ -122,7 +124,7 @@ namespace Microsoft.OneDrive.Sdk
                 return this.CurrentAccountSession;
             }
 
-            if (string.IsNullOrEmpty(this.ServiceInfo.ServiceResource) || string.IsNullOrEmpty(this.ServiceInfo.BaseUrl))
+            if (allowDiscoveryService && string.IsNullOrEmpty(this.ServiceInfo.ServiceResource) || string.IsNullOrEmpty(this.ServiceInfo.BaseUrl))
             {
                 var discoveryServiceToken = await this.GetAuthenticationTokenForResourceAsync(this.serviceInfo.DiscoveryServiceResource);
                 await this.RetrieveMyFilesServiceResourceAsync(discoveryServiceToken);
