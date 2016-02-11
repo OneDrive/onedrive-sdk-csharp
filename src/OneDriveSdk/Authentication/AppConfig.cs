@@ -40,8 +40,14 @@ namespace Microsoft.OneDrive.Sdk
         public string ActiveDirectoryReturnUrl { get; set; }
 
         /// <summary>
+        /// Gets or sets the service endpoint URL for OneDrive for Business. For example,
+        /// "https://tenant-my.sharepoint.com/_api/v2.0" or "https://tenant-my.sharepoint.com/personal/user_domain_com/_api/v2.0".
+        /// </summary>
+        public string ActiveDirectoryServiceEndpointUrl { get; set; }
+
+        /// <summary>
         /// Gets or sets the service resource for Active Directory authentication.
-        /// For example, "https://microsoft-my.sharepoint.com/".
+        /// For example, "https://tenant-my.sharepoint.com/".
         /// If not initialized during client creation will be retrieved using the Discovery service, if possible.
         /// </summary>
         public string ActiveDirectoryServiceResource { get; set; }
@@ -70,10 +76,5 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets the authentication service URL for Active Directory authentication.
         /// </summary>
         internal string ActiveDirectoryAuthenticationServiceUrl { get; set; }
-
-        /// <summary>
-        /// Gets or sets the service endpoint URL for OneDrive for Business.
-        /// </summary>
-        internal string ActiveDirectoryServiceEndpointUrl { get; set; }
     }
 }
