@@ -247,6 +247,7 @@ namespace Microsoft.OneDrive.Sdk
         ///         - ActiveDirectoryReturnUrl
         ///         - ActiveDirectoryServiceResource
         /// </param>
+        /// <param name="code">The authorization code to redeem for an authentication token.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
@@ -361,6 +362,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="appConfig">
         ///     The <see cref="BusinessAppConfig"/> for the application configuration.
         /// </param>
+        /// <param name="code">The authorization code to redeem for an authentication token.</param>
         /// <param name="credentialCache">The cache instance for storing user credentials.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
