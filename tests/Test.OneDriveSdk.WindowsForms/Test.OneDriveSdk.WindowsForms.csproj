@@ -40,16 +40,16 @@
     <AssemblyOriginatorKeyFile>..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.19.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.19.208020213\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.21.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.21.301221612\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.19.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.19.208020213\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.21.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.21.301221612\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -69,13 +69,22 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Authentication\AdalAppOnlyAuthenticationProviderTests.cs" />
+    <Compile Include="Authentication\AdalServiceInfoProviderTests.cs" />
+    <Compile Include="Authentication\AdalAuthenticationByCodeServiceInfoProviderTests.cs" />
+    <Compile Include="Authentication\AdalAuthenticationByCodeAuthenticationProviderTests.cs" />
+    <Compile Include="Authentication\AdalAuthenticationProviderTestBase.cs" />
     <Compile Include="Authentication\AdalAuthenticationProviderTests.cs" />
     <Compile Include="Authentication\AdalCredentialCacheTests.cs" />
+    <Compile Include="Authentication\AdalAppOnlyServiceInfoProviderTests.cs" />
+    <Compile Include="Extensions\BusinessClientExtensionsTests.cs" />
     <Compile Include="Mocks\MockAdalCredentialCache.cs" />
     <Compile Include="Mocks\MockAuthenticationContextWrapper.cs" />
     <Compile Include="Mocks\MockAuthenticationResult.cs" />
     <Compile Include="Mocks\MockTokenCache.cs" />
     <Compile Include="Mocks\MockTokenCacheItem.cs" />
+    <Compile Include="Mocks\TestAdalAuthenticationByCodeAuthenticationProvider.cs" />
+    <Compile Include="Mocks\TestAdalAppOnlyAuthenticationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +102,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Certs\testwebapplication.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>

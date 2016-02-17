@@ -32,6 +32,8 @@ namespace Microsoft.OneDrive.Sdk
     public abstract class AdalAuthenticationProviderBase : IAuthenticationProvider
     {
         protected ServiceInfo serviceInfo;
+
+        protected bool allowDiscoveryService = true;
         
         internal IAuthenticationContextWrapper authenticationContextWrapper;
 
@@ -99,14 +101,15 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The task to await.</returns>
         public async Task AppendAuthHeaderAsync(HttpRequestMessage request)
         {
-            if (this.CurrentAccountSession == null)
-            {
-                await this.AuthenticateAsync();
-            }
+            await this.AuthenticateAsync();
 
             if (this.CurrentAccountSession != null && !string.IsNullOrEmpty(this.CurrentAccountSession.AccessToken))
             {
-                request.Headers.Authorization = new AuthenticationHeaderValue(Constants.Headers.Bearer, this.CurrentAccountSession.AccessToken);
+                var tokenTypeString = string.IsNullOrEmpty(this.CurrentAccountSession.AccessTokenType)
+                    ? Constants.Headers.Bearer
+                    : this.CurrentAccountSession.AccessTokenType;
+
+                request.Headers.Authorization = new AuthenticationHeaderValue(tokenTypeString, this.CurrentAccountSession.AccessToken);
             }
         }
 
@@ -121,7 +124,7 @@ namespace Microsoft.OneDrive.Sdk
                 return this.CurrentAccountSession;
             }
 
-            if (string.IsNullOrEmpty(this.ServiceInfo.ServiceResource) || string.IsNullOrEmpty(this.ServiceInfo.BaseUrl))
+            if (allowDiscoveryService && string.IsNullOrEmpty(this.ServiceInfo.ServiceResource) || string.IsNullOrEmpty(this.ServiceInfo.BaseUrl))
             {
                 var discoveryServiceToken = await this.GetAuthenticationTokenForResourceAsync(this.serviceInfo.DiscoveryServiceResource);
                 await this.RetrieveMyFilesServiceResourceAsync(discoveryServiceToken);
@@ -152,7 +155,22 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Signs the current user out.
         /// </summary>
-        public abstract Task SignOutAsync();
+        public virtual async Task SignOutAsync()
+        {
+            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
+            {
+                if (this.ServiceInfo.HttpProvider != null)
+                {
+                    using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.ServiceInfo.SignOutUrl))
+                    {
+                        await this.ServiceInfo.HttpProvider.SendAsync(httpRequestMessage);
+                    }
+                }
+
+                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
+                this.CurrentAccountSession = null;
+            }
+        }
 
         protected void DeleteUserCredentialsFromCache(AccountSession accountSession)
         {
@@ -162,11 +180,42 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
 
+#if WINFORMS
+        protected virtual ClientCredential GetClientCredentialForAuthentication()
+        {
+            return string.IsNullOrEmpty(this.serviceInfo.ClientSecret)
+                ? null
+                : new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
+        }
+#endif
+
         protected UserIdentifier GetUserIdentifierForAuthentication()
         {
             return string.IsNullOrEmpty(this.serviceInfo.UserId)
                 ? UserIdentifier.AnyUser
                 : new UserIdentifier(this.serviceInfo.UserId, UserIdentifierType.OptionalDisplayableId);
+        }
+
+        internal OneDriveException GetAuthenticationException(bool isCancelled = false, Exception innerException = null)
+        {
+            if (isCancelled)
+            {
+                return new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationCancelled.ToString(),
+                        Message = "User cancelled authentication.",
+                    },
+                    innerException);
+            }
+
+            return new OneDriveException(
+                new Error
+                {
+                    Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                    Message = "An error occurred during active directory authentication.",
+                },
+                innerException);
         }
 
         private async Task<string> GetAuthenticationTokenForResourceAsync(string resource)

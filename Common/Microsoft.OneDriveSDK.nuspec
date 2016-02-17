@@ -15,15 +15,15 @@
     <tags>onedrive sharepoint files livesdk liveconnect cloud storage microsoftaccount windowsliveid microsoftid windowsphone windowsstore metro xaml html</tags>
     <dependencies>
       <group>
-        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="Newtonsoft.Json" version="8.0.2" />
       </group>
       <group targetFramework="net451">
-        <dependency id="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.19.208020213" />
-        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.21.301221612" />
+        <dependency id="Newtonsoft.Json" version="8.0.2" />
       </group>
       <group targetFramework="win81">
-        <dependency id="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.19.208020213" />
-        <dependency id="Newtonsoft.Json" version="7.0.1" />
+        <dependency id="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.21.301221612" />
+        <dependency id="Newtonsoft.Json" version="8.0.2" />
       </group>
     </dependencies>
 

@@ -113,5 +113,27 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets the <see cref="IWebAuthenticationUi"/> for displaying authentication UI to the user.
         /// </summary>
         public IWebAuthenticationUi WebAuthenticationUi { get; set; }
+
+        public void CopyFrom(ServiceInfo serviceInfo)
+        {
+            this.AccountType = serviceInfo.AccountType;
+            this.AppId = serviceInfo.AppId;
+            this.AuthenticationProvider = serviceInfo.AuthenticationProvider;
+            this.AuthenticationServiceUrl = serviceInfo.AuthenticationServiceUrl;
+            this.BaseUrl = serviceInfo.BaseUrl;
+            this.ClientSecret = serviceInfo.ClientSecret;
+            this.CredentialCache = serviceInfo.CredentialCache;
+            this.DiscoveryServiceResource = serviceInfo.DiscoveryServiceResource;
+            this.DiscoveryServiceUrl = serviceInfo.DiscoveryServiceUrl;
+            this.HttpProvider = serviceInfo.HttpProvider;
+            this.OneDriveServiceEndpointVersion = serviceInfo.OneDriveServiceEndpointVersion;
+            this.ReturnUrl = serviceInfo.ReturnUrl;
+            this.Scopes = serviceInfo.Scopes;
+            this.ServiceResource = serviceInfo.ServiceResource;
+            this.SignOutUrl = serviceInfo.SignOutUrl;
+            this.TokenServiceUrl = serviceInfo.TokenServiceUrl;
+            this.UserId = serviceInfo.UserId;
+            this.WebAuthenticationUi = serviceInfo.WebAuthenticationUi;
+        }
     }
 }

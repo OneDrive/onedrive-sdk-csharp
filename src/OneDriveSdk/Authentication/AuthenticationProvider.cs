@@ -24,7 +24,6 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
@@ -35,12 +34,32 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public abstract class AuthenticationProvider : IAuthenticationProvider
     {
+        private IOAuthRequestStringBuilder oAuthRequestStringBuilder;
+
         /// <summary>
         /// Constructs an <see cref="AuthenticationProvider"/>.
         /// </summary>
         protected AuthenticationProvider(ServiceInfo serviceInfo)
         {
             this.ServiceInfo = serviceInfo;
+        }
+
+        internal IOAuthRequestStringBuilder OAuthRequestStringBuilder
+        {
+            get
+            {
+                if (this.oAuthRequestStringBuilder == null)
+                {
+                    this.oAuthRequestStringBuilder = new OAuthRequestStringBuilder(this.ServiceInfo);
+                }
+
+                return this.oAuthRequestStringBuilder;
+            }
+
+            set
+            {
+                this.oAuthRequestStringBuilder = value;
+            }
         }
 
         public AccountSession CurrentAccountSession { get; set; }
@@ -61,7 +80,7 @@ namespace Microsoft.OneDrive.Sdk
                 var tokenTypeString = string.IsNullOrEmpty(this.CurrentAccountSession.AccessTokenType)
                     ? Constants.Headers.Bearer
                     : this.CurrentAccountSession.AccessTokenType;
-                request.Headers.Authorization = new AuthenticationHeaderValue(Constants.Headers.Bearer, this.CurrentAccountSession.AccessToken);
+                request.Headers.Authorization = new AuthenticationHeaderValue(tokenTypeString, this.CurrentAccountSession.AccessToken);
             }
         }
 
@@ -156,20 +175,7 @@ namespace Microsoft.OneDrive.Sdk
             {
                 returnUrl = returnUrl ?? this.ServiceInfo.ReturnUrl;
 
-                var requestUriStringBuilder = new StringBuilder();
-                requestUriStringBuilder.Append(this.ServiceInfo.AuthenticationServiceUrl);
-                requestUriStringBuilder.AppendFormat("?{0}={1}", Constants.Authentication.RedirectUriKeyName, returnUrl);
-                requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
-                requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, WebUtility.UrlEncode(string.Join(" ", this.ServiceInfo.Scopes)));
-
-                if (!string.IsNullOrEmpty(this.ServiceInfo.UserId))
-                {
-                    requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.UserIdKeyName, this.ServiceInfo.UserId);
-                }
-
-                requestUriStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ResponseTypeKeyName, Constants.Authentication.CodeKeyName);
-
-                var requestUri = new Uri(requestUriStringBuilder.ToString());
+                var requestUri = new Uri(this.OAuthRequestStringBuilder.GetAuthorizationCodeRequestUrl(returnUrl));
 
                 var authenticationResponseValues = await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(
                     requestUri,
@@ -185,46 +191,10 @@ namespace Microsoft.OneDrive.Sdk
 
             return null;
         }
-
-        internal string GetCodeRedemptionRequestBody(string code, string returnUrl = null)
-        {
-            returnUrl = returnUrl ?? this.ServiceInfo.ReturnUrl;
-
-            var requestBodyStringBuilder = new StringBuilder();
-            requestBodyStringBuilder.AppendFormat("{0}={1}", Constants.Authentication.RedirectUriKeyName, returnUrl);
-            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
-            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, WebUtility.UrlEncode(string.Join(" ", this.ServiceInfo.Scopes)));
-            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.CodeKeyName, code);
-            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.GrantTypeKeyName, Constants.Authentication.AuthorizationCodeGrantType);
-
-            if (!string.IsNullOrEmpty(this.ServiceInfo.ClientSecret))
-            {
-                requestBodyStringBuilder.AppendFormat("&client_secret={0}", this.ServiceInfo.ClientSecret);
-            }
-
-            return requestBodyStringBuilder.ToString();
-        }
-
+        
         protected virtual Task<AccountSession> RefreshAccessTokenAsync(string refreshToken)
         {
-            return this.SendTokenRequestAsync(this.GetRefreshTokenRequestBody(refreshToken));
-        }
-
-        internal string GetRefreshTokenRequestBody(string refreshToken)
-        {
-            var requestBodyStringBuilder = new StringBuilder();
-            requestBodyStringBuilder.AppendFormat("{0}={1}", Constants.Authentication.RedirectUriKeyName, this.ServiceInfo.ReturnUrl);
-            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientIdKeyName, this.ServiceInfo.AppId);
-            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ScopeKeyName, WebUtility.UrlEncode(string.Join(" ", this.ServiceInfo.Scopes)));
-            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.RefreshTokenKeyName, refreshToken);
-            requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.GrantTypeKeyName, Constants.Authentication.RefreshTokenKeyName);
-
-            if (!string.IsNullOrEmpty(this.ServiceInfo.ClientSecret))
-            {
-                requestBodyStringBuilder.AppendFormat("&{0}={1}", Constants.Authentication.ClientSecretKeyName, this.ServiceInfo.ClientSecret);
-            }
-
-            return requestBodyStringBuilder.ToString();
+            return this.SendTokenRequestAsync(this.OAuthRequestStringBuilder.GetRefreshTokenRequestBody(refreshToken));
         }
 
         internal async Task<AccountSession> ProcessCachedAccountSessionAsync(AccountSession accountSession)

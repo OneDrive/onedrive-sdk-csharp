@@ -23,13 +23,15 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using System.Net.Http;
     using System.Threading.Tasks;
 
     using IdentityModel.Clients.ActiveDirectory;
+    using WindowsForms;
 
     public class AdalAuthenticationProvider : AdalAuthenticationProviderBase
     {
+        private IOAuthRequestStringBuilder oAuthRequestStringBuilder;
+
         /// <summary>
         /// Constructs an <see cref="AdalAuthenticationProvider"/>.
         /// </summary>
@@ -40,37 +42,47 @@ namespace Microsoft.OneDrive.Sdk
         {
         }
 
-        /// <summary>
-        /// Signs the current user out.
-        /// </summary>
-        public override async Task SignOutAsync()
+        internal IOAuthRequestStringBuilder OAuthRequestStringBuilder
         {
-            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
+            get
             {
-                if (this.ServiceInfo.HttpProvider != null)
+                if (this.oAuthRequestStringBuilder == null)
                 {
-                    using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.ServiceInfo.SignOutUrl))
-                    {
-                        await this.ServiceInfo.HttpProvider.SendAsync(httpRequestMessage);
-                    }
+                    this.oAuthRequestStringBuilder = new OAuthRequestStringBuilder(this.ServiceInfo);
                 }
 
-                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
-                this.CurrentAccountSession = null;
+                return this.oAuthRequestStringBuilder;
+            }
+
+            set
+            {
+                this.oAuthRequestStringBuilder = value;
             }
         }
 
         protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
         {
             IAuthenticationResult authenticationResult = null;
-            var clientCredential = string.IsNullOrEmpty(this.serviceInfo.ClientSecret) ? null : new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
+
+            var adalServiceInfo = this.ServiceInfo as AdalServiceInfo;
+
+            ClientAssertionCertificate clientAssertionCertificate = null;
+            ClientCredential clientCredential = this.GetClientCredentialForAuthentication();
+
+            if (adalServiceInfo != null && adalServiceInfo.ClientCertificate != null)
+            {
+                clientAssertionCertificate = new ClientAssertionCertificate(this.serviceInfo.AppId, adalServiceInfo.ClientCertificate);
+            }
+
             var userIdentifier = this.GetUserIdentifierForAuthentication();
 
             try
             {
-                authenticationResult = clientCredential == null
-                    ? await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId)
-                    : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier);
+                authenticationResult = clientAssertionCertificate == null
+                    ?  clientCredential == null
+                        ? await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId)
+                        : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier)
+                    : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientAssertionCertificate, userIdentifier);
             }
             catch (Exception)
             {
@@ -84,14 +96,50 @@ namespace Microsoft.OneDrive.Sdk
 
             try
             {
-                authenticationResult = clientCredential == null
-                    ? this.authenticationContextWrapper.AcquireToken(
+                var redirectUri = new Uri(this.ServiceInfo.ReturnUrl);
+
+                if (clientAssertionCertificate != null || clientCredential != null)
+                {
+                    var webAuthenticationUi = this.serviceInfo.WebAuthenticationUi ?? new FormsWebAuthenticationUi();
+                    
+                    var requestUri = new Uri(this.OAuthRequestStringBuilder.GetAuthorizationCodeRequestUrl());
+
+                    var authenticationResponseValues = await webAuthenticationUi.AuthenticateAsync(
+                        requestUri,
+                        redirectUri);
+
+                    OAuthErrorHandler.ThrowIfError(authenticationResponseValues);
+
+                    string code;
+                    if (authenticationResponseValues != null && authenticationResponseValues.TryGetValue("code", out code))
+                    {
+                        if (clientAssertionCertificate != null)
+                        {
+                            authenticationResult = await this.authenticationContextWrapper.AcquireTokenByAuthorizationCodeAsync(
+                                code,
+                                redirectUri,
+                                clientAssertionCertificate,
+                                resource);
+                        }
+                        else
+                        {
+                            authenticationResult = await this.authenticationContextWrapper.AcquireTokenByAuthorizationCodeAsync(
+                                code,
+                                redirectUri,
+                                clientCredential,
+                                resource);
+                        }
+                    }
+                }
+                else
+                {
+                    authenticationResult = this.authenticationContextWrapper.AcquireToken(
                         resource,
                         this.ServiceInfo.AppId,
-                        new Uri(this.ServiceInfo.ReturnUrl),
+                        redirectUri,
                         PromptBehavior.Auto,
-                        userIdentifier)
-                    : await this.authenticationContextWrapper.AcquireTokenAsync(resource, clientCredential);
+                        userIdentifier);
+                }
             }
             catch (AdalException adalException)
             {
@@ -108,28 +156,6 @@ namespace Microsoft.OneDrive.Sdk
             }
 
             return authenticationResult;
-        }
-
-        internal OneDriveException GetAuthenticationException(bool isCancelled = false, Exception innerException = null)
-        {
-            if (isCancelled)
-            {
-                return new OneDriveException(
-                    new Error
-                    {
-                        Code = OneDriveErrorCode.AuthenticationCancelled.ToString(),
-                        Message = "User cancelled authentication.",
-                    },
-                    innerException);
-            }
-
-            return new OneDriveException(
-                new Error
-                {
-                    Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                    Message = "An error occurred during active directory authentication.",
-                },
-                innerException);
         }
     }
 }

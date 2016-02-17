@@ -138,26 +138,5 @@ namespace Test.OneDriveSdk
 
             await this.AuthenticateWithRefreshToken(refreshedAccountSession);
         }
-
-        [TestMethod]
-        public void GetRefreshTokenRequestBody_ClientSecret()
-        {
-            this.serviceInfo.ClientSecret = "secret";
-            var token = "token";
-            var requestBodyString = this.authenticationProvider.GetRefreshTokenRequestBody(token);
-            Assert.IsTrue(requestBodyString.Contains("refresh_token=" + token), "Token not set correctly.");
-            Assert.IsTrue(
-                requestBodyString.Contains("client_secret=" + this.serviceInfo.ClientSecret),
-                "Client secret not set correctly.");
-        }
-
-        [TestMethod]
-        public void GetRefreshTokenRequestBody_NoClientSecret()
-        {
-            var token = "token";
-            var requestBodyString = this.authenticationProvider.GetRefreshTokenRequestBody(token);
-            Assert.IsTrue(requestBodyString.Contains("refresh_token=" + token), "Token not set correctly.");
-            Assert.IsFalse(requestBodyString.Contains("client_secret"), "Client secret set.");
-        }
     }
 }

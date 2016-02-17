@@ -73,6 +73,7 @@ namespace Test.OneDriveSdk.WinRT
             var cachedAccountSession = new AccountSession
             {
                 AccessToken = "token",
+                ExpiresOnUtc = DateTimeOffset.UtcNow.AddHours(1),
             };
 
             this.authenticationProvider.CurrentAccountSession = cachedAccountSession;

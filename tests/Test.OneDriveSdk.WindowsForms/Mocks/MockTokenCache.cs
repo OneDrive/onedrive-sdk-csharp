@@ -22,8 +22,6 @@
 
 namespace Test.OneDriveSdk.WindowsForms.Mocks
 {
-    using System.Collections.Generic;
-    
     using Microsoft.OneDrive.Sdk;
     using Moq;
 
