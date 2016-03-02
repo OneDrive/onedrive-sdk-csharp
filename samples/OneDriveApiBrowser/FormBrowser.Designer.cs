@@ -234,8 +234,8 @@
             this.uploadFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.simpleUploadToolStripMenuItem,
             this.simpleIDbasedToolStripMenuItem,
-            this.chunkedUploadToolStripMenuItem,
-            this.bITSParallelToolStripMenuItem,
+            /// Uncomment when used: this.chunkedUploadToolStripMenuItem,
+            /// Uncomment when used: this.bITSParallelToolStripMenuItem,
             this.toolStripMenuItem2,
             this.createFolderToolStripMenuItem});
             this.uploadFileToolStripMenuItem.Name = "uploadFileToolStripMenuItem";
