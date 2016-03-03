@@ -9,7 +9,7 @@ To authenticate your app to use OneDrive, you need to get a `OneDriveClient`, wh
 
 Various helper methods are available for constructing a client. All of them take a set of standard parameters:
 
-| Paramater | Description |
+| Parameter | Description |
 |:----------|:------------|
 | _clientId_ | The client ID of the app. Required. |
 | _returnUrl_ | A redirect URL. Required. |
