@@ -54,7 +54,23 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The task to await.</returns>
         public virtual async Task AppendAuthHeaderAsync(HttpRequestMessage request)
         {
-            await this.AuthenticateAsync();
+            try
+            {
+                await this.AuthenticateAsync();
+            }
+            catch (OneDriveException oneDriveException)
+            {
+                // Swallow exception for Authentication Provider that does not unsupported re-authentication but have a valid header.
+                if (oneDriveException.IsMatch(OneDriveErrorCode.AuthenticationFailure.ToString())
+                    && oneDriveException.Error != null
+                    && oneDriveException.Error.Message.StartsWith("The request is not supported.", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    if (this.CurrentAccountSession == null || string.IsNullOrEmpty(this.CurrentAccountSession.AccessToken))
+                    {
+                        throw;
+                    }
+                }
+            }
 
             if (this.CurrentAccountSession != null && !string.IsNullOrEmpty(this.CurrentAccountSession.AccessToken))
             {
@@ -114,7 +130,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Signs the current user out.
         /// </summary>
         public abstract Task SignOutAsync();
-        
+
         protected void CacheAuthResult(AccountSession accountSession)
         {
             this.CurrentAccountSession = accountSession;
@@ -252,7 +268,7 @@ namespace Microsoft.OneDrive.Sdk
 
             return null;
         }
-        
+
         internal async Task<AccountSession> SendTokenRequestAsync(string requestBodyString)
         {
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, this.ServiceInfo.TokenServiceUrl);
