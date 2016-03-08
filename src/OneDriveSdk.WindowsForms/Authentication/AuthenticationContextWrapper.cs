@@ -182,5 +182,65 @@ namespace Microsoft.OneDrive.Sdk
 
             return result == null ? null : new AuthenticationResultWrapper(result);
         }
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByRefreshToken(string, string, string)"/>.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token.</param>
+        /// <param name="clientId">The client ID for the application.</param>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        public async Task<IAuthenticationResult> AcquireTokenByRefreshTokenAsync(
+            string refreshToken,
+            string clientId,
+            string resource)
+        {
+            var result = await this.authenticationContext.AcquireTokenByRefreshTokenAsync(
+                refreshToken,
+                clientId,
+                resource);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
+        }
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByRefreshTokenAsync(string, ClientCredential, string)"/>.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token.</param>
+        /// <param name="clientCredential">The client credential of the application.</param>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        public async Task<IAuthenticationResult> AcquireTokenByRefreshTokenAsync(
+            string refreshToken,
+            ClientCredential clientCredential,
+            string resource)
+        {
+            var result = await this.authenticationContext.AcquireTokenByRefreshTokenAsync(
+                refreshToken,
+                clientCredential,
+                resource);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
+        }
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByRefreshTokenAsync(string, ClientAssertionCertificate, string)"/>.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token.</param>
+        /// <param name="clientAssertionCertificate">The client assertion certificate of the application.</param>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        public async Task<IAuthenticationResult> AcquireTokenByRefreshTokenAsync(
+            string refreshToken,
+            ClientAssertionCertificate clientAssertionCertificate,
+            string resource)
+        {
+            var result = await this.authenticationContext.AcquireTokenByRefreshTokenAsync(
+                refreshToken,
+                clientAssertionCertificate,
+                resource);
+
+            return result == null ? null : new AuthenticationResultWrapper(result);
+        }
     }
 }

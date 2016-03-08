@@ -40,8 +40,16 @@ namespace Test.OneDriveSdk.WinRT.Mocks
             string clientId,
             UserIdentifier userIdentifier);
 
+        public delegate IAuthenticationResult AuthenticationResultByRefreshTokenCallback(
+            string refreshToken,
+            string clientId,
+            string resource);
+
         public AuthenticationResultCallback AcquireTokenAsyncCallback { get; set; }
+
         public AuthenticationResultSilentCallback AcquireTokenSilentAsyncCallback { get; set; }
+
+        public AuthenticationResultByRefreshTokenCallback AcquireTokenByRefreshTokenAsyncCallback { get; set; }
 
         public Task<IAuthenticationResult> AcquireTokenAsync(
             string resource,
@@ -56,6 +64,11 @@ namespace Test.OneDriveSdk.WinRT.Mocks
         public Task<IAuthenticationResult> AcquireTokenSilentAsync(string resource, string clientId, UserIdentifier userIdentifier)
         {
             return Task.FromResult(this.AcquireTokenSilentAsyncCallback(resource, clientId, userIdentifier));
+        }
+
+        public Task<IAuthenticationResult> AcquireTokenByRefreshTokenAsync(string refreshToken, string clientId, string resource)
+        {
+            return Task.FromResult(this.AcquireTokenByRefreshTokenAsyncCallback(refreshToken, clientId, resource));
         }
     }
 }

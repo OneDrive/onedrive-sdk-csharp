@@ -79,23 +79,14 @@ namespace Microsoft.OneDrive.Sdk
             {
                 authenticationResult = await this.authenticationContextWrapper.AcquireTokenAsync(resource, clientAssertionCertificate);
             }
-            catch (AdalException adalException)
-            {
-                throw this.GetAuthenticationException(string.Equals(adalException.ErrorCode, Constants.Authentication.AuthenticationCancelled), adalException);
-            }
-            catch (OneDriveException)
-            {
-                // If authentication threw a OneDriveException assume we already handled it and let it bubble up.
-                throw;
-            }
             catch (Exception exception)
             {
-                throw this.GetAuthenticationException(false, exception);
+                AuthenticationExceptionHelper.HandleAuthenticationException(exception);
             }
 
             if (authenticationResult == null)
             {
-                throw this.GetAuthenticationException();
+                AuthenticationExceptionHelper.HandleAuthenticationException(null);
             }
 
             return authenticationResult;

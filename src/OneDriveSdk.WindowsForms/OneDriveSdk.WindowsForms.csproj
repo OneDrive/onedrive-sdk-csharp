@@ -72,6 +72,9 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\AdalCredentialCache.cs">
       <Link>Authentication\AdalCredentialCache.cs</Link>
     </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AuthenticationExceptionHelper.cs">
+      <Link>Authentication\AuthenticationExceptionHelper.cs</Link>
+    </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\AuthenticationResultWrapper.cs">
       <Link>Authentication\AuthenticationResultWrapper.cs</Link>
     </Compile>
@@ -99,6 +102,7 @@
     <Compile Include="Authentication\AdalAppConfig.cs" />
     <Compile Include="Authentication\AdalAppOnlyAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalAppOnlyServiceInfoProvider.cs" />
+    <Compile Include="Authentication\AdalRedeemRefreshTokenHelper.cs" />
     <Compile Include="Authentication\AdalAuthenticationByCodeAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalAuthenticationByCodeServiceInfoProvider.cs" />
     <Compile Include="Authentication\AdalAuthenticationProvider.cs" />

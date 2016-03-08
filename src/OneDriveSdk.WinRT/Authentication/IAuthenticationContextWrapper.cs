@@ -46,6 +46,23 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="promptBehavior">The <see cref="PromptBehavior"/> for authentication.</param>
         /// <param name="userIdentifier">The <see cref="UserIdentifier"/> for authentication.</param>
         /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
-        Task<IAuthenticationResult> AcquireTokenAsync(string resource, string clientId, Uri redirectUri, PromptBehavior promptBehavior, UserIdentifier userIdentifier);
+        Task<IAuthenticationResult> AcquireTokenAsync(
+            string resource,
+            string clientId,
+            Uri redirectUri,
+            PromptBehavior promptBehavior,
+            UserIdentifier userIdentifier);
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByRefreshToken(string, string, string)"/>.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token.</param>
+        /// <param name="clientId">The client ID for the application.</param>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        Task<IAuthenticationResult> AcquireTokenByRefreshTokenAsync(
+            string refreshToken,
+            string clientId,
+            string resource);
     }
 }
