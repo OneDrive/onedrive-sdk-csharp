@@ -68,5 +68,10 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets the requested scopes for Microsoft account authentication.
         /// </summary>
         public string[] MicrosoftAccountScopes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the requested prompt type for Microsoft account authentication.
+        /// </summary>
+        public CredentialPromptType MicrosoftAccountPromptType { get; set; }
     }
 }

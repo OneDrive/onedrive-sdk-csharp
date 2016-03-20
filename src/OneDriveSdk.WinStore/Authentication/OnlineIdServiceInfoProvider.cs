@@ -51,6 +51,7 @@ namespace Microsoft.OneDrive.Sdk
                 CredentialCache = credentialCache,
                 HttpProvider = httpProvider,
                 Scopes = appConfig.MicrosoftAccountScopes,
+                MicrosoftAccountPromptType = appConfig.MicrosoftAccountPromptType
             };
 
             microsoftAccountServiceInfo.AuthenticationProvider = this.AuthenticationProvider ?? new OnlineIdAuthenticationProvider(microsoftAccountServiceInfo);

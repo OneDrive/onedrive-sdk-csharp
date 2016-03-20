@@ -115,10 +115,11 @@ namespace Microsoft.OneDrive.Sdk
         public static IOneDriveClient GetClientUsingOnlineIdAuthenticator(
             string[] scopes,
             string returnUrl = null,
-            IHttpProvider httpProvider = null)
+            IHttpProvider httpProvider = null,
+            CredentialPromptType promptType = CredentialPromptType.PromptIfNeeded)
         {
             return new OneDriveClient(
-                new AppConfig { MicrosoftAccountScopes = scopes },
+                new AppConfig { MicrosoftAccountScopes = scopes, MicrosoftAccountPromptType = promptType },
                 httpProvider: httpProvider ?? new HttpProvider(),
                 serviceInfoProvider: new OnlineIdServiceInfoProvider());
         }
@@ -173,9 +174,10 @@ namespace Microsoft.OneDrive.Sdk
         public static IOneDriveClient GetUniversalClient(
             string[] scopes,
             string returnUrl = null,
-            IHttpProvider httpProvider = null)
+            IHttpProvider httpProvider = null,
+            CredentialPromptType promptType = CredentialPromptType.PromptIfNeeded)
         {
-            return OneDriveClientExtensions.GetClientUsingOnlineIdAuthenticator(scopes, returnUrl, httpProvider);
+            return OneDriveClientExtensions.GetClientUsingOnlineIdAuthenticator(scopes, returnUrl, httpProvider, promptType);
         }
     }
 }
