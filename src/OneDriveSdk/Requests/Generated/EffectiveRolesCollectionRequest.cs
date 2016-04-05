@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,40 +27,40 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// The type ItemAllPhotosRequest.
+    /// The type EffectiveRolesCollectionRequest.
     /// </summary>
-    public partial class ItemAllPhotosRequest : BaseRequest, IItemAllPhotosRequest
+    public partial class EffectiveRolesCollectionRequest : BaseRequest, IEffectiveRolesCollectionRequest
     {
-    
         /// <summary>
-        /// Constructs a new ItemAllPhotosRequest.
+        /// Constructs a new EffectiveRolesCollectionRequest.
         /// </summary>
-        public ItemAllPhotosRequest(
+        /// <param name="requestUrl">The request URL.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
+        /// <param name="options">Query option name value pairs for the request.</param>
+        public EffectiveRolesCollectionRequest(
             string requestUrl,
             IBaseClient client,
             IList<Option> options)
             : base(requestUrl, client, options)
         {
-    
         }
-    
+
+        
         /// <summary>
-        /// Issues the GET request.
+        /// Gets the collection page.
         /// </summary>
-        public async Task<IItemAllPhotosCollectionPage> GetAsync()
+        /// <returns>The collection page.</returns>
+        public async Task<IEffectiveRolesCollectionPage> GetAsync()
         {
-    
-            var response = await this.SendAsync<ItemAllPhotosCollectionResponse>(null);
+            this.Method = "GET";
+            var response = await this.SendAsync<EffectiveRolesCollectionResponse>(null);
             if (response != null && response.Value != null && response.Value.CurrentPage != null)
             {
                 if (response.AdditionalData != null)
                 {
-                    response.Value.AdditionalData = response.AdditionalData;
-                    
                     object nextPageLink;
                     response.AdditionalData.TryGetValue("@odata.nextLink", out nextPageLink);
 
@@ -72,22 +73,21 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-            
+
                 return response.Value;
             }
 
             return null;
-    
         }
-    
+
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
         /// <param name="value">The expand value.</param>
         /// <returns>The request object to send.</returns>
-        public IItemAllPhotosRequest Expand(string value)
+        public IEffectiveRolesCollectionRequest Expand(string value)
         {
-            this.QueryOptions.Add(new QueryOption("$expand", value));
+            this.QueryOptions.Add(new QueryOption("expand", value));
             return this;
         }
 
@@ -96,9 +96,9 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="value">The select value.</param>
         /// <returns>The request object to send.</returns>
-        public IItemAllPhotosRequest Select(string value)
+        public IEffectiveRolesCollectionRequest Select(string value)
         {
-            this.QueryOptions.Add(new QueryOption("$select", value));
+            this.QueryOptions.Add(new QueryOption("select", value));
             return this;
         }
 
@@ -107,11 +107,10 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="value">The top value.</param>
         /// <returns>The request object to send.</returns>
-        public IItemAllPhotosRequest Top(int value)
+        public IEffectiveRolesCollectionRequest Top(int value)
         {
-            this.QueryOptions.Add(new QueryOption("$top", value.ToString()));
+            this.QueryOptions.Add(new QueryOption("top", value.ToString()));
             return this;
         }
-    
     }
 }

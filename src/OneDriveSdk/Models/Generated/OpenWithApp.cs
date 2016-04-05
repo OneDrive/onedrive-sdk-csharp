@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -56,10 +57,16 @@ namespace Microsoft.OneDrive.Sdk
         public string EditUrl { get; set; }
     
         /// <summary>
-        /// Gets or sets postParameters.
+        /// Gets or sets viewPostParameters.
         /// </summary>
-        [DataMember(Name = "postParameters", EmitDefaultValue = false, IsRequired = false)]
-        public string PostParameters { get; set; }
+        [DataMember(Name = "viewPostParameters", EmitDefaultValue = false, IsRequired = false)]
+        public string ViewPostParameters { get; set; }
+    
+        /// <summary>
+        /// Gets or sets editPostParameters.
+        /// </summary>
+        [DataMember(Name = "editPostParameters", EmitDefaultValue = false, IsRequired = false)]
+        public string EditPostParameters { get; set; }
     
         /// <summary>
         /// Gets or sets additional data.

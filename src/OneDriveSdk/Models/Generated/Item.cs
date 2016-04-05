@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -170,10 +171,22 @@ namespace Microsoft.OneDrive.Sdk
         public Photo Photo { get; set; }
     
         /// <summary>
+        /// Gets or sets remote item.
+        /// </summary>
+        [DataMember(Name = "remoteItem", EmitDefaultValue = false, IsRequired = false)]
+        public Item RemoteItem { get; set; }
+    
+        /// <summary>
         /// Gets or sets search result.
         /// </summary>
         [DataMember(Name = "searchResult", EmitDefaultValue = false, IsRequired = false)]
         public SearchResult SearchResult { get; set; }
+    
+        /// <summary>
+        /// Gets or sets shared.
+        /// </summary>
+        [DataMember(Name = "shared", EmitDefaultValue = false, IsRequired = false)]
+        public Shared Shared { get; set; }
     
         /// <summary>
         /// Gets or sets special folder.
