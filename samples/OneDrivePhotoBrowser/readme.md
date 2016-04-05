@@ -16,7 +16,7 @@ To run the sample, you will need:
 ### Download the sample
 
 1. Download the sample from [GitHub](https://github.com/OneDrive/onedrive-sdk-csharp) by choosing **Clone in Desktop** or **Download Zip**. 
-3. In Visual Studio, open the **OneDriveSdk.sln** file and build it.
+2. In Visual Studio, open the **OneDriveSdk.sln** file and build it.
 
 ## OneDrive Consumer configuration
 
@@ -36,6 +36,8 @@ Replace the following values at the top of the file with your application detail
     private readonly string oneDriveForBusinessClientId = "Insert your AAD client ID here";
     private readonly string oneDriveForBusinessReturnUrl = "Insert your AAD return URL here";
 ```
+
+For more details on setting up an application to access OneDrive for Business please read the [registration documentation](https://dev.onedrive.com/app-registration.htm#register-your-app-for-onedrive-for-business) for the API.
 
 ## Run the sample
 
