@@ -10,7 +10,7 @@ The sample app displays only items that are images from a user's OneDrive. Note 
 To run the sample, you will need: 
 
 * Visual Studio 2013 or 2015, with Universal Windows App Development Tools **Note:** If you don't have Universal Windows App Development Tools installed, open **Control Panel** | **Uninstall a program**. Then right-click **Microsoft Visual Studio** and click **Change**. Select **Modify** and then choose **Universal Windows App Development Tools**. Click **Update**. For more info about setting up your machine for Universal Windows Platform development, see [Build UWP apps with Visual Studio](https://msdn.microsoft.com/en-us/library/windows/apps/dn609832.aspx).
-* A Microsoft account
+* A Microsoft account and/or Azure Active Directory account with access to OneDrive for Business
 * Knowledge of Windows Universal app development
 
 ### Download the sample
@@ -49,7 +49,7 @@ The OneDrive Photo Browser sample app will open the signed-in user's personal On
 
 ### OneDrive sign-in
 
-When the app loads, the user is presented with an account selection screen with two buttons: "Log in to MSA" and "Log in to AAD". If the user selects "Log in to MSA" the `GetUniversalClient` is called on the `OneDriveClientExtensions` object to get a `OneDriveClient` object. If the user selects "Log in to AAD" the `GetActiveDirectoryClient` is called on the `OneDriveClientExtensions` object to get a `OneDriveClient` object.
+When the app loads, the user is presented with an account selection screen with two buttons: "Log in to MSA" and "Log in to AAD". If the user selects "Log in to MSA" the `GetUniversalClient` is called on the `OneDriveClientExtensions` object to get a `OneDriveClient` object. If the user selects "Log in to AAD" the `GetActiveDirectoryClient` is called on the `BusinessClientExtensions` object to get a `OneDriveClient` object.
 
 Once a `OneDriveClient` object is returned, `AuthenticateAsync` completes the client authentication for the Windows Universal sample app. This will prompt the user to log in with the selected account type.
 

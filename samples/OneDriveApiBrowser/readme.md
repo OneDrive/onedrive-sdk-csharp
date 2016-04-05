@@ -6,7 +6,17 @@ The OneDriveAPIBrowser sample is a [Windows Forms](https://msdn.microsoft.com/en
 
 1. Install [Visual Studio](https://www.visualstudio.com/downloads/download-visual-studio-vs) and all available updates, if you don't already have it. 
 2. Download the OneDriveAPIBrowser sample from [GitHub](https://github.com/OneDrive/onedrive-sdk-csharp) or create your own fork of the repository.
-3. From Visual Studio, open the **OneDriveSdk.sln** project and build it.
+3. From Visual Studio, open the **OneDriveSdk.sln** solution.
+4. Go to the OneDriveApiBrowser project in the solution and view the code for FormBrowser.cs.
+5. Update your OneDrive for Business and/or OneDrive Consumer application details in the following variables at the top of the file:
+```csharp
+        private const string AadClientId = "Insert your AAD client ID here";
+        private const string AadReturnUrl = "Insert your AAD return URL here";
+
+        private const string MsaClientId = "Insert your MSA client ID here";
+```
+
+For more details on setting up an application to access OneDrive Consumer or OneDrive for Business please read the [registration documentation](https://dev.onedrive.com/app-registration.htm) for the API.
 
 ## Run the sample
 
@@ -14,11 +24,19 @@ In Visual Studio, select the sample OneDriveAPIBrowser from the Startup project 
 
 ![OneDriveAPIBrowser sample](images/OneDriveAPIBrowser.PNG)
 
+### Sign-in to OneDrive Consumer
 When the OneDrive API Browser app opens, choose **File** | **Sign in to MSA** to sign in to a personal OneDrive account. Once you have signed in to your Microsoft account, a dialog will appear, asking for permissions to access OneDrive files.
 
 ![Let this app access your info](images/Permissions.PNG)
 
 Click **Yes**. 
+
+### Sign-in to OneDrive for Business
+When the OneDrive API Browser app opens, choose **File** | **Sign in to AAD** to sign in to a business OneDrive account. Once you have signed in to your Azure Active Directory account, a dialog will appear, asking for the permissions configured for the application ID in the Azure Active Directory portal.
+
+Click **Yes**. 
+
+### After sign-in
 
 Your OneDrive items will appear on the left pane, with each item represented by a thumbnail. On the right pane, the selected item's properties are displayed. You can choose how the item properties are displayed, whether its JSON or Tree View.
 
@@ -30,23 +48,25 @@ The **Picker** menu opens up the signed-in user's OneDrive from a web browser.
 
 ## API features
 
-### OneDrive sign-in
+### Retrieving an authenticated client
 
-This sample gets an **IOneDriveClient** instance using **GetMicrosoftAccountClient**, and calls **AuthenticateAsync** to sign the user in with the specified scopes:
+This sample gets a OneDrive Consumer **IOneDriveClient** instance using **GetMicrosoftAccountClient**. It gets a OneDrive for Business **IOneDriveClient** instance using **BusinessClientExtensions.GetActiveDirectoryClient**. After retrieving a client instance the app calls **AuthenticateAsync** to sign the user in.
 
 ```csharp
 private IOneDriveClient oneDriveClient { get; set; }
 private static readonly string[] Scopes = { "onedrive.readwrite", "wl.offline_access", "wl.signin" };
 ...
-private async void signInToolStripMenuItem_Click(object sender, EventArgs e) 
+private async Task SignIn(ClientType clientType) 
 { 
      if (this.oneDriveClient == null) 
      { 
-         this.oneDriveClient = OneDriveClient.GetMicrosoftAccountClient( 
-             FormBrowser.MsaClientId, 
-             "https://login.live.com/oauth20_desktop.srf", 
-             FormBrowser.Scopes, 
-             webAuthenticationUi: new FormsWebAuthenticationUi()); 
+         this.oneDriveClient = clientType == ClientType.Consumer
+             ? OneDriveClient.GetMicrosoftAccountClient(
+                 FormBrowser.MsaClientId,
+                 FormBrowser.MsaReturnUrl,
+                 FormBrowser.Scopes,
+                 webAuthenticationUi: new FormsWebAuthenticationUi())
+             : BusinessClientExtensions.GetActiveDirectoryClient(FormBrowser.AadClientId, FormBrowser.AadReturnUrl);
      } 
 
      try 
@@ -58,7 +78,7 @@ private async void signInToolStripMenuItem_Click(object sender, EventArgs e)
 ...
 ```
 
-As you can see, the three scopes specified for `Scopes` invokes the Permissions window. The OneDrive SDK also provides a **SignOutAsync** method to easily sign the user out:
+The OneDrive SDK also provides a **SignOutAsync** method to easily sign the user out:
 
 ```csharp
 await this.oneDriveClient.SignOutAsync();
