@@ -36,11 +36,11 @@ namespace OneDrivePhotoBrowser
     /// </summary>
     public sealed partial class AccountSelection : Page
     {
-        private readonly string[] scopes = new string[] { "onedrive.readonly", "wl.offline_access", "wl.signin" };
+        private readonly string[] scopes = new string[] { "onedrive.readonly", "wl.signin" };
 
         // Set these values to your app's ID and return URL.
-        private readonly string oneDriveForBusinessAppId = "67b8454b-58df-4e6d-a688-c769bd327052";
-        private readonly string oneDriveForBusinessReturnUrl = "https://localhost:777";
+        private readonly string oneDriveForBusinessClientId = "Insert your AAD client ID here";
+        private readonly string oneDriveForBusinessReturnUrl = "Insert your AAD return URL here";
 
         public AccountSelection()
         {
@@ -64,7 +64,7 @@ namespace OneDrivePhotoBrowser
             }
 
             // Don't show AAD login if the required AAD auth values aren't set
-            if (string.IsNullOrEmpty(oneDriveForBusinessAppId) || string.IsNullOrEmpty(oneDriveForBusinessReturnUrl))
+            if (string.IsNullOrEmpty(oneDriveForBusinessClientId) || string.IsNullOrEmpty(oneDriveForBusinessReturnUrl))
             {
                 AadButton.Visibility = Visibility.Collapsed;
             }
@@ -87,7 +87,7 @@ namespace OneDrivePhotoBrowser
                 var client = clientType == ClientType.Consumer
                     ? OneDriveClientExtensions.GetUniversalClient(this.scopes) as OneDriveClient
                     : BusinessClientExtensions.GetActiveDirectoryClient(
-                        oneDriveForBusinessAppId,
+                        oneDriveForBusinessClientId,
                         oneDriveForBusinessReturnUrl) as OneDriveClient;
 
                 try
