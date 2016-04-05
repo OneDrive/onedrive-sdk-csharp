@@ -26,7 +26,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Reflection;
@@ -306,8 +305,8 @@ namespace Microsoft.OneDrive.Sdk
                         {
                             var segments = queryValue.Split('=');
                             return new QueryOption(
-                                WebUtility.UrlDecode(segments[0]),
-                                segments.Length > 1 ? WebUtility.UrlDecode(segments[1]) : string.Empty);
+                                segments[0],
+                                segments.Length > 1 ? segments[1] : string.Empty);
                         });
 
                 foreach(var queryOption in queryOptions)
