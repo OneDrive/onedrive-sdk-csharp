@@ -26,6 +26,7 @@ namespace Test.OneDriveSdk.Requests
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
     using System.Reflection;
     using System.Threading.Tasks;
@@ -51,6 +52,24 @@ namespace Test.OneDriveSdk.Requests
                 Assert.AreEqual("Base URL is not initialized for the request.", exception.Error.Message, "Unexpected error message.");
                 throw;
             }
+        }
+
+        [TestMethod]
+        public void BaseRequest_InitializeWithEncodedQueryString()
+        {
+            var baseUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id";
+            var secondQueryValue = WebUtility.UrlEncode("value2=value3&value4");
+            var query = string.Concat("?key=value&key2=", secondQueryValue);
+
+            var requestUrl = string.Concat(baseUrl, query);
+
+            var baseRequest = new BaseRequest(requestUrl, this.oneDriveClient);
+
+            Assert.AreEqual(new Uri(baseUrl), new Uri(baseRequest.RequestUrl), "Unexpected request URL.");
+            Assert.AreEqual(2, baseRequest.QueryOptions.Count, "Unexpected number of query options.");
+            Assert.IsTrue(baseRequest.QueryOptions[0].Name.Equals("key") && baseRequest.QueryOptions[0].Value.Equals("value"), "Unexpected first query option.");
+            Assert.IsTrue(baseRequest.QueryOptions[1].Name.Equals("key2") && baseRequest.QueryOptions[1].Value.Equals(secondQueryValue), "Unexpected second query option.");
+            Assert.AreEqual(0, baseRequest.Headers.Count, "Unexpected number of header options.");
         }
 
         [TestMethod]
