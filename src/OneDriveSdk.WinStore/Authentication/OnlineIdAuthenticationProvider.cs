@@ -65,7 +65,6 @@ namespace Microsoft.OneDrive.Sdk
             try
             {
                 var serviceTicketRequest = new OnlineIdServiceTicketRequest(string.Join(" ", this.ServiceInfo.Scopes), "DELEGATION");
-                //                var authenticationResponse = await this.authenticator.AuthenticateUserAsync(serviceTicketRequest);
                 var ticketRequests = new List<OnlineIdServiceTicketRequest>();
                 ticketRequests.Add(serviceTicketRequest);
                 var authenticationResponse = await this.authenticator.AuthenticateUserAsync(ticketRequests, (Windows.Security.Authentication.OnlineId.CredentialPromptType) this.ServiceInfo.MicrosoftAccountPromptType);
