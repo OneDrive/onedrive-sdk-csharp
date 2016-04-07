@@ -84,19 +84,25 @@ namespace OneDrivePhotoBrowser
         {
             if (((App)Application.Current).OneDriveClient == null)
             {
+                OneDriveClient client = null;
                 try
                 {
-                    var client = clientType == ClientType.Consumer
-                    ? OneDriveClientExtensions.GetUniversalClient(this.scopes) as OneDriveClient
-                    : await BusinessClientExtensions.GetSilentlyAuthenticatedClientAsync(
-                        new AppConfig
-                        {
-                            ActiveDirectoryAppId = oneDriveForBusinessAppId,
-                            ActiveDirectoryServiceResource = "https://ginach-my.sharepoint.com/",
-                        },
-                        "AAABAAAAiL9Kn2Z27UubvWFPbm0gLVj9yOsK0WtRZjkNZ5FjbsrgDLFVxKdRtdVpaqgZsIqKr-8K5sYQpaazqWc5YndpUSdhshN0LM_bKI7ozS4aH0-nJueCoHarcHmiLALqEQw_2W7BgZ0bvLQvZ11BxN5uDRNzNnyIT3yGhW-c8_VPmTP1z_DD3VztbRGCaMf9U3Uxb5cYGFwmOzTuaBQXLXkgoDUIPrkj8mT8Yzc69n65mDHvlJMYAor64WeHksVCkUkdRkTHFM1JV0cLnLjhvEaCixDLk97Mv0NeIMbqAhNphFZYoJ0mHZxO2UBJG7zn4qCq4a0d1n_koLhoviIXyFBmiGJA0zX3NbwUb0mvSbQG62amvYwp9QS-uKaKJjdO46amP3TtXFErlNBE10nBlwwSp2p05ay1sE6oUHgeqJiSeEoyU9ai0HTd5ywYOhvzX9ECdAQRmBlssn2YtlfnyABh_75RBu5LRqoH977ynJikMKqdGnXgJfEADfhjkLwBlhdhRLzXTtBnCHqpNhJCcDkxmuAbVuRqawzaKAGDdxYiMLQHMX2D76N9K2d-OmkiQOuuhxqZ46V0pImQmjj8oQ52UD2-fF8YNAC8ndm6_Dk-r30gAA") as OneDriveClient;
+                    if (clientType == ClientType.Consumer)
+                    {
+                        client = OneDriveClientExtensions.GetUniversalClient(this.scopes) as OneDriveClient;
 
-                    await client.AuthenticateAsync();
+                        await client.AuthenticateAsync();
+                    }
+                    else
+                    {
+                        client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
+                            new AppConfig
+                            {
+                                ActiveDirectoryAppId = oneDriveForBusinessAppId,
+                                ActiveDirectoryServiceResource = oneDriveForBusinessReturnUrl,
+                            }) as OneDriveClient;
+                    }
+
                     ((App)Application.Current).OneDriveClient = client;
                     ((App)Application.Current).NavigationStack.Add(new ItemModel(new Item()));
                     Frame.Navigate(typeof(MainPage), e);
@@ -105,11 +111,11 @@ namespace OneDrivePhotoBrowser
                 {
                     // Swallow the auth exception but write message for debugging.
                     Debug.WriteLine(exception.Error.Message);
-                    //client.Dispose();
-                }
-                catch (Exception exception)
-                {
-                    // do stuff
+
+                    if (client != null)
+                    {
+                        client.Dispose();
+                    }
                 }
             }
             else

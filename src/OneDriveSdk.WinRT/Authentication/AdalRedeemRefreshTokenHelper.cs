@@ -30,7 +30,7 @@ namespace Microsoft.OneDrive.Sdk
     /// <summary>
     /// Helper class to redeem refresh tokens during ADAL authentication.
     /// </summary>
-    public class AdalRedeemRefreshTokenHelper
+    public class AdalRedeemRefreshTokenHelper : IAdalRedeemRefreshTokenHelper
     {
         private IAuthenticationContextWrapper authenticationContextWrapper;
 

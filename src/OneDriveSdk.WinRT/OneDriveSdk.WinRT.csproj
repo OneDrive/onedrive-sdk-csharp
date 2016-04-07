@@ -122,6 +122,9 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryServiceResponse.cs">
       <Link>Authentication\DiscoveryServiceResponse.cs</Link>
     </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\IAdalRedeemRefreshTokenHelper.cs">
+      <Link>Authentication\IAdalRedeemRefreshTokenHelper.cs</Link>
+    </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\IAuthenticationResult.cs">
       <Link>Authentication\IAuthenticationResult.cs</Link>
     </Compile>
@@ -140,8 +143,8 @@
     <Compile Include="Authentication\AdalRedeemRefreshTokenHelper.cs" />
     <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalServiceInfoProvider.cs" />
-    <Compile Include="Authentication\IAuthenticationContextWrapper.cs" />
     <Compile Include="Authentication\AuthenticationContextWrapper.cs" />
+    <Compile Include="Authentication\IAuthenticationContextWrapper.cs" />
     <Compile Include="Extensions\BusinessClientExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

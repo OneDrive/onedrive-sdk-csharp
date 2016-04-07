@@ -37,7 +37,7 @@ namespace Microsoft.OneDrive.Sdk
         
         internal IAuthenticationContextWrapper authenticationContextWrapper;
 
-        internal AdalRedeemRefreshTokenHelper adalRedeemRefreshTokenHelper;
+        internal IAdalRedeemRefreshTokenHelper adalRedeemRefreshTokenHelper;
 
         /// <summary>
         /// Constructs an <see cref="AdalAuthenticationProviderBase"/>.

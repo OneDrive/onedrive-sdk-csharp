@@ -272,11 +272,22 @@ namespace Microsoft.OneDrive.Sdk
                     });
             }
 
+            var serviceInfoProvider = new AdalServiceInfoProvider();
+
             var client = BusinessClientExtensions.GetClientInternal(
                 appConfig,
-                new AdalServiceInfoProvider(),
+                serviceInfoProvider,
                 credentialCache,
-                httpProvider);
+                httpProvider) as OneDriveClient;
+
+            if (client.ServiceInfo == null)
+            {
+                client.ServiceInfo = await serviceInfoProvider.GetServiceInfo(
+                    client.appConfig,
+                    client.credentialCache,
+                    client.HttpProvider,
+                    client.ClientType);
+            }
 
             client.AuthenticationProvider.CurrentAccountSession = new AccountSession { RefreshToken = refreshToken };
 
