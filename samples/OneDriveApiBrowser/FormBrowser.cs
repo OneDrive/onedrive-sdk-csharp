@@ -381,24 +381,27 @@ namespace OneDriveApiBrowser
             string filename;
             using (var stream = GetFileStreamForUpload(targetFolder.Name, out filename))
             {
-                string folderPath = targetFolder.ParentReference == null
-                    ? "/drive/items/root:"
-                    : targetFolder.ParentReference.Path + "/" + Uri.EscapeUriString(targetFolder.Name);
-                var uploadPath = folderPath + "/" + Uri.EscapeUriString(System.IO.Path.GetFileName(filename));
-
-                try
+                if (stream != null)
                 {
-                    var uploadedItem =
-                        await
-                            this.oneDriveClient.ItemWithPath(uploadPath).Content.Request().PutAsync<Item>(stream);
+                    string folderPath = targetFolder.ParentReference == null
+                        ? "/drive/items/root:"
+                        : targetFolder.ParentReference.Path + "/" + Uri.EscapeUriString(targetFolder.Name);
+                    var uploadPath = folderPath + "/" + Uri.EscapeUriString(System.IO.Path.GetFileName(filename));
 
-                    AddItemToFolderContents(uploadedItem);
+                    try
+                    {
+                        var uploadedItem =
+                            await
+                                this.oneDriveClient.ItemWithPath(uploadPath).Content.Request().PutAsync<Item>(stream);
 
-                    MessageBox.Show("Uploaded with ID: " + uploadedItem.Id);
-                }
-                catch (Exception exception)
-                {
-                    PresentOneDriveException(exception);
+                        AddItemToFolderContents(uploadedItem);
+
+                        MessageBox.Show("Uploaded with ID: " + uploadedItem.Id);
+                    }
+                    catch (Exception exception)
+                    {
+                        PresentOneDriveException(exception);
+                    }
                 }
             }
         }
@@ -410,20 +413,23 @@ namespace OneDriveApiBrowser
             string filename;
             using (var stream = GetFileStreamForUpload(targetFolder.Name, out filename))
             {
-                try
+                if (stream != null)
                 {
-                    var uploadedItem =
-                        await
-                            this.oneDriveClient.Drive.Items[targetFolder.Id].ItemWithPath(filename).Content.Request()
-                                .PutAsync<Item>(stream);
+                    try
+                    {
+                        var uploadedItem =
+                            await
+                                this.oneDriveClient.Drive.Items[targetFolder.Id].ItemWithPath(filename).Content.Request()
+                                    .PutAsync<Item>(stream);
 
-                    AddItemToFolderContents(uploadedItem);
+                        AddItemToFolderContents(uploadedItem);
 
-                    MessageBox.Show("Uploaded with ID: " + uploadedItem.Id);
-                }
-                catch (Exception exception)
-                {
-                    PresentOneDriveException(exception);
+                        MessageBox.Show("Uploaded with ID: " + uploadedItem.Id);
+                    }
+                    catch (Exception exception)
+                    {
+                        PresentOneDriveException(exception);
+                    }
                 }
             }
         }
