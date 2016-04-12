@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,33 +26,29 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using System.Collections.Generic;
-
+    
     /// <summary>
-    /// The type ItemAllPhotosRequestBuilder.
+    /// The type EffectiveRolesCollectionPage.
     /// </summary>
-    public partial class ItemAllPhotosRequestBuilder : BaseRequestBuilder, IItemAllPhotosRequestBuilder
+    public partial class EffectiveRolesCollectionPage : CollectionPage<String>, IEffectiveRolesCollectionPage
     {
-    
-        public ItemAllPhotosRequestBuilder(
-            string requestUrl,
-            IBaseClient client)
-            : base(requestUrl, client)
-        {
-        }
-    
         /// <summary>
-        /// Builds the request.
+        /// Gets the next page <see cref="IEffectiveRolesCollectionRequest"/> instance.
         /// </summary>
-        /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IItemAllPhotosRequest Request(IList<Option> options = null)
-        {
-            return new ItemAllPhotosRequest(
-                this.RequestUrl,
-                this.Client,
-                options);
-        }
+        public IEffectiveRolesCollectionRequest NextPageRequest { get; private set; }
 
+        /// <summary>
+        /// Initializes the NextPageRequest property.
+        /// </summary>
+        public void InitializeNextPageRequest(IBaseClient client, string nextPageLinkString)
+        {
+            if (!string.IsNullOrEmpty(nextPageLinkString))
+            {
+                this.NextPageRequest = new EffectiveRolesCollectionRequest(
+                    nextPageLinkString,
+                    client,
+                    null);
+            }
+        }
     }
 }

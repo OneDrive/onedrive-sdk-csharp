@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,39 +28,39 @@ namespace Microsoft.OneDrive.Sdk
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Threading.Tasks;
-    
+    using System.Runtime.Serialization;
+    using Newtonsoft.Json;
+
     /// <summary>
-    /// The interface IDriveAllPhotosRequest.
+    /// The type Shared.
     /// </summary>
-    public partial interface IDriveAllPhotosRequest : IBaseRequest
+    [DataContract]
+    public partial class Shared
     {
     
         /// <summary>
-        /// Issues the GET request.
+        /// Gets or sets effectiveRoles.
         /// </summary>
-        Task<IDriveAllPhotosCollectionPage> GetAsync();
-            
-        /// <summary>
-        /// Adds the specified expand value to the request.
-        /// </summary>
-        /// <param name="value">The expand value.</param>
-        /// <returns>The request object to send.</returns>
-        IDriveAllPhotosRequest Expand(string value);
-
-        /// <summary>
-        /// Adds the specified select value to the request.
-        /// </summary>
-        /// <param name="value">The select value.</param>
-        /// <returns>The request object to send.</returns>
-        IDriveAllPhotosRequest Select(string value);
-
-        /// <summary>
-        /// Adds the specified top value to the request.
-        /// </summary>
-        /// <param name="value">The top value.</param>
-        /// <returns>The request object to send.</returns>
-        IDriveAllPhotosRequest Top(int value);
+        [DataMember(Name = "effectiveRoles", EmitDefaultValue = false, IsRequired = false)]
+        public IEnumerable<string> EffectiveRoles { get; set; }
     
+        /// <summary>
+        /// Gets or sets owner.
+        /// </summary>
+        [DataMember(Name = "owner", EmitDefaultValue = false, IsRequired = false)]
+        public IdentitySet Owner { get; set; }
+    
+        /// <summary>
+        /// Gets or sets scope.
+        /// </summary>
+        [DataMember(Name = "scope", EmitDefaultValue = false, IsRequired = false)]
+        public string Scope { get; set; }
+    
+        /// <summary>
+        /// Gets or sets additional data.
+        /// </summary>
+        [JsonExtensionData(ReadData = false)]
+        public IDictionary<string, object> AdditionalData { get; set; }
+
     }
 }
