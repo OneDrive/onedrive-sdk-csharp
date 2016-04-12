@@ -111,14 +111,16 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <param name="promptType">The credential prompt type (show or hide the credential prompt user interface)</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static IOneDriveClient GetClientUsingOnlineIdAuthenticator(
             string[] scopes,
             string returnUrl = null,
-            IHttpProvider httpProvider = null)
+            IHttpProvider httpProvider = null,
+            CredentialPromptType promptType = CredentialPromptType.PromptIfNeeded)
         {
             return new OneDriveClient(
-                new AppConfig { MicrosoftAccountScopes = scopes },
+                new AppConfig { MicrosoftAccountScopes = scopes, MicrosoftAccountPromptType = promptType },
                 httpProvider: httpProvider ?? new HttpProvider(),
                 serviceInfoProvider: new OnlineIdServiceInfoProvider());
         }
@@ -169,13 +171,15 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="appId">The application ID for Microsoft account authentication.</param>
         /// <param name="scopes">The requested scopes for Microsoft account authentication.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <param name="promptType">The credential prompt type (show or hide the credential prompt user interface)</param>
         /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
         public static IOneDriveClient GetUniversalClient(
             string[] scopes,
             string returnUrl = null,
-            IHttpProvider httpProvider = null)
+            IHttpProvider httpProvider = null,
+            CredentialPromptType promptType = CredentialPromptType.PromptIfNeeded)
         {
-            return OneDriveClientExtensions.GetClientUsingOnlineIdAuthenticator(scopes, returnUrl, httpProvider);
+            return OneDriveClientExtensions.GetClientUsingOnlineIdAuthenticator(scopes, returnUrl, httpProvider, promptType);
         }
     }
 }

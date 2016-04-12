@@ -55,6 +55,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\ClientType.cs" />
+    <Compile Include="Enums\CredentialPromptType.cs" />
     <Compile Include="Enums\OneDriveErrorCode.cs" />
     <Compile Include="Exceptions\Error.cs" />
     <Compile Include="Exceptions\ErrorResponse.cs" />
