@@ -10,17 +10,34 @@ The sample app displays only items that are images from a user's OneDrive. Note 
 To run the sample, you will need: 
 
 * Visual Studio 2013 or 2015, with Universal Windows App Development Tools **Note:** If you don't have Universal Windows App Development Tools installed, open **Control Panel** | **Uninstall a program**. Then right-click **Microsoft Visual Studio** and click **Change**. Select **Modify** and then choose **Universal Windows App Development Tools**. Click **Update**. For more info about setting up your machine for Universal Windows Platform development, see [Build UWP apps with Visual Studio](https://msdn.microsoft.com/en-us/library/windows/apps/dn609832.aspx).
-* A Microsoft account
+* A Microsoft account and/or Azure Active Directory account with access to OneDrive for Business
 * Knowledge of Windows Universal app development
 
 ### Download the sample
 
 1. Download the sample from [GitHub](https://github.com/OneDrive/onedrive-sdk-csharp) by choosing **Clone in Desktop** or **Download Zip**. 
-3. In Visual Studio, open the **OneDriveSdk.sln** file and build it.
+2. In Visual Studio, open the **OneDriveSdk.sln** file and build it.
+
+## OneDrive Consumer configuration
 
 ### Associate the sample app with the Windows Store
 
-Before you can run the sample, you must associate the app with the Windows Store. To do this, right-click the OneDrivePhotoBrowser project and choose **Store** | **Associate app with store**. Associating the app with the Windows store is reqiured for authentication to succeed.
+Before you can run the sample to use with OneDrive Consumer, you must associate the app with the Windows Store. To do this, right-click the OneDrivePhotoBrowser project and choose **Store** | **Associate app with store**. Associating the app with the Windows store is reqiured for authentication to succeed.
+
+OneDrive for Business authentication does not require store association.
+
+## OneDrive for Business configuration
+
+In order to authenticate using OneDrive for Business you'll need to enter your application details for the app. To do this, right-click the AccountSelection.xaml file and choose **View Code**.
+
+Replace the following values at the top of the file with your application details:
+
+```csharp
+    private readonly string oneDriveForBusinessClientId = "Insert your AAD client ID here";
+    private readonly string oneDriveForBusinessReturnUrl = "Insert your AAD return URL here";
+```
+
+For more details on setting up an application to access OneDrive for Business please read the [registration documentation](https://dev.onedrive.com/app-registration.htm#register-your-app-for-onedrive-for-business) for the API.
 
 ## Run the sample
 
@@ -34,24 +51,31 @@ The OneDrive Photo Browser sample app will open the signed-in user's personal On
 
 ### OneDrive sign-in
 
-In this sample app, authentication and sign in occurs when the app starts. If the user is not already signed in, the app will invoke the Microsoft account sign-in window.
+When the app loads, the user is presented with an account selection screen with two buttons: "Log in to MSA" and "Log in to AAD". If the user selects "Log in to MSA" the `GetUniversalClient` is called on the `OneDriveClientExtensions` object to get a `OneDriveClient` object. If the user selects "Log in to AAD" the `GetActiveDirectoryClient` is called on the `BusinessClientExtensions` object to get a `OneDriveClient` object.
 
-In App.xaml.cs, an `IOneDriveClient` object is initialized.
-
-```csharp
-public IOneDriveClient OneDriveClient { get; set}
-```
-In MainPage.xaml.cs, sign-in is verified. If no user is signed in, a Microsoft account sign-in dialog appears. The `GetUniversalClient` is called on the `OneDriveClientExtensions` object to get a `OneDriveClient` object. Once a `OneDriveClient` object is returned, `AuthenticateAsync` completes the client authentication for the Windows Universal sample app.
+Once a `OneDriveClient` object is returned, `AuthenticateAsync` completes the client authentication for the Windows Universal sample app. This will prompt the user to log in with the selected account type.
 
 ```csharp
-private readonly string[] scopes = new string[] { "onedrive.readwrite", "wl.offline_access", "wl.signin" };
-...
-private async void MainPage_Loaded(object sender, RoutedEventArgs e)
+private async void InitializeClient(ClientType clientType, RoutedEventArgs e)
 {
   if (((App)Application.Current).OneDriveClient == null)
   {
-      ((App)Application.Current).OneDriveClient = OneDriveClientExtensions.GetUniversalClient(this.scopes);
-      await ((App)Application.Current).OneDriveClient.AuthenticateAsync();
+      var client = clientType == ClientType.Consumer
+          ? OneDriveClientExtensions.GetUniversalClient(this.scopes) as OneDriveClient
+          : BusinessClientExtensions.GetActiveDirectoryClient(
+              oneDriveForBusinessAppId,
+              oneDriveForBusinessReturnUrl) as OneDriveClient;
+              
+      try
+      {
+          await client.AuthenticateAsync();
+          ...
+      }
+      catch (OneDriveException exception)
+      {
+          ....
+          client.Dispose();
+      }
   }
   ...
 }
