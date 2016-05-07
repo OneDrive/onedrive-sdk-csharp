@@ -28,6 +28,8 @@ namespace Microsoft.OneDrive.Sdk
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.Graph;
+
     public class AsyncMonitor<T>
     {
         private AsyncOperationStatus asyncOperationStatus;
@@ -45,14 +47,9 @@ namespace Microsoft.OneDrive.Sdk
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (!this.client.IsAuthenticated || this.client.AuthenticationProvider.CurrentAccountSession.IsExpiring())
-                {
-                    await this.client.AuthenticateAsync();
-                }
-
                 using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.monitorUrl))
                 {
-                    await this.client.AuthenticationProvider.AppendAuthHeaderAsync(httpRequestMessage);
+                    await this.client.AuthenticationProvider.AuthenticateRequestAsync(httpRequestMessage);
 
                     using (var responseMessage = await this.client.HttpProvider.SendAsync(httpRequestMessage))
                     {
@@ -72,7 +69,7 @@ namespace Microsoft.OneDrive.Sdk
 
                             if (this.asyncOperationStatus == null)
                             {
-                                throw new OneDriveException(
+                                throw new ServiceException(
                                     new Error
                                     {
                                         Code = OneDriveErrorCode.GeneralException.ToString(),
@@ -94,7 +91,7 @@ namespace Microsoft.OneDrive.Sdk
                                     this.asyncOperationStatus.AdditionalData.TryGetValue("message", out message);
                                 }
 
-                                throw new OneDriveException(
+                                throw new ServiceException(
                                     new Error
                                     {
                                         Code = OneDriveErrorCode.GeneralException.ToString(),

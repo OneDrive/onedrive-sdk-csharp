@@ -6,8 +6,8 @@ using System.Windows.Forms;
 
 namespace OneDriveSamples.Picker
 {
+    using Microsoft.Graph;
     using Microsoft.OneDrive.Sdk;
-    using Microsoft.OneDrive.Sdk.WindowsForms;
 
     public partial class FormOneDrivePicker : Form
     {
@@ -230,13 +230,13 @@ namespace OneDriveSamples.Picker
 
             if (oneDriveClient == null)
             {
-                oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
+                /*oneDriveClient = OneDriveClient.GetMicrosoftAccountClient(
                     msa_client_id,
                     "https://login.live.com/oauth20_desktop.srf",
                     offers,
                     webAuthenticationUi: new FormsWebAuthenticationUi());
 
-                await oneDriveClient.AuthenticateAsync();
+                await oneDriveClient.AuthenticateAsync();*/
             }
 
             var parts = this.SelectionId.Split('.');

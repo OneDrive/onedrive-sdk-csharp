@@ -24,6 +24,8 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System.Collections.Generic;
 
+    using Microsoft.Graph;
+
     public static class OAuthErrorHandler
     {
         public static void ThrowIfError(IDictionary<string, string> responseValues)
@@ -43,7 +45,7 @@ namespace Microsoft.OneDrive.Sdk
 
         private static void ParseAuthenticationError(string error, string errorDescription)
         {
-            throw new OneDriveException(
+            throw new ServiceException(
                 new Error
                 {
                     Code = OneDriveErrorCode.AuthenticationFailure.ToString(),

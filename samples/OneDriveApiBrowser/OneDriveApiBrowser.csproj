@@ -59,6 +59,9 @@
     <AssemblyOriginatorKeyFile>..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Graph.Core">
+      <HintPath>..\..\src\OneDriveSdk\Microsoft.Graph.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.19.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.19.208020213\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
       <Private>True</Private>
@@ -67,9 +70,14 @@
       <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.19.208020213\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -176,10 +184,6 @@
     <ProjectReference Include="..\..\src\OneDriveSdk\OneDriveSdk.csproj">
       <Project>{1368527B-D7B2-46AD-893D-6DC8C073D819}</Project>
       <Name>OneDriveSdk</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OneDriveSdk.WindowsForms\OneDriveSdk.WindowsForms.csproj">
-      <Project>{C48558A9-320F-464D-BEF4-48266F3CF2D3}</Project>
-      <Name>OneDriveSdk.WindowsForms</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

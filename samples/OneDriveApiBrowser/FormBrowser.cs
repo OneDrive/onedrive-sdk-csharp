@@ -24,16 +24,21 @@ namespace OneDriveApiBrowser
 {
     using System;
     using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Microsoft.Graph;
     using Microsoft.OneDrive.Sdk;
-    using Microsoft.OneDrive.Sdk.WindowsForms;
     using System.Threading;
-
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
     public partial class FormBrowser : Form
     {
-        private const string AadClientId = "Insert your AAD client ID here";
-        private const string AadReturnUrl = "Insert your AAD return URL here";
+        private const string AadAuthenticationEndpoint = "https://login.microsoftonline.com/";
+        private const string AadClientId = "5a51bad1-557c-42d0-9b12-72eff58ba798";
+        private const string AadResource = "https://ginach-my.sharepoint.com/";
+        private const string AadTenantId = "5f09b637-8b81-4912-b800-3260b3b1437d";
+        private const string AadReturnUrl = "https://localhost:777";
 
         private const string MsaClientId = "Insert your MSA client ID here";
         private const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
@@ -41,8 +46,17 @@ namespace OneDriveApiBrowser
         private static readonly string[] Scopes = { "onedrive.readwrite", "wl.signin" };
 
         private const int UploadChunkSize = 10 * 1024 * 1024;       // 10 MB
+
+        private bool isBusiness;
+
+        private AuthenticationContext authenticationContext { get; set; }
+
+        private DelegateAuthenticationProvider authenticationProvider { get; set; }
+
         private IOneDriveClient oneDriveClient { get; set; }
+
         private Item CurrentFolder { get; set; }
+
         private Item SelectedItem { get; set; }
 
         private OneDriveTile _selectedTile;
@@ -69,18 +83,14 @@ namespace OneDriveApiBrowser
 
             try
             {
-                var expandString = this.oneDriveClient.ClientType == ClientType.Consumer
-                    ? "thumbnails,children(expand=thumbnails)"
-                    : "thumbnails,children";
-
                 var folder =
-                    await this.oneDriveClient.Drive.Items[id].Request().Expand(expandString).GetAsync();
+                    await this.oneDriveClient.Drive.Items[id].Request().Expand("thumbnails,children(expand=thumbnails)").GetAsync();
 
                 ProcessFolder(folder);
             }
             catch (Exception exception)
             {
-                PresentOneDriveException(exception);
+                PresentServiceException(exception);
             }
 
             ShowWork(false);
@@ -98,9 +108,7 @@ namespace OneDriveApiBrowser
             {
                 Item folder;
 
-                var expandValue = this.oneDriveClient.ClientType == ClientType.Consumer
-                    ? "thumbnails,children(expand=thumbnails)"
-                    : "thumbnails,children";
+                var expandValue = "thumbnails,children(expand=thumbnails)";
 
                 if (path == null)
                 {
@@ -120,7 +128,7 @@ namespace OneDriveApiBrowser
             }
             catch (Exception exception)
             {
-                PresentOneDriveException(exception);
+                PresentServiceException(exception);
             }
 
             ShowWork(false);
@@ -280,39 +288,77 @@ namespace OneDriveApiBrowser
 
         private async void signInAadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            await this.SignIn(ClientType.Business);
+            this.isBusiness = true;
+
+            if (this.authenticationContext == null)
+            {
+                this.authenticationContext = new AuthenticationContext(
+                    string.Concat(FormBrowser.AadAuthenticationEndpoint, FormBrowser.AadTenantId),
+                    false);
+            }
+
+            var authenticationResult = await this.AuthenticateUserAsync();
+
+            this.authenticationProvider = new DelegateAuthenticationProvider(
+                async (HttpRequestMessage requestMessage) =>
+                {
+                    var silentAuthenticationResult = await this.authenticationContext.AcquireTokenSilentAsync(FormBrowser.AadResource, FormBrowser.AadClientId);
+
+                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue(silentAuthenticationResult.AccessTokenType, silentAuthenticationResult.AccessToken);
+                });
+
+            await this.SignIn();
+        }
+
+        private async Task<AuthenticationResult> AuthenticateUserAsync()
+        {
+            AuthenticationResult authenticationResult = null;
+
+            try
+            {
+                authenticationResult = await this.authenticationContext.AcquireTokenSilentAsync(FormBrowser.AadResource, FormBrowser.AadClientId);
+            }
+            catch (Exception)
+            {
+                // If an exception happens during silent authentication try interactive authentication.
+            }
+
+            if (authenticationResult != null)
+            {
+                return authenticationResult;
+            }
+
+            authenticationResult = this.authenticationContext.AcquireToken(
+                FormBrowser.AadResource,
+                FormBrowser.AadClientId,
+                new Uri(FormBrowser.AadReturnUrl),
+                PromptBehavior.Auto);
+
+            return authenticationResult;
         }
 
         private async void signInMsaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            await this.SignIn(ClientType.Consumer);
+            this.isBusiness = false;
+            await this.SignIn();
         }
 
-        private async Task SignIn(ClientType clientType)
+        private async Task SignIn()
         {
             if (this.oneDriveClient == null)
             {
-                this.oneDriveClient = clientType == ClientType.Consumer
-                    ? OneDriveClient.GetMicrosoftAccountClient(
-                        FormBrowser.MsaClientId,
-                        FormBrowser.MsaReturnUrl,
-                        FormBrowser.Scopes,
-                        webAuthenticationUi: new FormsWebAuthenticationUi())
-                    : BusinessClientExtensions.GetActiveDirectoryClient(FormBrowser.AadClientId, FormBrowser.AadReturnUrl);
+                string baseUrl = this.isBusiness ? string.Format("{0}_api/v2.0", FormBrowser.AadResource) : "https://api.onedrive.com/v1.0";
+
+                this.oneDriveClient = new OneDriveClient(baseUrl, this.authenticationProvider);
             }
 
             try
             {
-                if (!this.oneDriveClient.IsAuthenticated)
-                {
-                    await this.oneDriveClient.AuthenticateAsync();
-                }
-
                 await LoadFolderFromPath();
 
                 UpdateConnectedStateUx(true);
             }
-            catch (OneDriveException exception)
+            catch (ServiceException exception)
             {
                 // Swallow authentication cancelled exceptions
                 if (!exception.IsMatch(OneDriveErrorCode.AuthenticationCancelled.ToString()))
@@ -330,18 +376,27 @@ namespace OneDriveApiBrowser
                     }
                     else
                     {
-                        PresentOneDriveException(exception);
+                        PresentServiceException(exception);
                     }
                 }
             }
         }
 
-        private async void signOutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void signOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (this.authenticationContext != null)
+            {
+                this.authenticationContext.TokenCache.Clear();
+            }
+
             if (this.oneDriveClient != null)
             {
-                await this.oneDriveClient.SignOutAsync();
-                ((OneDriveClient)this.oneDriveClient).Dispose();
+                if (this.oneDriveClient.HttpProvider != null)
+                {
+                    this.oneDriveClient.HttpProvider.Dispose();
+                }
+
+                this.authenticationProvider = null;
                 this.oneDriveClient = null;
             }
 
@@ -400,7 +455,7 @@ namespace OneDriveApiBrowser
                     }
                     catch (Exception exception)
                     {
-                        PresentOneDriveException(exception);
+                        PresentServiceException(exception);
                     }
                 }
             }
@@ -428,7 +483,7 @@ namespace OneDriveApiBrowser
                     }
                     catch (Exception exception)
                     {
-                        PresentOneDriveException(exception);
+                        PresentServiceException(exception);
                     }
                 }
             }
@@ -453,9 +508,9 @@ namespace OneDriveApiBrowser
                         this.AddItemToFolderContents(newFolder);
                     }
                 }
-                catch(OneDriveException oneDriveException)
+                catch(ServiceException serviceException)
                 {
-                    if (oneDriveException.IsMatch(OneDriveErrorCode.InvalidRequest.ToString()))
+                    if (serviceException.IsMatch(OneDriveErrorCode.InvalidRequest.ToString()))
                     {
                         MessageBox.Show(
                             "Please enter a valid folder name.",
@@ -467,27 +522,27 @@ namespace OneDriveApiBrowser
                     }
                     else
                     {
-                        PresentOneDriveException(oneDriveException);
+                        PresentServiceException(serviceException);
                     }
                 }
                 catch (Exception exception)
                 {
-                    PresentOneDriveException(exception);
+                    PresentServiceException(exception);
                 }
             }
         }
 
-        private static void PresentOneDriveException(Exception exception)
+        private static void PresentServiceException(Exception exception)
         {
             string message = null;
-            var oneDriveException = exception as OneDriveException;
-            if (oneDriveException == null)
+            var serviceException = exception as ServiceException;
+            if (serviceException == null)
             {
                 message = exception.Message;
             }
             else
             {
-                message = string.Format("{0}{1}", Environment.NewLine, oneDriveException.ToString());
+                message = string.Format("{0}{1}", Environment.NewLine, serviceException.ToString());
             }
 
             MessageBox.Show(string.Format("OneDrive reported the following error: {0}", message));
@@ -508,7 +563,7 @@ namespace OneDriveApiBrowser
                 }
                 catch (Exception exception)
                 {
-                    PresentOneDriveException(exception);
+                    PresentServiceException(exception);
                 }
             }
         }
@@ -524,7 +579,7 @@ namespace OneDriveApiBrowser
             }
             catch (Exception ex)
             {
-                PresentOneDriveException(ex);
+                PresentServiceException(ex);
             }
         }
 

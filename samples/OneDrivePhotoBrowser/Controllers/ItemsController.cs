@@ -49,9 +49,7 @@ namespace OneDrivePhotoBrowser.Controllers
             
             IEnumerable<Item> items;
 
-            var expandString = this.oneDriveClient.ClientType == ClientType.Consumer
-                ? "thumbnails,children(expand=thumbnails)"
-                : "thumbnails, children";
+            var expandString = "thumbnails,children(expand=thumbnails)";
 
             // If id isn't set, get the OneDrive root's photos and folders. Otherwise, get those for the specified item ID.
             // Also retrieve the thumbnails for each item if using a consumer client.

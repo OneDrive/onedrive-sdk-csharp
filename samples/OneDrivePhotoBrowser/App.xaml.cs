@@ -22,11 +22,14 @@
 
 namespace OneDrivePhotoBrowser
 {
-    using Models;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+
+    using Microsoft.Graph;
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
     using Microsoft.OneDrive.Sdk;
+    using Models;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Core;
@@ -42,6 +45,10 @@ namespace OneDrivePhotoBrowser
         public ObservableCollection<ItemModel> Items { get; set; }
 
         public List<ItemModel> NavigationStack { get; set; }
+
+        public AuthenticationContext AuthenticationContext { get; set; }
+
+        public IAuthenticationProvider AuthenticationProvider { get; set; }
 
         public IOneDriveClient OneDriveClient { get; set; }
 
