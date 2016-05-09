@@ -162,7 +162,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             catch (OneDriveException exception)
             {
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
-                Assert.AreEqual("An error occurred during active directory authentication.", exception.Error.Message, "Unexpected error thrown.");
+                Assert.AreEqual("An error occurred during Azure Active Directory authentication.", exception.Error.Message, "Unexpected error thrown.");
                 Assert.AreEqual(adalException, exception.InnerException, "Unexpected inner exception.");
                 throw;
             }
@@ -194,7 +194,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             catch (OneDriveException exception)
             {
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
-                Assert.AreEqual("An error occurred during active directory authentication.", exception.Error.Message, "Unexpected error thrown.");
+                Assert.AreEqual("An error occurred during Azure Active Directory authentication.", exception.Error.Message, "Unexpected error thrown.");
                 Assert.AreEqual(innerException, exception.InnerException, "Unexpected inner exception.");
                 throw;
             }
@@ -226,7 +226,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             catch (OneDriveException exception)
             {
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
-                Assert.AreEqual("An error occurred during active directory authentication.", exception.Error.Message, "Unexpected error thrown.");
+                Assert.AreEqual("An error occurred during Azure Active Directory authentication.", exception.Error.Message, "Unexpected error thrown.");
                 Assert.IsNull(exception.InnerException, "Unexpected inner exception.");
                 throw;
             }

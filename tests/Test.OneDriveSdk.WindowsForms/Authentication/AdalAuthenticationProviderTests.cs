@@ -326,7 +326,83 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 mockAuthenticationResult.Object);
         }
 
-        
+        [TestMethod]
+        public async Task AuthenticateAsync_AuthenticateWithRefreshToken()
+        {
+            string refreshToken = "refresh";
+
+            this.authenticationProvider.CurrentAccountSession = new AccountSession { RefreshToken = refreshToken };
+            
+            var mockAuthenticationResult = new MockAuthenticationResult();
+            mockAuthenticationResult.SetupGet(result => result.AccessToken).Returns("token");
+            mockAuthenticationResult.SetupGet(result => result.AccessTokenType).Returns("type");
+            mockAuthenticationResult.SetupGet(result => result.ExpiresOn).Returns(DateTimeOffset.UtcNow);
+
+            var mockAuthenticationContextWrapper = new MockAuthenticationContextWrapper();
+
+            mockAuthenticationContextWrapper.Setup(wrapper => wrapper.AcquireTokenByRefreshTokenAsync(
+                It.Is<string>(token => token.Equals(refreshToken)),
+                It.Is<string>(clientId => clientId.Equals(this.adalServiceInfo.AppId)),
+                It.Is<string>(resource => resource.Equals(this.adalServiceInfo.ServiceResource)))).Returns(Task.FromResult(mockAuthenticationResult.Object));
+
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService(
+                mockAuthenticationContextWrapper.Object,
+                mockAuthenticationResult.Object);
+        }
+
+        [TestMethod]
+        public async Task AuthenticateAsync_AuthenticateWithRefreshToken_WithClientCertificate()
+        {
+            string refreshToken = "refresh";
+
+            this.authenticationProvider.CurrentAccountSession = new AccountSession { RefreshToken = refreshToken };
+
+            this.adalServiceInfo.ClientCertificate = new X509Certificate2(@"Certs\testwebapplication.pfx", "password");
+
+            var mockAuthenticationResult = new MockAuthenticationResult();
+            mockAuthenticationResult.SetupGet(result => result.AccessToken).Returns("token");
+            mockAuthenticationResult.SetupGet(result => result.AccessTokenType).Returns("type");
+            mockAuthenticationResult.SetupGet(result => result.ExpiresOn).Returns(DateTimeOffset.UtcNow);
+
+            var mockAuthenticationContextWrapper = new MockAuthenticationContextWrapper();
+
+            mockAuthenticationContextWrapper.Setup(wrapper => wrapper.AcquireTokenByRefreshTokenAsync(
+                It.Is<string>(token => token.Equals(refreshToken)),
+                It.Is<ClientAssertionCertificate>(certificate =>
+                    certificate.ClientId.Equals(this.adalServiceInfo.AppId) &&
+                    certificate.Certificate == this.adalServiceInfo.ClientCertificate),
+                It.Is<string>(resource => resource.Equals(serviceResourceId)))).Returns(Task.FromResult(mockAuthenticationResult.Object));
+
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService(
+                mockAuthenticationContextWrapper.Object,
+                mockAuthenticationResult.Object);
+        }
+
+        [TestMethod]
+        public async Task AuthenticateAsync_AuthenticateWithRefreshToken_WithClientCredential()
+        {
+            string refreshToken = "refresh";
+
+            this.authenticationProvider.CurrentAccountSession = new AccountSession { RefreshToken = refreshToken };
+
+            this.adalServiceInfo.ClientSecret = "clientSecret";
+
+            var mockAuthenticationResult = new MockAuthenticationResult();
+            mockAuthenticationResult.SetupGet(result => result.AccessToken).Returns("token");
+            mockAuthenticationResult.SetupGet(result => result.AccessTokenType).Returns("type");
+            mockAuthenticationResult.SetupGet(result => result.ExpiresOn).Returns(DateTimeOffset.UtcNow);
+
+            var mockAuthenticationContextWrapper = new MockAuthenticationContextWrapper();
+            
+            mockAuthenticationContextWrapper.Setup(wrapper => wrapper.AcquireTokenByRefreshTokenAsync(
+                It.Is<string>(token => token.Equals(refreshToken)),
+                It.Is<ClientCredential>(credential => credential.ClientId.Equals(this.adalServiceInfo.AppId)),
+                It.Is<string>(resource => resource.Equals(this.adalServiceInfo.ServiceResource)))).Returns(Task.FromResult(mockAuthenticationResult.Object));
+
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService(
+                mockAuthenticationContextWrapper.Object,
+                mockAuthenticationResult.Object);
+        }
 
         [TestMethod]
         [ExpectedException(typeof(OneDriveException))]
@@ -355,7 +431,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             {
                 Assert.IsNotNull(exception.Error, "Error not set in exception.");
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code returned.");
-                Assert.AreEqual("An error occurred during active directory authentication.",
+                Assert.AreEqual("An error occurred during Azure Active Directory authentication.",
                     exception.Error.Message,
                     "Unexpected error message returned.");
                 Assert.AreEqual(innerException, exception.InnerException, "Unexpected inner exception.");
@@ -532,24 +608,12 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 Assert.IsNotNull(exception.Error, "Error not set in exception.");
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code returned.");
                 Assert.AreEqual(
-                    "An error occurred during active directory authentication.",
+                    "An error occurred during Azure Active Directory authentication.",
                     exception.Error.Message,
                     "Unexpected error message returned.");
 
                 throw;
             }
-        }
-
-        [TestMethod]
-        public void GetAuthenticationException_Cancelled()
-        {
-            var innerException = new Exception();
-            var oneDriveException = this.authenticationProvider.GetAuthenticationException(true, innerException);
-
-            Assert.IsNotNull(oneDriveException.Error, "Error not set in exception.");
-            Assert.AreEqual(OneDriveErrorCode.AuthenticationCancelled.ToString(), oneDriveException.Error.Code, "Unexpected error code returned.");
-            Assert.AreEqual("User cancelled authentication.", oneDriveException.Error.Message, "Unexpected error message returned.");
-            Assert.AreEqual(innerException, oneDriveException.InnerException, "Unexpected inner exception.");
         }
 
         [TestMethod]
@@ -653,8 +717,8 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
         }
 
         public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService(
-    IAuthenticationContextWrapper authenticationContextWrapper,
-    IAuthenticationResult authenticationResult)
+            IAuthenticationContextWrapper authenticationContextWrapper,
+            IAuthenticationResult authenticationResult)
         {
             this.adalServiceInfo.BaseUrl = "https://localhost";
             this.adalServiceInfo.ServiceResource = serviceResourceId;

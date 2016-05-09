@@ -108,5 +108,41 @@ namespace Microsoft.OneDrive.Sdk
             Uri redirectUri,
             ClientAssertionCertificate clientAssertionCertificate,
             string resource);
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByRefreshToken(string, string, string)"/>.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token.</param>
+        /// <param name="clientId">The client ID for the application.</param>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        Task<IAuthenticationResult> AcquireTokenByRefreshTokenAsync(
+            string refreshToken,
+            string clientId,
+            string resource);
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByRefreshTokenAsync(string, ClientCredential, string)"/>.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token.</param>
+        /// <param name="clientCredential">The client credential of the application.</param>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        Task<IAuthenticationResult> AcquireTokenByRefreshTokenAsync(
+            string refreshToken,
+            ClientCredential clientCredential,
+            string resource);
+
+        /// <summary>
+        /// Authenticates the user silently using <see cref="AuthenticationContext.AcquireTokenByRefreshTokenAsync(string, ClientAssertionCertificate, string)"/>.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token.</param>
+        /// <param name="clientAssertionCertificate">The client assertion certificate of the application.</param>
+        /// <param name="resource">The resource to authenticate against.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/>.</returns>
+        Task<IAuthenticationResult> AcquireTokenByRefreshTokenAsync(
+            string refreshToken,
+            ClientAssertionCertificate clientAssertionCertificate,
+            string resource);
     }
 }

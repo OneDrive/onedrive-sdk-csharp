@@ -72,6 +72,9 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\AdalCredentialCache.cs">
       <Link>Authentication\AdalCredentialCache.cs</Link>
     </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AuthenticationExceptionHelper.cs">
+      <Link>Authentication\AuthenticationExceptionHelper.cs</Link>
+    </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\AuthenticationResultWrapper.cs">
       <Link>Authentication\AuthenticationResultWrapper.cs</Link>
     </Compile>
@@ -80,6 +83,9 @@
     </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryServiceResponse.cs">
       <Link>Authentication\DiscoveryServiceResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\IAdalRedeemRefreshTokenHelper.cs">
+      <Link>Authentication\IAdalRedeemRefreshTokenHelper.cs</Link>
     </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\IAuthenticationResult.cs">
       <Link>Authentication\IAuthenticationResult.cs</Link>
@@ -99,13 +105,14 @@
     <Compile Include="Authentication\AdalAppConfig.cs" />
     <Compile Include="Authentication\AdalAppOnlyAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalAppOnlyServiceInfoProvider.cs" />
+    <Compile Include="Authentication\AdalRedeemRefreshTokenHelper.cs" />
     <Compile Include="Authentication\AdalAuthenticationByCodeAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalAuthenticationByCodeServiceInfoProvider.cs" />
     <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalServiceInfoProvider.cs" />
     <Compile Include="Authentication\AuthenticationContextWrapper.cs" />
-    <Compile Include="Authentication\IAuthenticationContextWrapper.cs" />
     <Compile Include="Authentication\AdalServiceInfo.cs" />
+    <Compile Include="Authentication\IAuthenticationContextWrapper.cs" />
     <Compile Include="Extensions\BusinessClientExtensions.cs" />
     <Compile Include="Web\FormsWebDialog.cs">
       <SubType>form</SubType>

@@ -234,6 +234,69 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
+        /// Creates an unauthenticated client using ADAL for authentication.
+        /// </summary>
+        /// <param name="appConfig">
+        ///     The <see cref="AppConfig"/> for the application configuration.
+        ///     Authentication requires the following to be initialized:
+        ///         - ActiveDirectoryAppId
+        ///         - ActiveDirectoryServiceResource
+        /// </param>
+        /// <param name="refreshToken">The refresh token to redeem for an access token.</param>
+        /// <param name="credentialCache">The cache instance for storing user credentials.</param>
+        /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending HTTP requests.</param>
+        /// <returns>The <see cref="IOneDriveClient"/> for the session.</returns>
+        public static async Task<IOneDriveClient> GetSilentlyAuthenticatedClientAsync(
+            AppConfig appConfig,
+            string refreshToken,
+            AdalCredentialCache credentialCache = null,
+            IHttpProvider httpProvider = null)
+        {
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "Refresh token is required for silently authenticating a business client.",
+                    });
+            }
+
+            if (string.IsNullOrEmpty(appConfig.ActiveDirectoryServiceResource))
+            {
+                throw new OneDriveException(
+                    new Error
+                    {
+                        Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
+                        Message = "ActiveDirectoryServiceResource is required for silently authenticating a business client.",
+                    });
+            }
+
+            var serviceInfoProvider = new AdalServiceInfoProvider();
+
+            var client = BusinessClientExtensions.GetClientInternal(
+                appConfig,
+                serviceInfoProvider,
+                credentialCache,
+                httpProvider) as OneDriveClient;
+
+            if (client.ServiceInfo == null)
+            {
+                client.ServiceInfo = await serviceInfoProvider.GetServiceInfo(
+                    client.appConfig,
+                    client.credentialCache,
+                    client.HttpProvider,
+                    client.ClientType);
+            }
+
+            client.AuthenticationProvider.CurrentAccountSession = new AccountSession { RefreshToken = refreshToken };
+
+            await client.AuthenticateAsync();
+
+            return client;
+        }
+
+        /// <summary>
         /// Creates an authenticated client using the ADAL app-only authentication flow.
         /// </summary>
         /// <param name="appConfig">

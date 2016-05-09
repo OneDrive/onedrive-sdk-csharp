@@ -45,6 +45,11 @@ namespace Test.OneDriveSdk.WinRT.Mocks
             string clientId,
             UserIdentifier userIdentifier);
 
+        public delegate IAuthenticationResult AuthenticationResultByRefreshTokenCallback(
+            string refreshToken,
+            string clientId,
+            string resource);
+
         public AuthenticationResultCallback AcquireTokenAsyncCallback { get; set; }
 
         public AuthenticationResultByRefreshTokenCallback AcquireTokenByRefreshTokenAsyncCallback { get; set; }

@@ -69,20 +69,24 @@ namespace Microsoft.OneDrive.Sdk
             ClientAssertionCertificate clientAssertionCertificate = null;
             ClientCredential clientCredential = this.GetClientCredentialForAuthentication();
 
-            if (adalServiceInfo != null && adalServiceInfo.ClientCertificate != null)
-            {
-                clientAssertionCertificate = new ClientAssertionCertificate(this.serviceInfo.AppId, adalServiceInfo.ClientCertificate);
-            }
-
             var userIdentifier = this.GetUserIdentifierForAuthentication();
 
             try
             {
-                authenticationResult = clientAssertionCertificate == null
-                    ?  clientCredential == null
-                        ? await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId)
-                        : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier)
-                    : await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientAssertionCertificate, userIdentifier);
+                if (adalServiceInfo != null && adalServiceInfo.ClientCertificate != null)
+                {
+                    clientAssertionCertificate = new ClientAssertionCertificate(this.serviceInfo.AppId, adalServiceInfo.ClientCertificate);
+
+                    authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientAssertionCertificate, userIdentifier);
+                }
+                else if (clientCredential != null)
+                {
+                    authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, clientCredential, userIdentifier);
+                }
+                else
+                {
+                    authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId);
+                }
             }
             catch (Exception)
             {
@@ -141,18 +145,14 @@ namespace Microsoft.OneDrive.Sdk
                         userIdentifier);
                 }
             }
-            catch (AdalException adalException)
-            {
-                throw this.GetAuthenticationException(string.Equals(adalException.ErrorCode, Constants.Authentication.AuthenticationCancelled), adalException);
-            }
             catch (Exception exception)
             {
-                throw this.GetAuthenticationException(false, exception);
+                AuthenticationExceptionHelper.HandleAuthenticationException(exception);
             }
 
             if (authenticationResult == null)
             {
-                throw this.GetAuthenticationException();
+                AuthenticationExceptionHelper.HandleAuthenticationException(null);
             }
 
             return authenticationResult;

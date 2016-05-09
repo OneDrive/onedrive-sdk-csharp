@@ -37,6 +37,8 @@ namespace Microsoft.OneDrive.Sdk
         
         internal IAuthenticationContextWrapper authenticationContextWrapper;
 
+        internal IAdalRedeemRefreshTokenHelper adalRedeemRefreshTokenHelper;
+
         /// <summary>
         /// Constructs an <see cref="AdalAuthenticationProviderBase"/>.
         /// </summary>
@@ -84,6 +86,11 @@ namespace Microsoft.OneDrive.Sdk
                 this.authenticationContextWrapper = adalCredentialCache == null
                     ? new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl)
                     : new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl, false, adalCredentialCache.TokenCache.InnerTokenCache);
+
+                if (this.adalRedeemRefreshTokenHelper != null)
+                {
+                    this.adalRedeemRefreshTokenHelper = new AdalRedeemRefreshTokenHelper(this.serviceInfo, this.authenticationContextWrapper);
+                }
             }
         }
 
@@ -123,7 +130,20 @@ namespace Microsoft.OneDrive.Sdk
             {
                 return this.CurrentAccountSession;
             }
+            else if (this.CurrentAccountSession != null && !string.IsNullOrEmpty(this.CurrentAccountSession.RefreshToken))
+            {
+                if (this.adalRedeemRefreshTokenHelper == null)
+                {
+                    this.adalRedeemRefreshTokenHelper = new AdalRedeemRefreshTokenHelper(
+                        this.ServiceInfo,
+                        this.authenticationContextWrapper);
+                }
 
+                var refreshResult = await this.adalRedeemRefreshTokenHelper.RedeemRefreshToken(this.CurrentAccountSession.RefreshToken);
+
+                return this.ProcessAuthenticationResult(refreshResult);
+            }
+            
             if (allowDiscoveryService && string.IsNullOrEmpty(this.ServiceInfo.ServiceResource) || string.IsNullOrEmpty(this.ServiceInfo.BaseUrl))
             {
                 var discoveryServiceToken = await this.GetAuthenticationTokenForResourceAsync(this.serviceInfo.DiscoveryServiceResource);
@@ -132,24 +152,7 @@ namespace Microsoft.OneDrive.Sdk
 
             var authenticationResult = await this.AuthenticateResourceAsync(this.ServiceInfo.ServiceResource);
 
-            if (authenticationResult == null)
-            {
-                this.CurrentAccountSession = null;
-                return this.CurrentAccountSession;
-            }
-
-            this.CurrentAccountSession = new AdalAccountSession
-            {
-                AccessToken = authenticationResult.AccessToken,
-                AccessTokenType = authenticationResult.AccessTokenType,
-                AccountType = AccountType.ActiveDirectory,
-                CanSignOut = true,
-                ClientId = this.ServiceInfo.AppId,
-                ExpiresOnUtc = authenticationResult.ExpiresOn,
-                UserId = authenticationResult.UserInfo == null ? null : authenticationResult.UserInfo.UniqueId,
-            };
-
-            return this.CurrentAccountSession;
+            return this.ProcessAuthenticationResult(authenticationResult);
         }
 
         /// <summary>
@@ -196,33 +199,34 @@ namespace Microsoft.OneDrive.Sdk
                 : new UserIdentifier(this.serviceInfo.UserId, UserIdentifierType.OptionalDisplayableId);
         }
 
-        internal OneDriveException GetAuthenticationException(bool isCancelled = false, Exception innerException = null)
-        {
-            if (isCancelled)
-            {
-                return new OneDriveException(
-                    new Error
-                    {
-                        Code = OneDriveErrorCode.AuthenticationCancelled.ToString(),
-                        Message = "User cancelled authentication.",
-                    },
-                    innerException);
-            }
-
-            return new OneDriveException(
-                new Error
-                {
-                    Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
-                    Message = "An error occurred during active directory authentication.",
-                },
-                innerException);
-        }
-
         private async Task<string> GetAuthenticationTokenForResourceAsync(string resource)
         {
             var authenticationResult = await this.AuthenticateResourceAsync(resource);
 
             return authenticationResult.AccessToken;
+        }
+
+        private AccountSession ProcessAuthenticationResult(IAuthenticationResult authenticationResult)
+        {
+            if (authenticationResult == null)
+            {
+                this.CurrentAccountSession = null;
+                return this.CurrentAccountSession;
+            }
+
+            this.CurrentAccountSession = new AdalAccountSession
+            {
+                AccessToken = authenticationResult.AccessToken,
+                AccessTokenType = authenticationResult.AccessTokenType,
+                AccountType = AccountType.ActiveDirectory,
+                CanSignOut = true,
+                ClientId = this.ServiceInfo.AppId,
+                ExpiresOnUtc = authenticationResult.ExpiresOn,
+                RefreshToken = authenticationResult.RefreshToken,
+                UserId = authenticationResult.UserInfo == null ? null : authenticationResult.UserInfo.UniqueId,
+            };
+
+            return this.CurrentAccountSession;
         }
 
         private Task RetrieveMyFilesServiceResourceAsync(string discoveryServiceToken)

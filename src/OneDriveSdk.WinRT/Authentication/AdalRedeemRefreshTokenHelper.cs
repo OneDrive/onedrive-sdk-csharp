@@ -26,64 +26,49 @@ namespace Microsoft.OneDrive.Sdk
     using System.Threading.Tasks;
 
     using IdentityModel.Clients.ActiveDirectory;
-    using Windows.Security.Authentication.Web;
 
-    public class AdalAuthenticationProvider : AdalAuthenticationProviderBase
+    /// <summary>
+    /// Helper class to redeem refresh tokens during ADAL authentication.
+    /// </summary>
+    public class AdalRedeemRefreshTokenHelper : IAdalRedeemRefreshTokenHelper
     {
+        private IAuthenticationContextWrapper authenticationContextWrapper;
+
+        private ServiceInfo serviceInfo;
+
         /// <summary>
-        /// Constructs an <see cref="AdalAuthenticationProvider"/>.
+        /// Instantiates a new instance of <see cref="AdalRedeemRefreshTokenHelper"/>.
         /// </summary>
         /// <param name="serviceInfo">The information for authenticating against the service.</param>
-        /// <param name="currentAccountSession">The current account session, used for initializing an already logged in user.</param>
-        public AdalAuthenticationProvider(ServiceInfo serviceInfo, AccountSession currentAccountSession = null)
-            : base(serviceInfo, currentAccountSession)
+        /// <param name="authenticationContextWrapper"></param>
+        public AdalRedeemRefreshTokenHelper(ServiceInfo serviceInfo, IAuthenticationContextWrapper authenticationContextWrapper)
         {
+            this.authenticationContextWrapper = authenticationContextWrapper;
+            this.serviceInfo = serviceInfo;
         }
 
         /// <summary>
-        /// Signs the current user out.
+        /// Redeems the refresh token for the provided service info to retrieve an authentication result.
         /// </summary>
-        public override async Task SignOutAsync()
-        {
-            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
-            {
-                if (this.ServiceInfo.WebAuthenticationUi != null)
-                {
-                    await this.ServiceInfo.WebAuthenticationUi.AuthenticateAsync(new Uri(this.ServiceInfo.SignOutUrl), null);
-                }
-
-                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
-                this.CurrentAccountSession = null;
-            }
-        }
-
-        protected override async Task<IAuthenticationResult> AuthenticateResourceAsync(string resource)
+        /// <param name="refreshToken">The code for retrieving the authentication token.</param>
+        /// <returns>The <see cref="IAuthenticationResult"/> returned for the resource.</returns>
+        public async Task<IAuthenticationResult> RedeemRefreshToken(string refreshToken)
         {
             IAuthenticationResult authenticationResult = null;
-            var userIdentifier = this.GetUserIdentifierForAuthentication();
 
             try
             {
-                authenticationResult = await this.authenticationContextWrapper.AcquireTokenSilentAsync(resource, this.serviceInfo.AppId, userIdentifier);
+                authenticationResult = await this.authenticationContextWrapper.AcquireTokenByRefreshTokenAsync(
+                    refreshToken,
+                    this.serviceInfo.AppId,
+                    this.serviceInfo.ServiceResource);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                // If an exception happens during silent authentication try interactive authentication.
+                AuthenticationExceptionHelper.HandleAuthenticationException(exception);
             }
 
-            if (authenticationResult != null && authenticationResult.Status == AuthenticationStatus.Success)
-            {
-                return authenticationResult;
-            }
-
-            authenticationResult = await this.authenticationContextWrapper.AcquireTokenAsync(
-                resource,
-                this.ServiceInfo.AppId,
-                new Uri(this.ServiceInfo.ReturnUrl),
-                PromptBehavior.Auto,
-                userIdentifier);
-
-            if (authenticationResult == null || authenticationResult.Status != AuthenticationStatus.Success)
+            if (authenticationResult.Status != AuthenticationStatus.Success)
             {
                 throw new OneDriveException(
                     new Error
