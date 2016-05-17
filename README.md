@@ -73,6 +73,7 @@ For a general overview of how the SDK is designed, see [overview](docs/overview.
 The following sample applications are also available:
 * [OneDrive API Browser](samples/OneDriveApiBrowser) - Windows Forms app
 * [OneDrive Photo Browser](samples/OneDrivePhotoBrowser) - Windows Universal app
+* [OneDrive Webhooks](https://github.com/OneDrive/onedrive-webhooks-aspnet) - ASP.NET MVC app
 
 To run the OneDrivePhotoBrowser sample app your machine will need to be configured for [UWP app development](https://msdn.microsoft.com/en-us/library/windows/apps/dn609832.aspx) and the project must be associated with the Windows Store.
 
