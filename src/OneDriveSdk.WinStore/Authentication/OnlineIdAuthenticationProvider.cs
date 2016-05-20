@@ -30,6 +30,8 @@ namespace Microsoft.OneDrive.Sdk
 
     public class OnlineIdAuthenticationProvider : AuthenticationProvider
     {
+        private readonly int ticketExpirationTimeInMinutes = 60;
+
         private OnlineIdAuthenticator authenticator;
 
         public OnlineIdAuthenticationProvider(ServiceInfo serviceInfo)
@@ -89,6 +91,7 @@ namespace Microsoft.OneDrive.Sdk
                     AccountType = this.ServiceInfo.AccountType,
                     CanSignOut = this.authenticator.CanSignOut,
                     ClientId = this.authenticator.ApplicationId.ToString(),
+                    ExpiresOnUtc = DateTimeOffset.UtcNow.AddMinutes(this.ticketExpirationTimeInMinutes),
                     UserId = authenticationResponse.SafeCustomerId,
                 };
 
