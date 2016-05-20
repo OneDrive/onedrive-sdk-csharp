@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,18 +27,40 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Runtime.Serialization;
+    using Newtonsoft.Json;
 
     /// <summary>
-    /// The interface IDriveRecentRequestBuilder.
+    /// The type Shared.
     /// </summary>
-    public partial interface IDriveRecentRequestBuilder
+    [DataContract]
+    public partial class Shared
     {
     
         /// <summary>
-        /// Builds the request.
+        /// Gets or sets effectiveRoles.
         /// </summary>
-        /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        IDriveRecentRequest Request(IList<Option> options = null);
+        [DataMember(Name = "effectiveRoles", EmitDefaultValue = false, IsRequired = false)]
+        public IEnumerable<string> EffectiveRoles { get; set; }
+    
+        /// <summary>
+        /// Gets or sets owner.
+        /// </summary>
+        [DataMember(Name = "owner", EmitDefaultValue = false, IsRequired = false)]
+        public IdentitySet Owner { get; set; }
+    
+        /// <summary>
+        /// Gets or sets scope.
+        /// </summary>
+        [DataMember(Name = "scope", EmitDefaultValue = false, IsRequired = false)]
+        public string Scope { get; set; }
+    
+        /// <summary>
+        /// Gets or sets additional data.
+        /// </summary>
+        [JsonExtensionData(ReadData = false)]
+        public IDictionary<string, object> AdditionalData { get; set; }
+
     }
 }

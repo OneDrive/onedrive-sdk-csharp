@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,93 +26,40 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// The type DriveRecentRequest.
+    /// The interface IEffectiveRolesCollectionRequest.
     /// </summary>
-    public partial class DriveRecentRequest : BaseRequest, IDriveRecentRequest
+    public partial interface IEffectiveRolesCollectionRequest : IBaseRequest
     {
-    
+        
         /// <summary>
-        /// Constructs a new DriveRecentRequest.
+        /// Gets the collection page.
         /// </summary>
-        public DriveRecentRequest(
-            string requestUrl,
-            IBaseClient client,
-            IList<Option> options)
-            : base(requestUrl, client, options)
-        {
-    
-        }
-    
-        /// <summary>
-        /// Issues the GET request.
-        /// </summary>
-        public async Task<IDriveRecentCollectionPage> GetAsync()
-        {
-    
-            var response = await this.SendAsync<DriveRecentCollectionResponse>(null);
-            if (response != null && response.Value != null && response.Value.CurrentPage != null)
-            {
-                if (response.AdditionalData != null)
-                {
-                    response.Value.AdditionalData = response.AdditionalData;
-                    
-                    object nextPageLink;
-                    response.AdditionalData.TryGetValue("@odata.nextLink", out nextPageLink);
+        /// <returns>The collection page.</returns>
+        Task<IEffectiveRolesCollectionPage> GetAsync();
 
-                    var nextPageLinkString = nextPageLink as string;
-
-                    if (!string.IsNullOrEmpty(nextPageLinkString))
-                    {
-                        response.Value.InitializeNextPageRequest(
-                            this.Client,
-                            nextPageLinkString);
-                    }
-                }
-            
-                return response.Value;
-            }
-
-            return null;
-    
-        }
-    
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
         /// <param name="value">The expand value.</param>
         /// <returns>The request object to send.</returns>
-        public IDriveRecentRequest Expand(string value)
-        {
-            this.QueryOptions.Add(new QueryOption("$expand", value));
-            return this;
-        }
+        IEffectiveRolesCollectionRequest Expand(string value);
 
         /// <summary>
         /// Adds the specified select value to the request.
         /// </summary>
         /// <param name="value">The select value.</param>
         /// <returns>The request object to send.</returns>
-        public IDriveRecentRequest Select(string value)
-        {
-            this.QueryOptions.Add(new QueryOption("$select", value));
-            return this;
-        }
+        IEffectiveRolesCollectionRequest Select(string value);
 
         /// <summary>
         /// Adds the specified top value to the request.
         /// </summary>
         /// <param name="value">The top value.</param>
         /// <returns>The request object to send.</returns>
-        public IDriveRecentRequest Top(int value)
-        {
-            this.QueryOptions.Add(new QueryOption("$top", value.ToString()));
-            return this;
-        }
-    
+        IEffectiveRolesCollectionRequest Top(int value);
+
     }
 }

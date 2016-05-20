@@ -113,5 +113,10 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets the <see cref="IWebAuthenticationUi"/> for displaying authentication UI to the user.
         /// </summary>
         public IWebAuthenticationUi WebAuthenticationUi { get; set; }
+
+        /// <summary>
+        /// Gets or sets the requested prompt type for Microsoft account authentication.
+        /// </summary>
+        public CredentialPromptType MicrosoftAccountPromptType { get; set; }
     }
 }

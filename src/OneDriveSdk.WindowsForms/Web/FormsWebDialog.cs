@@ -52,6 +52,15 @@ namespace Microsoft.OneDrive.Sdk.WindowsForms
                 return null;
             }
 
+            bool isSignOutRequest =
+                requestUri.AbsoluteUri.StartsWith(Constants.Authentication.MicrosoftAccountSignOutUrl,
+                    StringComparison.OrdinalIgnoreCase) ||
+                requestUri.AbsoluteUri.StartsWith(Constants.Authentication.ActiveDirectorySignOutUrl,
+                    StringComparison.OrdinalIgnoreCase);
+
+            this.ShowInTaskbar = !isSignOutRequest;
+            this.WindowState = isSignOutRequest ? FormWindowState.Minimized : FormWindowState.Normal;
+
             this.RequestUri = requestUri;
             this.CallbackUri = callbackUri;
 

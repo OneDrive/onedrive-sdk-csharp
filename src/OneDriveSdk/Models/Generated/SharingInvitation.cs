@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -44,16 +45,28 @@ namespace Microsoft.OneDrive.Sdk
         public string Email { get; set; }
     
         /// <summary>
-        /// Gets or sets redeemedBy.
+        /// Gets or sets invitedBy.
         /// </summary>
-        [DataMember(Name = "redeemedBy", EmitDefaultValue = false, IsRequired = false)]
-        public string RedeemedBy { get; set; }
+        [DataMember(Name = "invitedBy", EmitDefaultValue = false, IsRequired = false)]
+        public IdentitySet InvitedBy { get; set; }
     
         /// <summary>
         /// Gets or sets signInRequired.
         /// </summary>
         [DataMember(Name = "signInRequired", EmitDefaultValue = false, IsRequired = false)]
         public bool? SignInRequired { get; set; }
+    
+        /// <summary>
+        /// Gets or sets sendInvitationStatus.
+        /// </summary>
+        [DataMember(Name = "sendInvitationStatus", EmitDefaultValue = false, IsRequired = false)]
+        public string SendInvitationStatus { get; set; }
+    
+        /// <summary>
+        /// Gets or sets inviteErrorResolveUrl.
+        /// </summary>
+        [DataMember(Name = "inviteErrorResolveUrl", EmitDefaultValue = false, IsRequired = false)]
+        public string InviteErrorResolveUrl { get; set; }
     
         /// <summary>
         /// Gets or sets additional data.

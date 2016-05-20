@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,33 +26,20 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using System.Collections.Generic;
-
+    
     /// <summary>
-    /// The type DriveAllPhotosRequestBuilder.
+    /// The interface IEffectiveRolesCollectionPage.
     /// </summary>
-    public partial class DriveAllPhotosRequestBuilder : BaseRequestBuilder, IDriveAllPhotosRequestBuilder
+    public interface IEffectiveRolesCollectionPage : ICollectionPage<String>
     {
-    
-        public DriveAllPhotosRequestBuilder(
-            string requestUrl,
-            IBaseClient client)
-            : base(requestUrl, client)
-        {
-        }
-    
         /// <summary>
-        /// Builds the request.
+        /// Gets the next page <see cref="IEffectiveRolesCollectionRequest"/> instance.
         /// </summary>
-        /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IDriveAllPhotosRequest Request(IList<Option> options = null)
-        {
-            return new DriveAllPhotosRequest(
-                this.RequestUrl,
-                this.Client,
-                options);
-        }
+        IEffectiveRolesCollectionRequest NextPageRequest { get; }
 
+        /// <summary>
+        /// Initializes the NextPageRequest property.
+        /// </summary>
+        void InitializeNextPageRequest(IBaseClient client, string nextPageLinkString);
     }
 }

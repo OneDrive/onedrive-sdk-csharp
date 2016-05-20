@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -63,6 +64,18 @@ namespace Microsoft.OneDrive.Sdk
             return new ItemRequest(this.RequestUrl, this.Client, options);
         }
 
+    
+        /// <summary>
+        /// Gets the request builder for RemoteItem.
+        /// </summary>
+        /// <returns>The <see cref="IItemRequestBuilder"/>.</returns>
+        public IItemRequestBuilder RemoteItem
+        {
+            get
+            {
+                return new ItemRequestBuilder(this.AppendSegmentToRequestUrl("remoteItem"), this.Client);
+            }
+        }
     
         /// <summary>
         /// Gets the request builder for Permissions.
@@ -163,17 +176,6 @@ namespace Microsoft.OneDrive.Sdk
                 this.AppendSegmentToRequestUrl("action.createLink"),
                 this.Client,
                 type);
-        }
-    
-        /// <summary>
-        /// Gets the request builder for ItemAllPhotos.
-        /// </summary>
-        /// <returns>The <see cref="IItemAllPhotosRequestBuilder"/>.</returns>
-        public IItemAllPhotosRequestBuilder AllPhotos()
-        {
-            return new ItemAllPhotosRequestBuilder(
-                this.AppendSegmentToRequestUrl("view.allPhotos"),
-                this.Client);
         }
     
         /// <summary>

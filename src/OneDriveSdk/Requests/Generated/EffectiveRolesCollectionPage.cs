@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,41 +26,29 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading.Tasks;
     
     /// <summary>
-    /// The interface IDriveAllPhotosRequest.
+    /// The type EffectiveRolesCollectionPage.
     /// </summary>
-    public partial interface IDriveAllPhotosRequest : IBaseRequest
+    public partial class EffectiveRolesCollectionPage : CollectionPage<String>, IEffectiveRolesCollectionPage
     {
-    
         /// <summary>
-        /// Issues the GET request.
+        /// Gets the next page <see cref="IEffectiveRolesCollectionRequest"/> instance.
         /// </summary>
-        Task<IDriveAllPhotosCollectionPage> GetAsync();
-            
-        /// <summary>
-        /// Adds the specified expand value to the request.
-        /// </summary>
-        /// <param name="value">The expand value.</param>
-        /// <returns>The request object to send.</returns>
-        IDriveAllPhotosRequest Expand(string value);
+        public IEffectiveRolesCollectionRequest NextPageRequest { get; private set; }
 
         /// <summary>
-        /// Adds the specified select value to the request.
+        /// Initializes the NextPageRequest property.
         /// </summary>
-        /// <param name="value">The select value.</param>
-        /// <returns>The request object to send.</returns>
-        IDriveAllPhotosRequest Select(string value);
-
-        /// <summary>
-        /// Adds the specified top value to the request.
-        /// </summary>
-        /// <param name="value">The top value.</param>
-        /// <returns>The request object to send.</returns>
-        IDriveAllPhotosRequest Top(int value);
-    
+        public void InitializeNextPageRequest(IBaseClient client, string nextPageLinkString)
+        {
+            if (!string.IsNullOrEmpty(nextPageLinkString))
+            {
+                this.NextPageRequest = new EffectiveRolesCollectionRequest(
+                    nextPageLinkString,
+                    client,
+                    null);
+            }
+        }
     }
 }

@@ -32,13 +32,13 @@ namespace OneDriveApiBrowser
 
     public partial class FormBrowser : Form
     {
-        private const string AadClientId = "67b8454b-58df-4e6d-a688-c769bd327052";
-        private const string AadReturnUrl = "https://localhost:777";
+        private const string AadClientId = "Insert your AAD client ID here";
+        private const string AadReturnUrl = "Insert your AAD return URL here";
 
-        private const string MsaClientId = "0000000044128B55";
+        private const string MsaClientId = "Insert your MSA client ID here";
         private const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
 
-        private static readonly string[] Scopes = { "onedrive.readwrite", "wl.offline_access", "wl.signin" };
+        private static readonly string[] Scopes = { "onedrive.readwrite", "wl.signin" };
 
         private const int UploadChunkSize = 10 * 1024 * 1024;       // 10 MB
         private IOneDriveClient oneDriveClient { get; set; }
