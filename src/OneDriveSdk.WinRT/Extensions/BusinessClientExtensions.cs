@@ -234,7 +234,7 @@ namespace Microsoft.OneDrive.Sdk
         }
 
         /// <summary>
-        /// Creates an unauthenticated client using ADAL for authentication.
+        /// Creates an authenticated client from a refresh token using ADAL for authentication.
         /// </summary>
         /// <param name="appConfig">
         ///     The <see cref="AppConfig"/> for the application configuration.

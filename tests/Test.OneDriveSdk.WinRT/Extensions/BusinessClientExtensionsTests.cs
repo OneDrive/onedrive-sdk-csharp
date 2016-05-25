@@ -253,5 +253,60 @@ namespace Test.OneDriveSdk.WinRT.Authentication
             Assert.IsNull(client.credentialCache, "Unexpected credential cache set.");
             Assert.AreEqual(ClientType.Business, client.ClientType, "Unexpected client type set.");
         }
+
+        [TestMethod]
+        public async Task GetSilentlyAuthenticatedClientAsync_RefreshTokenRequired()
+        {
+            bool exceptionThrown = false;
+
+            try
+            {
+                var client = await BusinessClientExtensions.GetSilentlyAuthenticatedClientAsync(
+                    new AppConfig
+                    {
+                        ActiveDirectoryAppId = "appId",
+                        ActiveDirectoryServiceResource = "https://localhost/resource/"
+                    },
+                    /* refreshToken */ null,
+                    this.credentialCache,
+                    this.httpProvider);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("Refresh token is required for silently authenticating a business client.", exception.Error.Message, "Unexpected error thrown.");
+
+                exceptionThrown = true;
+            }
+
+            Assert.IsTrue(exceptionThrown, "Expected exception not thrown.");
+        }
+
+        [TestMethod]
+        public async Task GetSilentlyAuthenticatedClientAsync_ServiceResourceRequired()
+        {
+            bool exceptionThrown = false;
+
+            try
+            {
+                var client = await BusinessClientExtensions.GetSilentlyAuthenticatedClientAsync(
+                    new AppConfig
+                    {
+                        ActiveDirectoryAppId = "appId",
+                    },
+                    "refreshToken",
+                    this.credentialCache,
+                    this.httpProvider);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("ActiveDirectoryServiceResource is required for silently authenticating a business client.", exception.Error.Message, "Unexpected error thrown.");
+
+                exceptionThrown = true;
+            }
+
+            Assert.IsTrue(exceptionThrown, "Expected exception not thrown.");
+        }
     }
 }

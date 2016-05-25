@@ -100,7 +100,7 @@ namespace OneDrivePhotoBrowser
                             new AppConfig
                             {
                                 ActiveDirectoryAppId = oneDriveForBusinessClientId,
-                                ActiveDirectoryServiceResource = oneDriveForBusinessReturnUrl,
+                                ActiveDirectoryReturnUrl = oneDriveForBusinessReturnUrl,
                             }) as OneDriveClient;
                     }
 

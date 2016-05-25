@@ -70,7 +70,7 @@ namespace Microsoft.OneDrive.Sdk
             {
                 serviceInfo.BaseUrl = string.Format(
                     Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
-                    serviceInfo.ServiceResource,
+                    serviceInfo.ServiceResource.TrimEnd('/'),
                     "v2.0");
             }
 

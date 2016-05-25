@@ -297,14 +297,12 @@ namespace OneDriveApiBrowser
                         FormBrowser.MsaReturnUrl,
                         FormBrowser.Scopes,
                         webAuthenticationUi: new FormsWebAuthenticationUi())
-                    : await BusinessClientExtensions.GetAuthenticatedClientAsync
-                    (
+                    : BusinessClientExtensions.GetClient(
                         new BusinessAppConfig
                         {
                             ActiveDirectoryAppId = FormBrowser.AadClientId,
                             ActiveDirectoryReturnUrl = FormBrowser.AadReturnUrl,
-                        }
-                    );
+                        });
             }
 
             try

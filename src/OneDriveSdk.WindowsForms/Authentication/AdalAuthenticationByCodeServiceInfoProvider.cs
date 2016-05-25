@@ -103,7 +103,7 @@ namespace Microsoft.OneDrive.Sdk
             {
                 adalServiceInfo.BaseUrl = string.Format(
                     Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
-                    adalServiceInfo.ServiceResource,
+                    adalServiceInfo.ServiceResource.TrimEnd('/'),
                     "v2.0");
             }
 

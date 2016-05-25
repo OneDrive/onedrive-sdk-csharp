@@ -336,7 +336,8 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                 var client = await BusinessClientExtensions.GetAuthenticatedWebClientUsingAuthenticationByCodeAsync(
                     new BusinessAppConfig
                     {
-                        ActiveDirectoryReturnUrl = "https://return"
+                        ActiveDirectoryReturnUrl = "https://return",
+                        ActiveDirectoryServiceResource = "https://resource/",
                     },
                     "code",
                     this.credentialCache.Object,
@@ -410,7 +411,7 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
                         ActiveDirectoryAppId = "appId",
                         ActiveDirectoryReturnUrl = "https://return",
                     },
-                    /* code */ null,
+                    "code",
                     this.credentialCache.Object,
                     this.httpProvider.Object);
             }
@@ -495,6 +496,79 @@ namespace Test.OneDriveSdk.WindowsForms.Authentication
             Assert.IsInstanceOfType(client.HttpProvider, typeof(HttpProvider), "Unexpected HTTP provider set.");
             Assert.IsNull(client.credentialCache, "Unexpected credential cache set.");
             Assert.AreEqual(ClientType.Business, client.ClientType, "Unexpected client type set.");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetSilentlyAuthenticatedClientAsync_RefreshTokenRequired()
+        {
+            try
+            {
+                var client = await BusinessClientExtensions.GetSilentlyAuthenticatedClientAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryAppId = "appId",
+                        ActiveDirectoryServiceResource = "https://localhost/resource/"
+                    },
+                    /* refreshToken */ null,
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("Refresh token is required for silently authenticating a business client.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetSilentlyAuthenticatedClientAsync_ServiceResourceRequired()
+        {
+            try
+            {
+                var client = await BusinessClientExtensions.GetSilentlyAuthenticatedClientAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryAppId = "appId",
+                    },
+                    "refreshToken",
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("ActiveDirectoryServiceResource is required for silently authenticating a business client.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(OneDriveException))]
+        public async Task GetSilentlyAuthenticatedWebClientAsync_ClientCertificateOrSecretRequired()
+        {
+            try
+            {
+                var client = await BusinessClientExtensions.GetSilentlyAuthenticatedWebClientAsync(
+                    new BusinessAppConfig
+                    {
+                        ActiveDirectoryAppId = "appId",
+                    },
+                    "refresh",
+                    this.credentialCache.Object,
+                    this.httpProvider.Object);
+            }
+            catch (OneDriveException exception)
+            {
+                Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error thrown.");
+                Assert.AreEqual("Client certificate or client secret is required for authenticating a business web client.", exception.Error.Message, "Unexpected error thrown.");
+
+                throw;
+            }
         }
 
         [TestMethod]
