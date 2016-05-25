@@ -25,42 +25,28 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
-    using System.Collections.Generic;
-
     /// <summary>
-    /// The type ThumbnailContentRequestBuilder.
+    /// The type DriveRecentCollectionPage.
     /// </summary>
-    public partial class ThumbnailContentRequestBuilder : BaseRequestBuilder, IThumbnailContentRequestBuilder
+    public partial class DriveRecentCollectionPage : CollectionPage<Item>, IDriveRecentCollectionPage
     {
         /// <summary>
-        /// Constructs a new ThumbnailContentRequestBuilder.
+        /// Gets the next page <see cref="IDriveRecentRequest"/> instance.
         /// </summary>
-        /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
-        public ThumbnailContentRequestBuilder(
-            string requestUrl,
-            IBaseClient client)
-            : base(requestUrl, client)
-        {
-        }
-
-        /// <summary>
-        /// Builds the request.
-        /// </summary>
-        /// <returns>The built request.</returns>
-        public IThumbnailContentRequest Request()
-        {
-            return this.Request(null);
-        }
+        public IDriveRecentRequest NextPageRequest { get; private set; }
         
         /// <summary>
-        /// Builds the request.
+        /// Initializes the NextPageRequest property.
         /// </summary>
-        /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IThumbnailContentRequest Request(IList<Option> options)
+        public void InitializeNextPageRequest(IBaseClient client, string nextPageLinkString)
         {
-            return new ThumbnailContentRequest(this.RequestUrl, this.Client, options);
+            if (!string.IsNullOrEmpty(nextPageLinkString))
+            {
+                this.NextPageRequest = new DriveRecentRequest(
+                    nextPageLinkString,
+                    client,
+                    null);
+            }
         }
     }
 }

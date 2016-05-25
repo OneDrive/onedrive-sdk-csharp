@@ -26,41 +26,26 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System.Collections.Generic;
+    using System.Runtime.Serialization;
+    using Newtonsoft.Json;
 
     /// <summary>
-    /// The type ThumbnailContentRequestBuilder.
+    /// The type DriveRecentCollectionResponse.
     /// </summary>
-    public partial class ThumbnailContentRequestBuilder : BaseRequestBuilder, IThumbnailContentRequestBuilder
+    [DataContract]
+    public class DriveRecentCollectionResponse
     {
         /// <summary>
-        /// Constructs a new ThumbnailContentRequestBuilder.
+        /// Gets or sets the <see cref="IDriveRecentCollectionPage"/> value.
         /// </summary>
-        /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
-        public ThumbnailContentRequestBuilder(
-            string requestUrl,
-            IBaseClient client)
-            : base(requestUrl, client)
-        {
-        }
-
-        /// <summary>
-        /// Builds the request.
-        /// </summary>
-        /// <returns>The built request.</returns>
-        public IThumbnailContentRequest Request()
-        {
-            return this.Request(null);
-        }
+        [JsonConverter(typeof(InterfaceConverter<DriveRecentCollectionPage>))]
+        [DataMember(Name = "value", EmitDefaultValue = false, IsRequired = false)]
+        public IDriveRecentCollectionPage Value { get; set; }
         
         /// <summary>
-        /// Builds the request.
+        /// Gets or sets additional data.
         /// </summary>
-        /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IThumbnailContentRequest Request(IList<Option> options)
-        {
-            return new ThumbnailContentRequest(this.RequestUrl, this.Client, options);
-        }
+        [JsonExtensionData(ReadData = true)]
+        public IDictionary<string, object> AdditionalData { get; set; }
     }
 }

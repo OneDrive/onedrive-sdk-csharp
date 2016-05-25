@@ -116,6 +116,10 @@
     <Compile Include="Requests\Generated\ChildrenCollectionRequest.cs" />
     <Compile Include="Requests\Generated\ChildrenCollectionRequestBuilder.cs" />
     <Compile Include="Requests\Generated\ChildrenCollectionResponse.cs" />
+    <Compile Include="Requests\Generated\DriveRecentCollectionPage.cs" />
+    <Compile Include="Requests\Generated\DriveRecentCollectionResponse.cs" />
+    <Compile Include="Requests\Generated\DriveRecentRequest.cs" />
+    <Compile Include="Requests\Generated\DriveRecentRequestBuilder.cs" />
     <Compile Include="Requests\Generated\DriveRequest.cs" />
     <Compile Include="Requests\Generated\DriveRequestBuilder.cs" />
     <Compile Include="Requests\Generated\DrivesCollectionPage.cs" />
@@ -129,6 +133,9 @@
     <Compile Include="Requests\Generated\IChildrenCollectionPage.cs" />
     <Compile Include="Requests\Generated\IChildrenCollectionRequest.cs" />
     <Compile Include="Requests\Generated\IChildrenCollectionRequestBuilder.cs" />
+    <Compile Include="Requests\Generated\IDriveRecentCollectionPage.cs" />
+    <Compile Include="Requests\Generated\IDriveRecentRequest.cs" />
+    <Compile Include="Requests\Generated\IDriveRecentRequestBuilder.cs" />
     <Compile Include="Requests\Generated\IDriveRequest.cs" />
     <Compile Include="Requests\Generated\IDriveRequestBuilder.cs" />
     <Compile Include="Requests\Generated\IDrivesCollectionPage.cs" />

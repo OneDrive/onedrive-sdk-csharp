@@ -25,42 +25,42 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
-
+    using System.IO;
+    using System.Threading.Tasks;
+    
     /// <summary>
-    /// The type ThumbnailContentRequestBuilder.
+    /// The interface IDriveRecentRequest.
     /// </summary>
-    public partial class ThumbnailContentRequestBuilder : BaseRequestBuilder, IThumbnailContentRequestBuilder
+    public partial interface IDriveRecentRequest : IBaseRequest
     {
+    
         /// <summary>
-        /// Constructs a new ThumbnailContentRequestBuilder.
+        /// Issues the GET request.
         /// </summary>
-        /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
-        public ThumbnailContentRequestBuilder(
-            string requestUrl,
-            IBaseClient client)
-            : base(requestUrl, client)
-        {
-        }
+        Task<IDriveRecentCollectionPage> GetAsync();
+            
+        /// <summary>
+        /// Adds the specified expand value to the request.
+        /// </summary>
+        /// <param name="value">The expand value.</param>
+        /// <returns>The request object to send.</returns>
+        IDriveRecentRequest Expand(string value);
 
         /// <summary>
-        /// Builds the request.
+        /// Adds the specified select value to the request.
         /// </summary>
-        /// <returns>The built request.</returns>
-        public IThumbnailContentRequest Request()
-        {
-            return this.Request(null);
-        }
-        
+        /// <param name="value">The select value.</param>
+        /// <returns>The request object to send.</returns>
+        IDriveRecentRequest Select(string value);
+
         /// <summary>
-        /// Builds the request.
+        /// Adds the specified top value to the request.
         /// </summary>
-        /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IThumbnailContentRequest Request(IList<Option> options)
-        {
-            return new ThumbnailContentRequest(this.RequestUrl, this.Client, options);
-        }
+        /// <param name="value">The top value.</param>
+        /// <returns>The request object to send.</returns>
+        IDriveRecentRequest Top(int value);
+    
     }
 }
