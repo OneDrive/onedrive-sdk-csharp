@@ -23,7 +23,6 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-    using System.Net;
     using System.Threading.Tasks;
 
     public class MicrosoftAccountAuthenticationProvider : AuthenticationProvider
@@ -79,7 +78,7 @@ namespace Microsoft.OneDrive.Sdk
         
         private Task<AccountSession> RedeemAuthorizationCodeAsync(string code)
         {
-            return this.SendTokenRequestAsync(this.GetCodeRedemptionRequestBody(code));
+            return this.SendTokenRequestAsync(this.OAuthRequestStringBuilder.GetCodeRedemptionRequestBody(code));
         }
     }
 }

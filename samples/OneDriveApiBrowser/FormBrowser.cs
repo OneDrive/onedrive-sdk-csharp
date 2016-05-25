@@ -28,7 +28,6 @@ namespace OneDriveApiBrowser
     using System.Windows.Forms;
     using Microsoft.OneDrive.Sdk;
     using Microsoft.OneDrive.Sdk.WindowsForms;
-    using System.Threading;
 
     public partial class FormBrowser : Form
     {
@@ -298,7 +297,12 @@ namespace OneDriveApiBrowser
                         FormBrowser.MsaReturnUrl,
                         FormBrowser.Scopes,
                         webAuthenticationUi: new FormsWebAuthenticationUi())
-                    : BusinessClientExtensions.GetActiveDirectoryClient(FormBrowser.AadClientId, FormBrowser.AadReturnUrl);
+                    : BusinessClientExtensions.GetClient(
+                        new BusinessAppConfig
+                        {
+                            ActiveDirectoryAppId = FormBrowser.AadClientId,
+                            ActiveDirectoryReturnUrl = FormBrowser.AadReturnUrl,
+                        });
             }
 
             try
@@ -314,7 +318,7 @@ namespace OneDriveApiBrowser
             }
             catch (OneDriveException exception)
             {
-                // Swallow authentication cancelled exceptions
+                // Swallow authentication cancelled exceptions, but reset the client
                 if (!exception.IsMatch(OneDriveErrorCode.AuthenticationCancelled.ToString()))
                 {
                     if (exception.IsMatch(OneDriveErrorCode.AuthenticationFailure.ToString()))
@@ -324,14 +328,18 @@ namespace OneDriveApiBrowser
                             "Authentication failed",
                             MessageBoxButtons.OK);
 
-                        var httpProvider = this.oneDriveClient.HttpProvider as HttpProvider;
-                        httpProvider.Dispose();
+                        ((OneDriveClient)this.oneDriveClient).Dispose();
                         this.oneDriveClient = null;
                     }
                     else
                     {
                         PresentOneDriveException(exception);
                     }
+                }
+                else
+                {
+                    ((OneDriveClient)this.oneDriveClient).Dispose();
+                    this.oneDriveClient = null;
                 }
             }
         }

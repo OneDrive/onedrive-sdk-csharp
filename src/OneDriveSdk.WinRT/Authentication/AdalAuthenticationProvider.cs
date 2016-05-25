@@ -90,8 +90,8 @@ namespace Microsoft.OneDrive.Sdk
                     {
                         Code = OneDriveErrorCode.AuthenticationFailure.ToString(),
                         Message = authenticationResult == null
-                            ? "An error occurred during active directory authentication."
-                            : string.Format("An error occurred during active directory authentication. Error: {0}. Description: {1}",
+                            ? "An error occurred during Azure Active Directory authentication."
+                            : string.Format("An error occurred during Azure Active Directory authentication. Error: {0}. Description: {1}",
                                 authenticationResult.Error,
                                 authenticationResult.ErrorDescription),
                     });

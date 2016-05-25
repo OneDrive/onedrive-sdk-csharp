@@ -237,7 +237,11 @@ namespace Microsoft.OneDrive.Sdk
                 MicrosoftAccountScopes = scopes,
             };
 
-            return new OneDriveClient(appConfig, credentialCache, httpProvider, serviceInfoProvider);
+            return new OneDriveClient(
+                appConfig,
+                credentialCache ?? new CredentialCache(),
+                httpProvider ?? new HttpProvider(),
+                serviceInfoProvider ?? new ServiceInfoProvider());
         }
 
         /// <summary>

@@ -24,13 +24,14 @@
 
 namespace OneDrivePhotoBrowser
 {
+    using System;
     using System.Diagnostics;
 
     using Microsoft.OneDrive.Sdk;
     using Models;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-
+    
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -84,15 +85,26 @@ namespace OneDrivePhotoBrowser
         {
             if (((App)Application.Current).OneDriveClient == null)
             {
-                var client = clientType == ClientType.Consumer
-                    ? OneDriveClientExtensions.GetUniversalClient(this.scopes) as OneDriveClient
-                    : BusinessClientExtensions.GetActiveDirectoryClient(
-                        oneDriveForBusinessClientId,
-                        oneDriveForBusinessReturnUrl) as OneDriveClient;
+                OneDriveClient client = null;
 
                 try
                 {
-                    await client.AuthenticateAsync();
+                    if (clientType == ClientType.Consumer)
+                    {
+                        client = OneDriveClientExtensions.GetUniversalClient(this.scopes) as OneDriveClient;
+
+                        await client.AuthenticateAsync();
+                    }
+                    else
+                    {
+                        client = await BusinessClientExtensions.GetAuthenticatedClientAsync(
+                            new AppConfig
+                            {
+                                ActiveDirectoryAppId = oneDriveForBusinessClientId,
+                                ActiveDirectoryReturnUrl = oneDriveForBusinessReturnUrl,
+                            }) as OneDriveClient;
+                    }
+
                     ((App)Application.Current).OneDriveClient = client;
                     ((App)Application.Current).NavigationStack.Add(new ItemModel(new Item()));
                     Frame.Navigate(typeof(MainPage), e);
@@ -101,7 +113,11 @@ namespace OneDrivePhotoBrowser
                 {
                     // Swallow the auth exception but write message for debugging.
                     Debug.WriteLine(exception.Error.Message);
-                    client.Dispose();
+
+                    if (client != null)
+                    {
+                        client.Dispose();
+                    }
                 }
             }
             else

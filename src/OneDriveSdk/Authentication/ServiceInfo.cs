@@ -75,6 +75,11 @@ namespace Microsoft.OneDrive.Sdk
         public IHttpProvider HttpProvider { get; set; }
 
         /// <summary>
+        /// Gets or sets the requested prompt type for Microsoft account authentication.
+        /// </summary>
+        public CredentialPromptType MicrosoftAccountPromptType { get; set; }
+
+        /// <summary>
         /// Gets or sets the application's return URL for authentication.
         /// </summary>
         public string ReturnUrl { get; set; }
@@ -114,9 +119,27 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         public IWebAuthenticationUi WebAuthenticationUi { get; set; }
 
-        /// <summary>
-        /// Gets or sets the requested prompt type for Microsoft account authentication.
-        /// </summary>
-        public CredentialPromptType MicrosoftAccountPromptType { get; set; }
+        public void CopyFrom(ServiceInfo serviceInfo)
+        {
+            this.AccountType = serviceInfo.AccountType;
+            this.AppId = serviceInfo.AppId;
+            this.AuthenticationProvider = serviceInfo.AuthenticationProvider;
+            this.AuthenticationServiceUrl = serviceInfo.AuthenticationServiceUrl;
+            this.BaseUrl = serviceInfo.BaseUrl;
+            this.ClientSecret = serviceInfo.ClientSecret;
+            this.CredentialCache = serviceInfo.CredentialCache;
+            this.DiscoveryServiceResource = serviceInfo.DiscoveryServiceResource;
+            this.DiscoveryServiceUrl = serviceInfo.DiscoveryServiceUrl;
+            this.HttpProvider = serviceInfo.HttpProvider;
+            this.MicrosoftAccountPromptType = serviceInfo.MicrosoftAccountPromptType;
+            this.OneDriveServiceEndpointVersion = serviceInfo.OneDriveServiceEndpointVersion;
+            this.ReturnUrl = serviceInfo.ReturnUrl;
+            this.Scopes = serviceInfo.Scopes;
+            this.ServiceResource = serviceInfo.ServiceResource;
+            this.SignOutUrl = serviceInfo.SignOutUrl;
+            this.TokenServiceUrl = serviceInfo.TokenServiceUrl;
+            this.UserId = serviceInfo.UserId;
+            this.WebAuthenticationUi = serviceInfo.WebAuthenticationUi;
+        }
     }
 }

@@ -32,8 +32,12 @@ namespace Microsoft.OneDrive.Sdk
     public abstract class AdalAuthenticationProviderBase : IAuthenticationProvider
     {
         protected ServiceInfo serviceInfo;
+
+        protected bool allowDiscoveryService = true;
         
         internal IAuthenticationContextWrapper authenticationContextWrapper;
+
+        internal IAdalRedeemRefreshTokenHelper adalRedeemRefreshTokenHelper;
 
         /// <summary>
         /// Constructs an <see cref="AdalAuthenticationProviderBase"/>.
@@ -82,6 +86,11 @@ namespace Microsoft.OneDrive.Sdk
                 this.authenticationContextWrapper = adalCredentialCache == null
                     ? new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl)
                     : new AuthenticationContextWrapper(serviceInfo.AuthenticationServiceUrl, false, adalCredentialCache.TokenCache.InnerTokenCache);
+
+                if (this.adalRedeemRefreshTokenHelper != null)
+                {
+                    this.adalRedeemRefreshTokenHelper = new AdalRedeemRefreshTokenHelper(this.serviceInfo, this.authenticationContextWrapper);
+                }
             }
         }
 
@@ -99,14 +108,15 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The task to await.</returns>
         public async Task AppendAuthHeaderAsync(HttpRequestMessage request)
         {
-            if (this.CurrentAccountSession == null)
-            {
-                await this.AuthenticateAsync();
-            }
+            await this.AuthenticateAsync();
 
             if (this.CurrentAccountSession != null && !string.IsNullOrEmpty(this.CurrentAccountSession.AccessToken))
             {
-                request.Headers.Authorization = new AuthenticationHeaderValue(Constants.Headers.Bearer, this.CurrentAccountSession.AccessToken);
+                var tokenTypeString = string.IsNullOrEmpty(this.CurrentAccountSession.AccessTokenType)
+                    ? Constants.Headers.Bearer
+                    : this.CurrentAccountSession.AccessTokenType;
+
+                request.Headers.Authorization = new AuthenticationHeaderValue(tokenTypeString, this.CurrentAccountSession.AccessToken);
             }
         }
 
@@ -120,8 +130,23 @@ namespace Microsoft.OneDrive.Sdk
             {
                 return this.CurrentAccountSession;
             }
+            else if (this.CurrentAccountSession != null && !string.IsNullOrEmpty(this.CurrentAccountSession.RefreshToken))
+            {
+                // We will have tried to authenticate silently using ADAL before hitting this point. It's safe to try
+                // re-auth using refresh token if we don't have a valid token by now.
+                if (this.adalRedeemRefreshTokenHelper == null)
+                {
+                    this.adalRedeemRefreshTokenHelper = new AdalRedeemRefreshTokenHelper(
+                        this.ServiceInfo,
+                        this.authenticationContextWrapper);
+                }
 
-            if (string.IsNullOrEmpty(this.ServiceInfo.ServiceResource) || string.IsNullOrEmpty(this.ServiceInfo.BaseUrl))
+                var refreshResult = await this.adalRedeemRefreshTokenHelper.RedeemRefreshToken(this.CurrentAccountSession.RefreshToken);
+
+                return this.ProcessAuthenticationResult(refreshResult);
+            }
+            
+            if (allowDiscoveryService && string.IsNullOrEmpty(this.ServiceInfo.ServiceResource) || string.IsNullOrEmpty(this.ServiceInfo.BaseUrl))
             {
                 var discoveryServiceToken = await this.GetAuthenticationTokenForResourceAsync(this.serviceInfo.DiscoveryServiceResource);
                 await this.RetrieveMyFilesServiceResourceAsync(discoveryServiceToken);
@@ -129,6 +154,62 @@ namespace Microsoft.OneDrive.Sdk
 
             var authenticationResult = await this.AuthenticateResourceAsync(this.ServiceInfo.ServiceResource);
 
+            return this.ProcessAuthenticationResult(authenticationResult);
+        }
+
+        /// <summary>
+        /// Signs the current user out.
+        /// </summary>
+        public virtual async Task SignOutAsync()
+        {
+            if (this.CurrentAccountSession != null && this.CurrentAccountSession.CanSignOut)
+            {
+                if (this.ServiceInfo.HttpProvider != null)
+                {
+                    using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.ServiceInfo.SignOutUrl))
+                    {
+                        await this.ServiceInfo.HttpProvider.SendAsync(httpRequestMessage);
+                    }
+                }
+
+                this.DeleteUserCredentialsFromCache(this.CurrentAccountSession);
+                this.CurrentAccountSession = null;
+            }
+        }
+
+        protected void DeleteUserCredentialsFromCache(AccountSession accountSession)
+        {
+            if (this.ServiceInfo.CredentialCache != null)
+            {
+                this.ServiceInfo.CredentialCache.DeleteFromCache(accountSession);
+            }
+        }
+
+#if WINFORMS
+        protected virtual ClientCredential GetClientCredentialForAuthentication()
+        {
+            return string.IsNullOrEmpty(this.serviceInfo.ClientSecret)
+                ? null
+                : new ClientCredential(this.serviceInfo.AppId, this.serviceInfo.ClientSecret);
+        }
+#endif
+
+        protected UserIdentifier GetUserIdentifierForAuthentication()
+        {
+            return string.IsNullOrEmpty(this.serviceInfo.UserId)
+                ? UserIdentifier.AnyUser
+                : new UserIdentifier(this.serviceInfo.UserId, UserIdentifierType.OptionalDisplayableId);
+        }
+
+        private async Task<string> GetAuthenticationTokenForResourceAsync(string resource)
+        {
+            var authenticationResult = await this.AuthenticateResourceAsync(resource);
+
+            return authenticationResult.AccessToken;
+        }
+
+        private AccountSession ProcessAuthenticationResult(IAuthenticationResult authenticationResult)
+        {
             if (authenticationResult == null)
             {
                 this.CurrentAccountSession = null;
@@ -143,37 +224,11 @@ namespace Microsoft.OneDrive.Sdk
                 CanSignOut = true,
                 ClientId = this.ServiceInfo.AppId,
                 ExpiresOnUtc = authenticationResult.ExpiresOn,
+                RefreshToken = authenticationResult.RefreshToken,
                 UserId = authenticationResult.UserInfo == null ? null : authenticationResult.UserInfo.UniqueId,
             };
 
             return this.CurrentAccountSession;
-        }
-
-        /// <summary>
-        /// Signs the current user out.
-        /// </summary>
-        public abstract Task SignOutAsync();
-
-        protected void DeleteUserCredentialsFromCache(AccountSession accountSession)
-        {
-            if (this.ServiceInfo.CredentialCache != null)
-            {
-                this.ServiceInfo.CredentialCache.DeleteFromCache(accountSession);
-            }
-        }
-
-        protected UserIdentifier GetUserIdentifierForAuthentication()
-        {
-            return string.IsNullOrEmpty(this.serviceInfo.UserId)
-                ? UserIdentifier.AnyUser
-                : new UserIdentifier(this.serviceInfo.UserId, UserIdentifierType.OptionalDisplayableId);
-        }
-
-        private async Task<string> GetAuthenticationTokenForResourceAsync(string resource)
-        {
-            var authenticationResult = await this.AuthenticateResourceAsync(resource);
-
-            return authenticationResult.AccessToken;
         }
 
         private Task RetrieveMyFilesServiceResourceAsync(string discoveryServiceToken)

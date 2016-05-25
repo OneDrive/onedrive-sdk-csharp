@@ -41,13 +41,13 @@
     <AssemblyOriginatorKeyFile>..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.19.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.19.208020213\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=2.21.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.21.301221612\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.19.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.19.208020213\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms, Version=2.21.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.21.301221612\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
     </Reference>
@@ -74,6 +74,9 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\AdalCredentialCache.cs">
       <Link>Authentication\AdalCredentialCache.cs</Link>
     </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\AuthenticationExceptionHelper.cs">
+      <Link>Authentication\AuthenticationExceptionHelper.cs</Link>
+    </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\AuthenticationResultWrapper.cs">
       <Link>Authentication\AuthenticationResultWrapper.cs</Link>
     </Compile>
@@ -82,6 +85,9 @@
     </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\DiscoveryServiceResponse.cs">
       <Link>Authentication\DiscoveryServiceResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\OneDriveSdk.Common\Authentication\IAdalRedeemRefreshTokenHelper.cs">
+      <Link>Authentication\IAdalRedeemRefreshTokenHelper.cs</Link>
     </Compile>
     <Compile Include="..\OneDriveSdk.Common\Authentication\IAuthenticationResult.cs">
       <Link>Authentication\IAuthenticationResult.cs</Link>
@@ -98,9 +104,16 @@
     <Compile Include="..\OneDriveSdk.Common\Authentication\TokenCacheWrapper.cs">
       <Link>Authentication\TokenCacheWrapper.cs</Link>
     </Compile>
+    <Compile Include="Authentication\AdalAppConfig.cs" />
+    <Compile Include="Authentication\AdalAppOnlyAuthenticationProvider.cs" />
+    <Compile Include="Authentication\AdalAppOnlyServiceInfoProvider.cs" />
+    <Compile Include="Authentication\AdalRedeemRefreshTokenHelper.cs" />
+    <Compile Include="Authentication\AdalAuthenticationByCodeAuthenticationProvider.cs" />
+    <Compile Include="Authentication\AdalAuthenticationByCodeServiceInfoProvider.cs" />
     <Compile Include="Authentication\AdalAuthenticationProvider.cs" />
     <Compile Include="Authentication\AdalServiceInfoProvider.cs" />
     <Compile Include="Authentication\AuthenticationContextWrapper.cs" />
+    <Compile Include="Authentication\AdalServiceInfo.cs" />
     <Compile Include="Authentication\IAuthenticationContextWrapper.cs" />
     <Compile Include="Extensions\BusinessClientExtensions.cs" />
     <Compile Include="Web\FormsWebDialog.cs">
