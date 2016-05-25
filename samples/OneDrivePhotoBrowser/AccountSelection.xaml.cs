@@ -24,13 +24,14 @@
 
 namespace OneDrivePhotoBrowser
 {
+    using System;
     using System.Diagnostics;
 
     using Microsoft.OneDrive.Sdk;
     using Models;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using System;
+    
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
