@@ -122,7 +122,7 @@ var itemWithUpdates = await oneDriveClient
 
 Copy an Item
 ---------------
-Copying and item is an async action described [here](https://dev.onedrive.com/items/copy.htm).
+Copying an item is an async action described [here](https://dev.onedrive.com/items/copy.htm).
 
 ```csharp
 var asyncStatus = await oneDriveClient

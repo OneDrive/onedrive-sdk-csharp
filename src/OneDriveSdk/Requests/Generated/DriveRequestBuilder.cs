@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -98,28 +99,6 @@ namespace Microsoft.OneDrive.Sdk
             {
                 return new SpecialCollectionRequestBuilder(this.AppendSegmentToRequestUrl("special"), this.Client);
             }
-        }
-    
-        /// <summary>
-        /// Gets the request builder for DriveAllPhotos.
-        /// </summary>
-        /// <returns>The <see cref="IDriveAllPhotosRequestBuilder"/>.</returns>
-        public IDriveAllPhotosRequestBuilder AllPhotos()
-        {
-            return new DriveAllPhotosRequestBuilder(
-                this.AppendSegmentToRequestUrl("view.allPhotos"),
-                this.Client);
-        }
-    
-        /// <summary>
-        /// Gets the request builder for DriveRecent.
-        /// </summary>
-        /// <returns>The <see cref="IDriveRecentRequestBuilder"/>.</returns>
-        public IDriveRecentRequestBuilder Recent()
-        {
-            return new DriveRecentRequestBuilder(
-                this.AppendSegmentToRequestUrl("view.recent"),
-                this.Client);
         }
     
     }

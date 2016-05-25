@@ -30,6 +30,11 @@ namespace Microsoft.OneDrive.Sdk
         public string ActiveDirectoryAppId { get; set; }
 
         /// <summary>
+        /// Gets or sets the authentication service URL for Active Directory authentication.
+        /// </summary>
+        public string ActiveDirectoryAuthenticationServiceUrl { get; set; }
+
+        /// <summary>
         /// Gets or sets the client secret for Active Directory authentication.
         /// </summary>
         public string ActiveDirectoryClientSecret { get; set; }
@@ -62,6 +67,10 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         public string MicrosoftAccountClientSecret { get; set; }
 
+        /// Gets or sets the requested prompt type for Microsoft account authentication.
+        /// </summary>
+        public CredentialPromptType MicrosoftAccountPromptType { get; set; }
+
         /// <summary>
         /// Gets or sets the application return URL for Microsoft account authentication.
         /// </summary>
@@ -71,10 +80,5 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets or sets the requested scopes for Microsoft account authentication.
         /// </summary>
         public string[] MicrosoftAccountScopes { get; set; }
-
-        /// <summary>
-        /// Gets or sets the authentication service URL for Active Directory authentication.
-        /// </summary>
-        internal string ActiveDirectoryAuthenticationServiceUrl { get; set; }
     }
 }

@@ -10,6 +10,7 @@
 //  
 //  The above copyright notice and this permission notice shall be included in
 //  all copies or substantial portions of the Software.
+//  
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -45,6 +46,12 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The built request.</returns>
         IItemRequest Request(IList<Option> options);
 
+    
+        /// <summary>
+        /// Gets the request builder for RemoteItem.
+        /// </summary>
+        /// <returns>The <see cref="IItemRequestBuilder"/>.</returns>
+        IItemRequestBuilder RemoteItem { get; }
     
         /// <summary>
         /// Gets the request builder for Permissions.
@@ -97,12 +104,6 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The <see cref="IItemCreateLinkRequestBuilder"/>.</returns>
         IItemCreateLinkRequestBuilder CreateLink(
             string type);
-    
-        /// <summary>
-        /// Gets the request builder for ItemAllPhotos.
-        /// </summary>
-        /// <returns>The <see cref="IItemAllPhotosRequestBuilder"/>.</returns>
-        IItemAllPhotosRequestBuilder AllPhotos();
     
         /// <summary>
         /// Gets the request builder for ItemDelta.
