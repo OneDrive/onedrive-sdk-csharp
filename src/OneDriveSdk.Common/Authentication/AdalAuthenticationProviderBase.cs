@@ -132,6 +132,8 @@ namespace Microsoft.OneDrive.Sdk
             }
             else if (this.CurrentAccountSession != null && !string.IsNullOrEmpty(this.CurrentAccountSession.RefreshToken))
             {
+                // We will have tried to authenticate silently using ADAL before hitting this point. It's safe to try
+                // re-auth using refresh token if we don't have a valid token by now.
                 if (this.adalRedeemRefreshTokenHelper == null)
                 {
                     this.adalRedeemRefreshTokenHelper = new AdalRedeemRefreshTokenHelper(
