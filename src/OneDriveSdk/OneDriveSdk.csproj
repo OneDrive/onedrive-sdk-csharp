@@ -118,6 +118,10 @@
     <Compile Include="Requests\Generated\ChildrenCollectionRequest.cs" />
     <Compile Include="Requests\Generated\ChildrenCollectionRequestBuilder.cs" />
     <Compile Include="Requests\Generated\ChildrenCollectionResponse.cs" />
+    <Compile Include="Requests\Generated\DriveRecentCollectionPage.cs" />
+    <Compile Include="Requests\Generated\DriveRecentCollectionResponse.cs" />
+    <Compile Include="Requests\Generated\DriveRecentRequest.cs" />
+    <Compile Include="Requests\Generated\DriveRecentRequestBuilder.cs" />
     <Compile Include="Requests\Generated\DriveRequest.cs" />
     <Compile Include="Requests\Generated\DriveRequestBuilder.cs" />
     <Compile Include="Requests\Generated\DrivesCollectionPage.cs" />
@@ -131,6 +135,9 @@
     <Compile Include="Requests\Generated\IChildrenCollectionPage.cs" />
     <Compile Include="Requests\Generated\IChildrenCollectionRequest.cs" />
     <Compile Include="Requests\Generated\IChildrenCollectionRequestBuilder.cs" />
+    <Compile Include="Requests\Generated\IDriveRecentCollectionPage.cs" />
+    <Compile Include="Requests\Generated\IDriveRecentRequest.cs" />
+    <Compile Include="Requests\Generated\IDriveRecentRequestBuilder.cs" />
     <Compile Include="Requests\Generated\IDriveRequest.cs" />
     <Compile Include="Requests\Generated\IDriveRequestBuilder.cs" />
     <Compile Include="Requests\Generated\IDrivesCollectionPage.cs" />
@@ -261,13 +268,14 @@
     <Compile Include="Web\IWebAuthenticationUi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.2\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.2\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

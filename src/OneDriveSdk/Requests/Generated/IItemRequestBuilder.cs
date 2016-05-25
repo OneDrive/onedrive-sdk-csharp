@@ -48,12 +48,6 @@ namespace Microsoft.OneDrive.Sdk
 
     
         /// <summary>
-        /// Gets the request builder for RemoteItem.
-        /// </summary>
-        /// <returns>The <see cref="IItemRequestBuilder"/>.</returns>
-        IItemRequestBuilder RemoteItem { get; }
-    
-        /// <summary>
         /// Gets the request builder for Permissions.
         /// </summary>
         /// <returns>The <see cref="IPermissionsCollectionRequestBuilder"/>.</returns>

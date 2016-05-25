@@ -65,8 +65,9 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Gets or sets additional data.
         /// </summary>
-        [JsonExtensionData(ReadData = false)]
+        [JsonExtensionData(ReadData = true)]
         public IDictionary<string, object> AdditionalData { get; set; }
 
     }
 }
+

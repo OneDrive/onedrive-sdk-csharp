@@ -25,42 +25,34 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
-    /// The type ThumbnailContentRequestBuilder.
+    /// The type DriveRecentRequestBuilder.
     /// </summary>
-    public partial class ThumbnailContentRequestBuilder : BaseRequestBuilder, IThumbnailContentRequestBuilder
+    public partial class DriveRecentRequestBuilder : BaseRequestBuilder, IDriveRecentRequestBuilder
     {
-        /// <summary>
-        /// Constructs a new ThumbnailContentRequestBuilder.
-        /// </summary>
-        /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
-        public ThumbnailContentRequestBuilder(
+    
+        public DriveRecentRequestBuilder(
             string requestUrl,
             IBaseClient client)
             : base(requestUrl, client)
         {
         }
-
-        /// <summary>
-        /// Builds the request.
-        /// </summary>
-        /// <returns>The built request.</returns>
-        public IThumbnailContentRequest Request()
-        {
-            return this.Request(null);
-        }
-        
+    
         /// <summary>
         /// Builds the request.
         /// </summary>
         /// <param name="options">The query and header options for the request.</param>
         /// <returns>The built request.</returns>
-        public IThumbnailContentRequest Request(IList<Option> options)
+        public IDriveRecentRequest Request(IList<Option> options = null)
         {
-            return new ThumbnailContentRequest(this.RequestUrl, this.Client, options);
+            return new DriveRecentRequest(
+                this.RequestUrl,
+                this.Client,
+                options);
         }
+
     }
 }

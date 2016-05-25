@@ -101,5 +101,16 @@ namespace Microsoft.OneDrive.Sdk
             }
         }
     
+        /// <summary>
+        /// Gets the request builder for DriveRecent.
+        /// </summary>
+        /// <returns>The <see cref="IDriveRecentRequestBuilder"/>.</returns>
+        public IDriveRecentRequestBuilder Recent()
+        {
+            return new DriveRecentRequestBuilder(
+                this.AppendSegmentToRequestUrl("view.recent"),
+                this.Client);
+        }
+    
     }
 }

@@ -66,18 +66,6 @@ namespace Microsoft.OneDrive.Sdk
 
     
         /// <summary>
-        /// Gets the request builder for RemoteItem.
-        /// </summary>
-        /// <returns>The <see cref="IItemRequestBuilder"/>.</returns>
-        public IItemRequestBuilder RemoteItem
-        {
-            get
-            {
-                return new ItemRequestBuilder(this.AppendSegmentToRequestUrl("remoteItem"), this.Client);
-            }
-        }
-    
-        /// <summary>
         /// Gets the request builder for Permissions.
         /// </summary>
         /// <returns>The <see cref="IPermissionsCollectionRequestBuilder"/>.</returns>
