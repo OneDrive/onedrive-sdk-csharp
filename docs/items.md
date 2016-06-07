@@ -71,7 +71,7 @@ await oneDriveClient
 Create a folder
 -------------------------
 
-### 1. By POST
+### 1. By POST to a known folder ID
 
 ```csharp
 var folderToCreate = new Item { Folder = new Folder(), Name = "folder name" };
@@ -83,7 +83,7 @@ var createdFolder = await oneDriveClient
           .AddAsync(folderToCreate);
 ```
 
-### 1. By PUT
+### 2. By PUT to a known folder ID
 
 ```csharp
 var folderToCreate = new Item { Folder = new Folder() };
@@ -94,6 +94,20 @@ var createdFolder = await oneDriveClient
           .Request()
           .CreateAsync(folderToCreate);
 ```
+
+### 3. By PUT with a given path
+
+```csharp
+var folderToCreate = new Item { Folder = new Folder() };
+var createdFolder = await oneDriveClient
+          .Drive
+          .Root
+          .ItemWithPath("folder/subfolder")
+          .Request()
+          .CreateAsync(folderToCreate);
+```
+
+Note: If the specified path does not exist, every folder name in the path will also be created.
 
 Uploading contents
 ------------------------------
