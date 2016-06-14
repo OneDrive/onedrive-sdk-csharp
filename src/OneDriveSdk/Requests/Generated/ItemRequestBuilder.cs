@@ -48,7 +48,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemRequest(this.RequestUrl, this.Client, options);
         }
-        
+
         /// <summary>
         /// Gets the request builder for Permissions.
         /// </summary>

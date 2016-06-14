@@ -48,5 +48,11 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The <see cref="IDriveSpecialCollectionRequestBuilder"/>.</returns>
         IDriveSpecialCollectionRequestBuilder Special { get; }
     
+        /// <summary>
+        /// Gets the request builder for DriveRecent.
+        /// </summary>
+        /// <returns>The <see cref="IDriveRecentRequestBuilder"/>.</returns>
+        IDriveRecentRequestBuilder Recent();
+    
     }
 }

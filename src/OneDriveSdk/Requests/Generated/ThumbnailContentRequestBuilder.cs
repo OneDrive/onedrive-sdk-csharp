@@ -34,7 +34,17 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The built request.</returns>
         public IThumbnailContentRequest Request()
         {
-            return new ThumbnailContentRequest(this.RequestUrl, this.Client, null);
+            return this.Request(null);
+        }
+        
+        /// <summary>
+        /// Builds the request.
+        /// </summary>
+        /// <param name="options">The query and header options for the request.</param>
+        /// <returns>The built request.</returns>
+        public IThumbnailContentRequest Request(IList<Option> options)
+        {
+            return new ThumbnailContentRequest(this.RequestUrl, this.Client, options);
         }
     }
 }

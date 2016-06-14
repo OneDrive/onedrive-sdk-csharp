@@ -73,6 +73,7 @@ namespace Test.OneDriveSdk.WinRT
             var cachedAccountSession = new AccountSession
             {
                 AccessToken = "token",
+                ExpiresOnUtc = DateTimeOffset.UtcNow.AddHours(1),
             };
 
             this.authenticationProvider.CurrentAccountSession = cachedAccountSession;
@@ -126,13 +127,19 @@ namespace Test.OneDriveSdk.WinRT
         [TestMethod]
         public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService()
         {
-            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(false);
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(false, false);
+        }
+
+        [TestMethod]
+        public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService_RefreshToken()
+        {
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(false, true);
         }
 
         [TestMethod]
         public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService_UserSignInNameSet()
         {
-            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(true);
+            await this.AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(true, false);
         }
 
         [TestMethod]
@@ -164,7 +171,7 @@ namespace Test.OneDriveSdk.WinRT
                 Assert.IsNotNull(exception.Error, "Error not set in exception.");
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code returned.");
                 Assert.AreEqual(
-                    string.Format("An error occurred during active directory authentication. Error: {0}. Description: {1}",
+                    string.Format("An error occurred during Azure Active Directory authentication. Error: {0}. Description: {1}",
                             authenticationResult.Error,
                             authenticationResult.ErrorDescription),
                     exception.Error.Message,
@@ -337,7 +344,7 @@ namespace Test.OneDriveSdk.WinRT
                 Assert.IsNotNull(exception.Error, "Error not set in exception.");
                 Assert.AreEqual(OneDriveErrorCode.AuthenticationFailure.ToString(), exception.Error.Code, "Unexpected error code returned.");
                 Assert.AreEqual(
-                    "An error occurred during active directory authentication.",
+                    "An error occurred during Azure Active Directory authentication.",
                     exception.Error.Message,
                     "Unexpected error message returned.");
 
@@ -451,7 +458,8 @@ namespace Test.OneDriveSdk.WinRT
         public async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService(
             IAuthenticationResult authenticationResult,
             MockAuthenticationContextWrapper.AuthenticationResultCallback authenticationResultCallback,
-            MockAuthenticationContextWrapper.AuthenticationResultSilentCallback authenticationResultSilentCallback)
+            MockAuthenticationContextWrapper.AuthenticationResultSilentCallback authenticationResultSilentCallback,
+            MockAuthenticationContextWrapper.AuthenticationResultByRefreshTokenCallback authenticationResultByRefreshTokenCallback)
         {
             this.serviceInfo.BaseUrl = "https://localhost";
             this.serviceInfo.ServiceResource = "https://resource/";
@@ -460,6 +468,7 @@ namespace Test.OneDriveSdk.WinRT
             {
                 AcquireTokenAsyncCallback = authenticationResultCallback,
                 AcquireTokenSilentAsyncCallback = authenticationResultSilentCallback,
+                AcquireTokenByRefreshTokenAsyncCallback = authenticationResultByRefreshTokenCallback,
             };
 
             var accountSession = await this.authenticationProvider.AuthenticateAsync();
@@ -646,7 +655,8 @@ namespace Test.OneDriveSdk.WinRT
                     }
 
                     return silentAuthenticationResult;
-                });
+                },
+                null);
         }
 
         public async Task AuthenticateAsync_AuthenticateWithDiscoveryService_Base(bool setUserSignInName)
@@ -695,10 +705,19 @@ namespace Test.OneDriveSdk.WinRT
                 });
         }
 
-        private async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(bool setUserSignInName)
+        private async Task AuthenticateAsync_AuthenticateWithoutDiscoveryService_Base(
+            bool setUserSignInName,
+            bool useRefreshToken)
         {
             this.serviceInfo.ServiceResource = "https://resource/";
             this.serviceInfo.BaseUrl = "https://localhost";
+
+            string refreshToken = "refresh";
+
+            if (useRefreshToken)
+            {
+                this.authenticationProvider.CurrentAccountSession = new AccountSession { RefreshToken = refreshToken };
+            }
 
             if (setUserSignInName)
             {
@@ -731,6 +750,19 @@ namespace Test.OneDriveSdk.WinRT
                 (string resource, string clientId, UserIdentifier userIdentifier) =>
                 {
                     throw new Exception();
+                },
+                (string token, string clientId, string resource) =>
+                {
+                    if (useRefreshToken)
+                    {
+                        Assert.AreEqual(refreshToken, token, "Unexpected refresh token.");
+                        Assert.AreEqual(this.serviceInfo.AppId, clientId, "Unexpected app ID.");
+                        Assert.AreEqual(this.serviceInfo.ServiceResource, resource, "Unexpected service resource.");
+
+                        return authenticationResult;
+                    }
+
+                    return null;
                 });
         }
 

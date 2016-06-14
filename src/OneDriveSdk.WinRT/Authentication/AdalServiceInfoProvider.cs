@@ -23,7 +23,6 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System.Threading.Tasks;
-    using Windows.Security.Authentication.Web;
 
     public class AdalServiceInfoProvider : ServiceInfoProvider
     {
@@ -65,12 +64,14 @@ namespace Microsoft.OneDrive.Sdk
 
             var serviceInfo = await base.GetServiceInfo(appConfig, null, httpProvider, clientType);
 
-            serviceInfo.BaseUrl = appConfig.ActiveDirectoryServiceEndpointUrl;
             serviceInfo.ServiceResource = appConfig.ActiveDirectoryServiceResource;
 
-            if (string.IsNullOrEmpty(serviceInfo.ReturnUrl))
+            if (string.IsNullOrEmpty(serviceInfo.BaseUrl) && !string.IsNullOrEmpty(serviceInfo.ServiceResource))
             {
-                serviceInfo.ReturnUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString();
+                serviceInfo.BaseUrl = string.Format(
+                    Constants.Authentication.OneDriveBusinessBaseUrlFormatString,
+                    serviceInfo.ServiceResource.TrimEnd('/'),
+                    "v2.0");
             }
 
             if (serviceInfo.AuthenticationProvider == null)

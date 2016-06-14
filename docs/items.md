@@ -8,6 +8,7 @@ The examples below assume that you have [Authenticated](/docs/auth.md) your app 
 * [Get an Item](#get-an-item)
 * [Delete an Item](#delete-an-item)
 * [Get Children for an Item](#get-children-for-an-item)
+* [Create a folder](#create-a-folder)
 * [Uploading contents](#uploading-contents)
 * [Downloading contents](#downloading-contents)
 * [Moving and updating an Item](#moving-and-updating-an-item)
@@ -66,6 +67,47 @@ await oneDriveClient
           .Request()
           .GetAsync();
 ```
+
+Create a folder
+-------------------------
+
+### 1. By POST to a known folder ID
+
+```csharp
+var folderToCreate = new Item { Folder = new Folder(), Name = "folder name" };
+var createdFolder = await oneDriveClient
+          .Drive
+          .Items[itemId]
+          .Children
+          .Request()
+          .AddAsync(folderToCreate);
+```
+
+### 2. By PUT to a known folder ID
+
+```csharp
+var folderToCreate = new Item { Folder = new Folder() };
+var createdFolder = await oneDriveClient
+          .Drive
+          .Items[itemId]
+          .ItemWithPath("folder name")
+          .Request()
+          .CreateAsync(folderToCreate);
+```
+
+### 3. By PUT with a given path
+
+```csharp
+var folderToCreate = new Item { Folder = new Folder() };
+var createdFolder = await oneDriveClient
+          .Drive
+          .Root
+          .ItemWithPath("folder/subfolder")
+          .Request()
+          .CreateAsync(folderToCreate);
+```
+
+Note: If the specified path does not exist, every folder name in the path will also be created.
 
 Uploading contents
 ------------------------------
