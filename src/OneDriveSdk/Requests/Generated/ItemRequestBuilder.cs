@@ -48,7 +48,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemRequest(this.RequestUrl, this.Client, options);
         }
-
+        
         /// <summary>
         /// Gets the request builder for Permissions.
         /// </summary>
@@ -117,7 +117,7 @@ namespace Microsoft.OneDrive.Sdk
             ChunkedUploadSessionDescriptor item = null)
         {
             return new ItemCreateSessionRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.upload.createSession"),
+                this.AppendSegmentToRequestUrl("oneDrive.createSession"),
                 this.Client,
                 item);
         }
@@ -131,7 +131,7 @@ namespace Microsoft.OneDrive.Sdk
             ItemReference parentReference = null)
         {
             return new ItemCopyRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.action.copy"),
+                this.AppendSegmentToRequestUrl("oneDrive.copy"),
                 this.Client,
                 name,
                 parentReference);
@@ -145,7 +145,7 @@ namespace Microsoft.OneDrive.Sdk
             string type)
         {
             return new ItemCreateLinkRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.action.createLink"),
+                this.AppendSegmentToRequestUrl("oneDrive.createLink"),
                 this.Client,
                 type);
         }
@@ -158,7 +158,7 @@ namespace Microsoft.OneDrive.Sdk
             string token = null)
         {
             return new ItemDeltaRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.view.delta"),
+                this.AppendSegmentToRequestUrl("oneDrive.delta"),
                 this.Client,
                 token);
         }
@@ -171,7 +171,7 @@ namespace Microsoft.OneDrive.Sdk
             string q = null)
         {
             return new ItemSearchRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.view.search"),
+                this.AppendSegmentToRequestUrl("oneDrive.search"),
                 this.Client,
                 q);
         }

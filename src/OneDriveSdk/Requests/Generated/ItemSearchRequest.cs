@@ -69,7 +69,7 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-
+    
                 return response.Value;
             }
 

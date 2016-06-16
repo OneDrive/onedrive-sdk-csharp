@@ -9,7 +9,7 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System.Collections.Generic;
     using System.Runtime.Serialization;
-    
+
     using Microsoft.Graph;
     using Newtonsoft.Json;
 
@@ -34,7 +34,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Gets or sets the DeltaLink.
         /// </summary>
-        [DataMember(Name = "@odata.deltaLink", EmitDefaultValue = false, IsRequired = false)]
+        [DataMember(Name = "@delta.deltaLink", EmitDefaultValue = false, IsRequired = false)]
         public string DeltaLink { get; set; }
         
         /// <summary>

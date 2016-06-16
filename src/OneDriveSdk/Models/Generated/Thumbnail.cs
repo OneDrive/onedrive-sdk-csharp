@@ -11,7 +11,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.Serialization;
-    
+
     using Microsoft.Graph;
     using Newtonsoft.Json;
 
@@ -55,4 +55,3 @@ namespace Microsoft.OneDrive.Sdk
     
     }
 }
-

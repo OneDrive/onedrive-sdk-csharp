@@ -21,12 +21,5 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <returns>The built request.</returns>
         IThumbnailContentRequest Request();
-        
-        /// <summary>
-        /// Builds the request.
-        /// </summary>
-        /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        IThumbnailContentRequest Request(IList<Option> options);
     }
 }

@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿// ------------------------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
+// ------------------------------------------------------------------------------
 
 namespace OneDriveSamples.Picker
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+
     using Microsoft.Graph;
     using Microsoft.OneDrive.Sdk;
 
@@ -138,10 +142,10 @@ namespace OneDriveSamples.Picker
             var scopes = multiSelect ? "onedrive_onetime.access:readfile|multi" : "onedrive_onetime.access:readfile|single";
 
             Dictionary<string, string> urlParam = new Dictionary<string,string>();
-            urlParam.Add(Constants.Authentication.ClientIdKeyName, clientId);
-            urlParam.Add(Constants.Authentication.ScopeKeyName, scopes);
-            urlParam.Add(Constants.Authentication.RedirectUriKeyName, msaDesktopUrl);
-            urlParam.Add(Constants.Authentication.ResponseTypeKeyName, "token");
+            urlParam.Add("client_id", clientId);
+            urlParam.Add("scope", scopes);
+            urlParam.Add("redirect_uri", msaDesktopUrl);
+            urlParam.Add("response_type", "token");
 
             startUrl = BuildUriWithParameters(msaAuthUrl, urlParam);
             completeUrl = msaDesktopUrl;
@@ -173,7 +177,7 @@ namespace OneDriveSamples.Picker
         {
             Console.WriteLine(resultUri.ToString());
             string[] queryParams = null;
-            int accessTokenIndex = resultUri.AbsoluteUri.IndexOf("#" + Constants.Authentication.AccessTokenKeyName);
+            int accessTokenIndex = resultUri.AbsoluteUri.IndexOf("#access_token");
             if (accessTokenIndex > 0)
             {
                 queryParams = resultUri.AbsoluteUri.Substring(accessTokenIndex + 1).Split('&');
@@ -189,24 +193,24 @@ namespace OneDriveSamples.Picker
                 string[] kvp = param.Split('=');
                 switch (kvp[0])
                 {
-                    case Constants.Authentication.AccessTokenKeyName:
+                    case "access_token":
                         this.AccessToken = kvp[1];
                         break;
-                    case Constants.Authentication.TokenTypeKeyName:
+                    case "token_type":
                         this.TokenType = kvp[1];
                         break;
-                    case Constants.Authentication.ExpiresInKeyName:
+                    case "expires_in":
                         this.AccessTokenExpiresIn = new TimeSpan(0, 0, int.Parse(kvp[1]));
                         break;
-                    case Constants.Authentication.ScopeKeyName:
+                    case "scope":
                         var scopeValues = kvp[1].Split(new string[] {":"}, StringSplitOptions.RemoveEmptyEntries);
                         this.SelectionId = scopeValues[2].Replace('_', '.');
                         break;
 
-                    case Constants.Authentication.ErrorKeyName:
+                    case "error":
                         this.ErrorCode = kvp[1];
                         break;
-                    case Constants.Authentication.ErrorDescriptionKeyName:
+                    case "error_description":
                         this.ErrorDescription = Uri.UnescapeDataString(kvp[1]);
                         break;
                 }

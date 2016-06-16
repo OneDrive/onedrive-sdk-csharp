@@ -37,7 +37,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the GET request.
         /// </summary>
-        public Task<Item> GetAsync()
+        public Task<IItemDeltaCollectionPage> GetAsync()
         {
             return this.GetAsync(CancellationToken.None);
         }
@@ -46,11 +46,38 @@ namespace Microsoft.OneDrive.Sdk
         /// Issues the GET request.
         /// </summary>
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>TheDeltaResponse</returns>
-        public Task<Item> GetAsync(CancellationToken cancellationToken)
+        /// <returns>TheIItemDeltaCollectionPage</returns>
+        public async Task<IItemDeltaCollectionPage> GetAsync(CancellationToken cancellationToken)
         {
     
-            return this.SendAsync<Item>(null, cancellationToken);
+            var response = await this.SendAsync<ItemDeltaCollectionResponse>(null, cancellationToken).ConfigureAwait(false);
+            if (response != null && response.Value != null && response.Value.CurrentPage != null)
+            {
+                if (response.AdditionalData != null)
+                {
+                    response.Value.AdditionalData = response.AdditionalData;
+                    
+                    object nextPageLink;
+                    response.AdditionalData.TryGetValue("@odata.nextLink", out nextPageLink);
+
+                    var nextPageLinkString = nextPageLink as string;
+
+                    if (!string.IsNullOrEmpty(nextPageLinkString))
+                    {
+                        response.Value.InitializeNextPageRequest(
+                            this.Client,
+                            nextPageLinkString);
+                    }
+                }
+    
+               response.Value.Token = response.Token;
+    
+               response.Value.DeltaLink = response.DeltaLink;
+    
+                return response.Value;
+            }
+
+            return null;
     
         }
     
@@ -73,6 +100,50 @@ namespace Microsoft.OneDrive.Sdk
         public IItemDeltaRequest Select(string value)
         {
             this.QueryOptions.Add(new QueryOption("$select", value));
+            return this;
+        }
+    
+        /// <summary>
+        /// Adds the specified top value to the request.
+        /// </summary>
+        /// <param name="value">The top value.</param>
+        /// <returns>The request object to send.</returns>
+        public IItemDeltaRequest Top(int value)
+        {
+            this.QueryOptions.Add(new QueryOption("$top", value.ToString()));
+            return this;
+        }
+		
+        /// <summary>
+        /// Adds the specified filter value to the request.
+        /// </summary>
+        /// <param name="value">The filter value.</param>
+        /// <returns>The request object to send.</returns>
+        public IItemDeltaRequest Filter(string value)
+        {
+            this.QueryOptions.Add(new QueryOption("$filter", value));
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the specified skip value to the request.
+        /// </summary>
+        /// <param name="value">The skip value.</param>
+        /// <returns>The request object to send.</returns>
+        public IItemDeltaRequest Skip(int value)
+        {
+            this.QueryOptions.Add(new QueryOption("$skip", value.ToString()));
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the specified orderby value to the request.
+        /// </summary>
+        /// <param name="value">The orderby value.</param>
+        /// <returns>The request object to send.</returns>
+        public IItemDeltaRequest OrderBy(string value)
+        {
+            this.QueryOptions.Add(new QueryOption("$orderby", value));
             return this;
         }
     

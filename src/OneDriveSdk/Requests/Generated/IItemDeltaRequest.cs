@@ -25,14 +25,14 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the GET request.
         /// </summary>
-        Task<Item> GetAsync();
+        Task<IItemDeltaCollectionPage> GetAsync();
 
         /// <summary>
         /// Issues the GET request.
         /// </summary>
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>TheDeltaResponse</returns>
-        Task<Item> GetAsync(CancellationToken cancellationToken);
+        /// <returns>TheIItemDeltaCollectionPage</returns>
+        Task<IItemDeltaCollectionPage> GetAsync(CancellationToken cancellationToken);
             
         /// <summary>
         /// Adds the specified expand value to the request.
@@ -47,6 +47,34 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The select value.</param>
         /// <returns>The request object to send.</returns>
         IItemDeltaRequest Select(string value);
+    
+        /// <summary>
+        /// Adds the specified top value to the request.
+        /// </summary>
+        /// <param name="value">The top value.</param>
+        /// <returns>The request object to send.</returns>
+        IItemDeltaRequest Top(int value);
+        
+        /// <summary>
+        /// Adds the specified filter value to the request.
+        /// </summary>
+        /// <param name="value">The filter value.</param>
+        /// <returns>The request object to send.</returns>
+        IItemDeltaRequest Filter(string value);
+
+        /// <summary>
+        /// Adds the specified skip value to the request.
+        /// </summary>
+        /// <param name="value">The skip value.</param>
+        /// <returns>The request object to send.</returns>
+        IItemDeltaRequest Skip(int value);
+
+        /// <summary>
+        /// Adds the specified orderby value to the request.
+        /// </summary>
+        /// <param name="value">The orderby value.</param>
+        /// <returns>The request object to send.</returns>
+        IItemDeltaRequest OrderBy(string value);
     
     }
 }

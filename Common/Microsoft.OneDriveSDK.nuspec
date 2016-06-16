@@ -17,32 +17,11 @@
       <group>
         <dependency id="Newtonsoft.Json" version="6.0.2" />
       </group>
-      <group targetFramework="net451">
-        <dependency id="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.21.301221612" />
-        <dependency id="Newtonsoft.Json" version="6.0.2" />
-      </group>
-      <group targetFramework="win81">
-        <dependency id="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.21.301221612" />
-        <dependency id="Newtonsoft.Json" version="6.0.2" />
-      </group>
     </dependencies>
 
   </metadata>
-  <files>
-    <!-- PCL projects -->
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-net45+netcore45+wpa81+win8\OneDriveSdk.dll" />         
-
-    <!-- Standard .NET projects, like Windows Forms or ASP.NET -->  
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\net451\OneDriveSdk.dll" />  
-    <file src="..\src\OneDriveSdk.WindowsForms\bin\Release\OneDriveSdk.WindowsForms.dll" target="lib\net451\OneDriveSdk.WindowsForms.dll" />  
-
-    <!-- Windows Phone 8.1 -->
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-win81+wpa81\OneDriveSdk.dll" />  
-    <file src="..\src\OneDriveSdk.WinStore\bin\Release\OneDriveSdk.WinStore.dll" target="lib\portable-win81+wpa81\OneDriveSdk.WinStore.dll" />  
-
-    <!-- Windows 8.1 -->
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\win81\OneDriveSdk.dll" />  
-    <file src="..\src\OneDriveSdk.WinRT\bin\Release\OneDriveSdk.WinRT.dll" target="lib\win81\OneDriveSdk.WinRT.dll" />
-    <file src="..\src\OneDriveSdk.WinStore\bin\Release\OneDriveSdk.WinStore.dll" target="lib\win81\OneDriveSdk.WinStore.dll" />  
-  </files>
+    <files>
+        <!-- PCL projects -->
+        <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-net45+netcore45+wpa81+win8\OneDriveSdk.dll" />
+    </files>
 </package>

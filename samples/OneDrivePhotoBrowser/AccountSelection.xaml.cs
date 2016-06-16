@@ -1,23 +1,5 @@
 ﻿// ------------------------------------------------------------------------------
-//  Copyright (c) 2015 Microsoft Corporation
-// 
-//  Permission is hereby granted, free of charge, to any person obtaining a copy
-//  of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//  copies of the Software, and to permit persons to whom the Software is
-//  furnished to do so, subject to the following conditions:
-// 
-//  The above copyright notice and this permission notice shall be included in
-//  all copies or substantial portions of the Software.
-// 
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//  THE SOFTWARE.
+//  Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -28,7 +10,6 @@ namespace OneDrivePhotoBrowser
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using System.Diagnostics;
 
     using Microsoft.Graph;
     using Microsoft.IdentityModel.Clients.ActiveDirectory;
@@ -46,10 +27,10 @@ namespace OneDrivePhotoBrowser
 
         // Set these values to your app's ID and return URL.
         private const string AadAuthenticationEndpoint = "https://login.microsoftonline.com/";
-        private const string AadClientId = "5a51bad1-557c-42d0-9b12-72eff58ba798";
-        private const string AadResource = "https://ginach-my.sharepoint.com/";
-        private const string AadTenantId = "5f09b637-8b81-4912-b800-3260b3b1437d";
-        private const string AadReturnUrl = "https://localhost:777";
+        private const string AadClientId = "client id";
+        private const string AadResource = "resource";
+        private const string AadTenantId = "tenant id";
+        private const string AadReturnUrl = "return url";
 
         public AccountSelection()
         {

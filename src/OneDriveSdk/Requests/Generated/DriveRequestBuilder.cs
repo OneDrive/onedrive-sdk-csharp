@@ -84,7 +84,7 @@ namespace Microsoft.OneDrive.Sdk
                 return new DriveSpecialCollectionRequestBuilder(this.AppendSegmentToRequestUrl("special"), this.Client);
             }
         }
-    
+        
         /// <summary>
         /// Gets the request builder for DriveRecent.
         /// </summary>
@@ -92,7 +92,7 @@ namespace Microsoft.OneDrive.Sdk
         public IDriveRecentRequestBuilder Recent()
         {
             return new DriveRecentRequestBuilder(
-                this.AppendSegmentToRequestUrl("view.recent"),
+                this.AppendSegmentToRequestUrl("oneDrive.recent"),
                 this.Client);
         }
     

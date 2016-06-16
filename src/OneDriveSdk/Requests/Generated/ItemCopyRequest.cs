@@ -34,6 +34,7 @@ namespace Microsoft.OneDrive.Sdk
             : base(requestUrl, client, options)
         {
             this.Method = "POST";
+            this.Headers.Add(new HeaderOption("Prefer", "respond-async"));
             this.ContentType = "application/json";
             this.RequestBody = new ItemCopyRequestBody();
             this.RequestBody.Name = name;
@@ -48,7 +49,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        public Task<Item> PostAsync()
+        public Task<IItemCopyAsyncMonitor> PostAsync()
         {
             return this.PostAsync(CancellationToken.None);
         }
@@ -57,11 +58,13 @@ namespace Microsoft.OneDrive.Sdk
         /// Issues the POST request.
         /// </summary>
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>TheItem</returns>
-        public Task<Item> PostAsync(CancellationToken cancellationToken)
+        /// <returns>TheIItemCopyAsyncMonitor</returns>
+        public async Task<IItemCopyAsyncMonitor> PostAsync(CancellationToken cancellationToken)
         {
-    
-            return this.SendAsync<Item>(this.RequestBody, cancellationToken);
+                using (var response = await this.SendRequestAsync(this.RequestBody, cancellationToken).ConfigureAwait(false))
+            {
+                return new ItemCopyAsyncMonitor(this.Client, response.Headers.Location.ToString());
+            }
     
         }
     
