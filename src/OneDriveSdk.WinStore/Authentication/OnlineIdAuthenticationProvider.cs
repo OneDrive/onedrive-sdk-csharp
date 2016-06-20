@@ -97,6 +97,10 @@ namespace Microsoft.OneDrive.Sdk
 
                 return accountSession;
             }
+            catch (TaskCanceledException taskCanceledException)
+            {
+                throw new OneDriveException(new Error { Code = OneDriveErrorCode.AuthenticationCancelled.ToString(), Message = "Authentication was canceled." }, taskCanceledException);
+            }
             catch (Exception exception)
             {
                 throw new OneDriveException(new Error { Code = OneDriveErrorCode.AuthenticationFailure.ToString(), Message = exception.Message }, exception);
