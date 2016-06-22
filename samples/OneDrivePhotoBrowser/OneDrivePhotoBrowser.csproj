@@ -143,9 +143,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\OneDriveSdk\OneDriveSdk.csproj">
+    <ProjectReference Include="..\..\src\OneDriveSdk\Microsoft.OneDrive.Sdk.csproj">
       <Project>{1368527b-d7b2-46ad-893d-6dc8c073d819}</Project>
-      <Name>OneDriveSdk</Name>
+      <Name>Microsoft.OneDrive.Sdk</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

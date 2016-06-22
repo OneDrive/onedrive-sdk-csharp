@@ -8,14 +8,11 @@ namespace Microsoft.OneDrive.Sdk
     {
         AccessDenied,
         ActivityLimitReached,
-        AuthenticationCancelled,
-        AuthenticationFailure,
         GeneralException,
         InvalidRange,
         InvalidRequest,
         ItemNotFound,
         MalwareDetected,
-        MyFilesCapabilityNotFound,
         NameAlreadyExists,
         NotAllowed,
         NotSupported,
@@ -26,6 +23,5 @@ namespace Microsoft.OneDrive.Sdk
         TooManyRedirects,
         QuotaLimitReached,
         Unauthenticated,
-        UserDoesNotHaveMyFilesService,
     }
 }

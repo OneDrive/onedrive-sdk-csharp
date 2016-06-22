@@ -17,10 +17,9 @@ namespace OneDriveApiBrowser
 
     public partial class FormBrowser : Form
     {
-        private const string AadAuthenticationEndpoint = "https://login.microsoftonline.com/";
+        private const string AadAuthenticationEndpoint = "https://login.microsoftonline.com/common";
         private const string AadClientId = "client id";
         private const string AadResource = "resource";
-        private const string AadTenantId = "tenant id";
         private const string AadReturnUrl = "return url";
 
         private const string MsaClientId = "Insert your MSA client ID here";
@@ -276,7 +275,7 @@ namespace OneDriveApiBrowser
             if (this.authenticationContext == null)
             {
                 this.authenticationContext = new AuthenticationContext(
-                    string.Concat(FormBrowser.AadAuthenticationEndpoint, FormBrowser.AadTenantId),
+                    FormBrowser.AadAuthenticationEndpoint,
                     false);
             }
 
@@ -315,7 +314,8 @@ namespace OneDriveApiBrowser
                 FormBrowser.AadResource,
                 FormBrowser.AadClientId,
                 new Uri(FormBrowser.AadReturnUrl),
-                PromptBehavior.Auto);
+                PromptBehavior.Always);
+
 
             return authenticationResult;
         }
@@ -343,25 +343,9 @@ namespace OneDriveApiBrowser
             }
             catch (ServiceException exception)
             {
-                // Swallow authentication cancelled exceptions, but reset the client
-                if (!exception.IsMatch(OneDriveErrorCode.AuthenticationCancelled.ToString()))
-                {
-                    if (exception.IsMatch(OneDriveErrorCode.AuthenticationFailure.ToString()))
-                    {
-                        MessageBox.Show(
-                            "Authentication failed",
-                            "Authentication failed",
-                            MessageBoxButtons.OK);
+                PresentServiceException(exception);
 
-                        this.oneDriveClient.HttpProvider.Dispose();
-                        this.oneDriveClient = null;
-                    }
-                    else
-                    {
-                        PresentServiceException(exception);
-                    }
-                }
-                else
+                if (this.oneDriveClient != null)
                 {
                     this.oneDriveClient.HttpProvider.Dispose();
                     this.oneDriveClient = null;

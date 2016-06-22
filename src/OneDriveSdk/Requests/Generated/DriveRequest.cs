@@ -33,6 +33,7 @@ namespace Microsoft.OneDrive.Sdk
             IEnumerable<Option> options)
             : base(requestUrl, client, options)
         {
+            this.SdkVersionHeaderPrefix = "onedrive";
         }
 
         /// <summary>

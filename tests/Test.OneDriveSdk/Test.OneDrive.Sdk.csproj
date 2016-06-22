@@ -6,8 +6,8 @@
     <ProjectGuid>{E3A990AA-5628-42AA-A8D4-1C599602DD96}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Test.OneDriveSdk</RootNamespace>
-    <AssemblyName>Test.OneDriveSdk</AssemblyName>
+    <RootNamespace>Test.OneDrive.Sdk</RootNamespace>
+    <AssemblyName>Test.OneDrive.Sdk</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -77,9 +77,9 @@
     <Compile Include="Requests\ThumbnailRequestTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\OneDriveSdk\OneDriveSdk.csproj">
+    <ProjectReference Include="..\..\src\OneDriveSdk\Microsoft.OneDrive.Sdk.csproj">
       <Project>{1368527b-d7b2-46ad-893d-6dc8c073d819}</Project>
-      <Name>OneDriveSdk</Name>
+      <Name>Microsoft.OneDrive.Sdk</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

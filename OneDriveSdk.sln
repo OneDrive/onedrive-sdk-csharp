@@ -14,11 +14,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneDrivePhotoBrowser", "sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneDriveApiBrowser", "samples\OneDriveApiBrowser\OneDriveApiBrowser.csproj", "{38C1F7A3-2A83-4686-A9F9-811520B1A0A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneDriveSdk", "src\OneDriveSdk\OneDriveSdk.csproj", "{1368527B-D7B2-46AD-893D-6DC8C073D819}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.OneDrive.Sdk", "src\OneDriveSdk\Microsoft.OneDrive.Sdk.csproj", "{1368527B-D7B2-46AD-893D-6DC8C073D819}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{369050EF-15AF-4B0E-98DF-085B91E1B68D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.OneDriveSdk", "tests\Test.OneDriveSdk\Test.OneDriveSdk.csproj", "{E3A990AA-5628-42AA-A8D4-1C599602DD96}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.OneDrive.Sdk", "tests\Test.OneDriveSdk\Test.OneDrive.Sdk.csproj", "{E3A990AA-5628-42AA-A8D4-1C599602DD96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
