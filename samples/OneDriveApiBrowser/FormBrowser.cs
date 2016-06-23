@@ -13,19 +13,20 @@ namespace OneDriveApiBrowser
 
     using Microsoft.Graph;
     using Microsoft.OneDrive.Sdk;
+    using Microsoft.OneDrive.Sdk.Authentication;
     using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
     public partial class FormBrowser : Form
     {
         private const string AadAuthenticationEndpoint = "https://login.microsoftonline.com/common";
-        private const string AadClientId = "client id";
-        private const string AadResource = "resource";
-        private const string AadReturnUrl = "return url";
+        private const string AadClientId = "Insert your AAD app ID here";
+        private const string AadResource = "Insert your AAD service resource ID here";
+        private const string AadReturnUrl = "Insert your AAD return URL here";
 
-        private const string MsaClientId = "Insert your MSA client ID here";
+        private const string MsaClientId = "Insert your MSA app ID here";
         private const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
 
-        private static readonly string[] Scopes = { "onedrive.readwrite", "wl.signin" };
+        private static readonly string[] Scopes = { "onedrive.readwrite", "offline_access" };
 
         private const int UploadChunkSize = 10 * 1024 * 1024;       // 10 MB
 
@@ -33,7 +34,7 @@ namespace OneDriveApiBrowser
 
         private AuthenticationContext authenticationContext { get; set; }
 
-        private DelegateAuthenticationProvider authenticationProvider { get; set; }
+        private IAuthenticationProvider authenticationProvider { get; set; }
 
         private IOneDriveClient oneDriveClient { get; set; }
 
@@ -279,7 +280,7 @@ namespace OneDriveApiBrowser
                     false);
             }
 
-            var authenticationResult = await this.AuthenticateUserAsync();
+            var authenticationResult = await this.AuthenticateBusinessUserAsync();
 
             this.authenticationProvider = new DelegateAuthenticationProvider(
                 async (HttpRequestMessage requestMessage) =>
@@ -292,7 +293,7 @@ namespace OneDriveApiBrowser
             await this.SignIn();
         }
 
-        private async Task<AuthenticationResult> AuthenticateUserAsync()
+        private async Task<AuthenticationResult> AuthenticateBusinessUserAsync()
         {
             AuthenticationResult authenticationResult = null;
 
@@ -322,8 +323,25 @@ namespace OneDriveApiBrowser
 
         private async void signInMsaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.isBusiness = false;
-            await this.SignIn();
+            try
+            {
+                this.isBusiness = false;
+
+                var msaAuthenticationProvider = new MsaAuthenticationProvider(
+                    MsaClientId,
+                    MsaReturnUrl,
+                    Scopes);
+
+                await msaAuthenticationProvider.AuthenticateUserAsync();
+
+                this.authenticationProvider = msaAuthenticationProvider;
+
+                await this.SignIn();
+            }
+            catch (Exception exception)
+            {
+                PresentServiceException(exception);
+            }
         }
 
         private async Task SignIn()
@@ -353,11 +371,17 @@ namespace OneDriveApiBrowser
             }
         }
 
-        private void signOutToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void signOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (this.authenticationContext != null)
             {
                 this.authenticationContext.TokenCache.Clear();
+            }
+
+            var msaAuthenticationProvider = this.authenticationProvider as MsaAuthenticationProvider;
+            if (msaAuthenticationProvider != null)
+            {
+                await msaAuthenticationProvider.SignOutAsync();
             }
 
             if (this.oneDriveClient != null)

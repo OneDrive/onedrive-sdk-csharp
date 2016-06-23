@@ -31,21 +31,21 @@ namespace Microsoft.OneDrive.Sdk
             {
                 using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, this.monitorUrl))
                 {
-                    await this.client.AuthenticationProvider.AuthenticateRequestAsync(httpRequestMessage);
+                    await this.client.AuthenticationProvider.AuthenticateRequestAsync(httpRequestMessage).ConfigureAwait(false);
 
-                    using (var responseMessage = await this.client.HttpProvider.SendAsync(httpRequestMessage))
+                    using (var responseMessage = await this.client.HttpProvider.SendAsync(httpRequestMessage).ConfigureAwait(false))
                     {
                         // The monitor service will return an Accepted status for any monitor operation that hasn't completed.
                         // If we have a success code that isn't Accepted, the operation is complete. Return the resulting object.
                         if (responseMessage.StatusCode != HttpStatusCode.Accepted && responseMessage.IsSuccessStatusCode)
                         {
-                            using (var responseStream = await responseMessage.Content.ReadAsStreamAsync())
+                            using (var responseStream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false))
                             {
                                 return this.client.HttpProvider.Serializer.DeserializeObject<T>(responseStream);
                             }
                         }
 
-                        using (var responseStream = await responseMessage.Content.ReadAsStreamAsync())
+                        using (var responseStream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false))
                         {
                             this.asyncOperationStatus = this.client.HttpProvider.Serializer.DeserializeObject<AsyncOperationStatus>(responseStream);
 
@@ -89,7 +89,7 @@ namespace Microsoft.OneDrive.Sdk
                     }
                 }
 
-                await Task.Delay(Constants.PollingIntervalInMs, cancellationToken);
+                await Task.Delay(Constants.PollingIntervalInMs, cancellationToken).ConfigureAwait(false);
             }
             
             return default(T);
