@@ -152,6 +152,9 @@
     <Reference Include="Microsoft.Graph.Core">
       <HintPath>..\..\src\OneDriveSdk\Microsoft.Graph.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.OneDrive.Sdk.Authentication.WinRT">
+      <HintPath>.\Microsoft.OneDrive.Sdk.Authentication.WinRT.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.OneDrive.Sdk.Authentication.WinStore">
       <HintPath>.\Microsoft.OneDrive.Sdk.Authentication.WinStore.dll</HintPath>
     </Reference>

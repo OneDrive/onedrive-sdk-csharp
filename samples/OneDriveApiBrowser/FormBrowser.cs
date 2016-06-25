@@ -12,13 +12,12 @@ namespace OneDriveApiBrowser
     using System.Windows.Forms;
 
     using Microsoft.Graph;
+    using Microsoft.IdentityModel.Clients.ActiveDirectory;
     using Microsoft.OneDrive.Sdk;
     using Microsoft.OneDrive.Sdk.Authentication;
-    using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
     public partial class FormBrowser : Form
     {
-        private const string AadAuthenticationEndpoint = "https://login.microsoftonline.com/common";
         private const string AadClientId = "Insert your AAD app ID here";
         private const string AadResource = "Insert your AAD service resource ID here";
         private const string AadReturnUrl = "Insert your AAD return URL here";
@@ -26,13 +25,9 @@ namespace OneDriveApiBrowser
         private const string MsaClientId = "Insert your MSA app ID here";
         private const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
 
-        private static readonly string[] Scopes = { "onedrive.readwrite", "offline_access" };
+        private static readonly string[] Scopes = { "onedrive.readwrite" };
 
         private const int UploadChunkSize = 10 * 1024 * 1024;       // 10 MB
-
-        private bool isBusiness;
-
-        private AuthenticationContext authenticationContext { get; set; }
 
         private IAuthenticationProvider authenticationProvider { get; set; }
 
@@ -271,62 +266,20 @@ namespace OneDriveApiBrowser
 
         private async void signInAadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.isBusiness = true;
+            this.authenticationProvider = new AdalAuthenticationProvider(FormBrowser.AadClientId, FormBrowser.AadReturnUrl);
 
-            if (this.authenticationContext == null)
-            {
-                this.authenticationContext = new AuthenticationContext(
-                    FormBrowser.AadAuthenticationEndpoint,
-                    false);
-            }
+            var discoveryServiceHelper = new DiscoveryServiceHelper((AdalAuthenticationProvider)this.authenticationProvider);
+            var userInfo = await discoveryServiceHelper.DiscoverFilesEndpointForUserAsync();
+            
+            await ((AdalAuthenticationProvider)this.authenticationProvider).AuthenticateUserAsync(userInfo.ServiceResourceId);
 
-            var authenticationResult = await this.AuthenticateBusinessUserAsync();
-
-            this.authenticationProvider = new DelegateAuthenticationProvider(
-                async (HttpRequestMessage requestMessage) =>
-                {
-                    var silentAuthenticationResult = await this.authenticationContext.AcquireTokenSilentAsync(FormBrowser.AadResource, FormBrowser.AadClientId);
-
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue(silentAuthenticationResult.AccessTokenType, silentAuthenticationResult.AccessToken);
-                });
-
-            await this.SignIn();
-        }
-
-        private async Task<AuthenticationResult> AuthenticateBusinessUserAsync()
-        {
-            AuthenticationResult authenticationResult = null;
-
-            try
-            {
-                authenticationResult = await this.authenticationContext.AcquireTokenSilentAsync(FormBrowser.AadResource, FormBrowser.AadClientId);
-            }
-            catch (Exception)
-            {
-                // If an exception happens during silent authentication try interactive authentication.
-            }
-
-            if (authenticationResult != null)
-            {
-                return authenticationResult;
-            }
-
-            authenticationResult = this.authenticationContext.AcquireToken(
-                FormBrowser.AadResource,
-                FormBrowser.AadClientId,
-                new Uri(FormBrowser.AadReturnUrl),
-                PromptBehavior.Always);
-
-
-            return authenticationResult;
+            await this.SignIn(userInfo);
         }
 
         private async void signInMsaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
-                this.isBusiness = false;
-
                 var msaAuthenticationProvider = new MsaAuthenticationProvider(
                     MsaClientId,
                     MsaReturnUrl,
@@ -344,11 +297,11 @@ namespace OneDriveApiBrowser
             }
         }
 
-        private async Task SignIn()
+        private async Task SignIn(BusinessServiceInfo userInfo = null)
         {
             if (this.oneDriveClient == null)
             {
-                string baseUrl = this.isBusiness ? string.Format("{0}_api/v2.0", FormBrowser.AadResource) : "https://api.onedrive.com/v1.0";
+                string baseUrl = userInfo == null ? "https://api.onedrive.com/v1.0" : userInfo.ServiceEndpointBaseUrl;
 
                 this.oneDriveClient = new OneDriveClient(baseUrl, this.authenticationProvider);
             }
@@ -373,13 +326,14 @@ namespace OneDriveApiBrowser
 
         private async void signOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.authenticationContext != null)
-            {
-                this.authenticationContext.TokenCache.Clear();
-            }
-
+            var adalAuthenticationProvider = this.authenticationProvider as AdalAuthenticationProvider;
             var msaAuthenticationProvider = this.authenticationProvider as MsaAuthenticationProvider;
-            if (msaAuthenticationProvider != null)
+
+            if (adalAuthenticationProvider != null)
+            {
+                adalAuthenticationProvider.SignOut();
+            }
+            else if (msaAuthenticationProvider != null)
             {
                 await msaAuthenticationProvider.SignOutAsync();
             }

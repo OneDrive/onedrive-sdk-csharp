@@ -28,8 +28,6 @@ namespace OneDrivePhotoBrowser
 
         public List<ItemModel> NavigationStack { get; set; }
 
-        public AuthenticationContext AuthenticationContext { get; set; }
-
         public IAuthenticationProvider AuthenticationProvider { get; set; }
 
         public IOneDriveClient OneDriveClient { get; set; }

@@ -14,6 +14,7 @@ namespace OneDrivePhotoBrowser
     using Microsoft.Graph;
     using Microsoft.IdentityModel.Clients.ActiveDirectory;
     using Microsoft.OneDrive.Sdk;
+    using Microsoft.OneDrive.Sdk.Authentication;
     using Models;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -23,14 +24,14 @@ namespace OneDrivePhotoBrowser
     /// </summary>
     public sealed partial class AccountSelection : Page
     {
-        private readonly string[] scopes = new string[] { "onedrive.readonly", "wl.signin" };
+        private readonly string[] scopes = new string[] { "onedrive.readonly" };
 
-        // Set these values to your app's ID and return URL.
-        private const string AadAuthenticationEndpoint = "https://login.microsoftonline.com/";
-        private const string AadClientId = "client id";
-        private const string AadResource = "resource";
-        private const string AadTenantId = "tenant id";
-        private const string AadReturnUrl = "return url";
+        private const string AadClientId = "Insert your AAD app ID here";
+        private const string AadResource = "Insert your AAD service resource ID here";
+        private const string AadReturnUrl = "Insert your AAD return URL here";
+
+        private const string MsaClientId = "Insert your MSA app ID here";
+        private const string MsaReturnUrl = "https://login.live.com/oauth20_desktop.srf";
 
         public AccountSelection()
         {
@@ -38,13 +39,20 @@ namespace OneDrivePhotoBrowser
             this.Loaded += AccountSelection_Loaded;
         }
 
-        private void AccountSelection_Loaded(object sender, RoutedEventArgs e)
+        private async void AccountSelection_Loaded(object sender, RoutedEventArgs e)
         {
-            var authenticationContext = ((App)Application.Current).AuthenticationContext;
-            if (authenticationContext != null)
+            var adalAuthenticationProvider = ((App)Application.Current).AuthenticationProvider as AdalAuthenticationProvider;
+            var msaAuthenticationProvider = ((App)Application.Current).AuthenticationProvider as MsaAuthenticationProvider;
+            if (adalAuthenticationProvider != null)
             {
-                authenticationContext.TokenCache.Clear();
+                adalAuthenticationProvider.SignOut();
             }
+            else if (msaAuthenticationProvider != null)
+            {
+                await msaAuthenticationProvider.SignOutAsync();
+            }
+
+            ((App)Application.Current).AuthenticationProvider = null;
 
             var client = ((App)Application.Current).OneDriveClient;
             if (client != null)
@@ -53,58 +61,38 @@ namespace OneDrivePhotoBrowser
 
                 ((App)Application.Current).OneDriveClient = null;
             }
-
-            // Don't show AAD login if the required AAD auth values aren't set
-            if (string.IsNullOrEmpty(AccountSelection.AadClientId) ||
-                string.IsNullOrEmpty(AccountSelection.AadReturnUrl) ||
-                string.IsNullOrEmpty(AccountSelection.AadResource) ||
-                string.IsNullOrEmpty(AccountSelection.AadTenantId))
-            {
-                AadButton.Visibility = Visibility.Collapsed;
-            }
         }
 
         private async void AadButton_Click(object sender, RoutedEventArgs e)
         {
-            var authenticationContext = ((App)Application.Current).AuthenticationContext;
-            if (authenticationContext == null)
-            {
-                authenticationContext = new AuthenticationContext(
-                    string.Concat(AccountSelection.AadAuthenticationEndpoint, AccountSelection.AadTenantId),
-                    false);
+            var adalAuthenticationProvider = new AdalAuthenticationProvider(AccountSelection.AadClientId, AccountSelection.AadReturnUrl);
 
-                authenticationContext.TokenCache.Clear();
+            var discoveryServiceHelper = new DiscoveryServiceHelper(adalAuthenticationProvider);
+            var userInfo = await discoveryServiceHelper.DiscoverFilesEndpointForUserAsync();
 
-                ((App)Application.Current).AuthenticationContext = authenticationContext;
-            }
+            await adalAuthenticationProvider.AuthenticateUserAsync(userInfo.ServiceResourceId);
 
-            var authenticationResult = await this.AuthenticateUserAsync();
+            ((App)Application.Current).AuthenticationProvider = adalAuthenticationProvider;
 
-            ((App)Application.Current).AuthenticationProvider = new DelegateAuthenticationProvider(
-                async (HttpRequestMessage requestMessage) =>
-                {
-                    var silentAuthenticationResult = await authenticationContext.AcquireTokenSilentAsync(
-                        AccountSelection.AadResource,
-                        AccountSelection.AadClientId);
-
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue(
-                        silentAuthenticationResult.AccessTokenType,
-                        silentAuthenticationResult.AccessToken);
-                });
-
-            this.InitializeClient(true, e);
+            this.InitializeClient(e, userInfo);
         }
 
-        private void MsaButton_Click(object sender, RoutedEventArgs e)
+        private async void MsaButton_Click(object sender, RoutedEventArgs e)
         {
-            this.InitializeClient(false, e);
+            var msaAuthenticationProvider = new MsaAuthenticationProvider(AccountSelection.MsaClientId, AccountSelection.MsaReturnUrl, this.scopes);
+
+            await msaAuthenticationProvider.AuthenticateUserAsync();
+
+            ((App)Application.Current).AuthenticationProvider = msaAuthenticationProvider;
+
+            this.InitializeClient(e);
         }
 
-        private void InitializeClient(bool isBusiness, RoutedEventArgs e)
+        private void InitializeClient(RoutedEventArgs e, BusinessServiceInfo userInfo = null)
         {
             if (((App)Application.Current).OneDriveClient == null)
             {
-                string baseUrl = isBusiness ? string.Format("{0}_api/v2.0", AccountSelection.AadResource) : "https://api.onedrive.com/v1.0";
+                string baseUrl = userInfo == null ? "https://api.onedrive.com/v1.0" : userInfo.ServiceEndpointBaseUrl;
 
                 ((App)Application.Current).OneDriveClient = new OneDriveClient(baseUrl, ((App)Application.Current).AuthenticationProvider);
 
@@ -115,34 +103,6 @@ namespace OneDrivePhotoBrowser
             {
                 Frame.Navigate(typeof(MainPage), e);
             }
-        }
-
-        private async Task<AuthenticationResult> AuthenticateUserAsync()
-        {
-            AuthenticationResult authenticationResult = null;
-            var authenticationContext = ((App)Application.Current).AuthenticationContext;
-
-            try
-            {
-                authenticationResult = await authenticationContext.AcquireTokenSilentAsync(AccountSelection.AadResource, AccountSelection.AadClientId);
-            }
-            catch (Exception)
-            {
-                // If an exception happens during silent authentication try interactive authentication.
-            }
-
-            if (authenticationResult != null && authenticationResult.Status == AuthenticationStatus.Success)
-            {
-                return authenticationResult;
-            }
-
-            authenticationResult = await authenticationContext.AcquireTokenAsync(
-                AccountSelection.AadResource,
-                AccountSelection.AadClientId,
-                new Uri(AccountSelection.AadReturnUrl),
-                PromptBehavior.Auto);
-
-            return authenticationResult;
         }
     }
 }
