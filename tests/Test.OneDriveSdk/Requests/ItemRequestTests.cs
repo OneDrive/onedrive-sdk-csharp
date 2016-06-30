@@ -9,13 +9,13 @@ namespace Test.OneDrive.Sdk.Requests
     using System.IO;
     using System.Net;
     using System.Net.Http;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.OneDrive.Sdk;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Mocks;
     using Moq;
-
+    
     [TestClass]
     public class ItemRequestTests : RequestTestBase
     {
@@ -32,7 +32,9 @@ namespace Test.OneDrive.Sdk.Requests
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
-                            request => request.RequestUri.ToString().Equals(requestUrl))))
+                            request => request.RequestUri.ToString().Equals(requestUrl)),
+                        HttpCompletionOption.ResponseContentRead,
+                        CancellationToken.None))
                     .Returns(Task.FromResult<HttpResponseMessage>(httpResponseMessage));
 
                 var expectedChildrenPage = new ItemChildrenCollectionPage
@@ -125,7 +127,9 @@ namespace Test.OneDrive.Sdk.Requests
                         It.Is<HttpRequestMessage>(
                             request =>
                                 request.Method == HttpMethod.Delete
-                                && request.RequestUri.ToString().Equals(requestUrl))))
+                                && request.RequestUri.ToString().Equals(requestUrl)),
+                        HttpCompletionOption.ResponseContentRead,
+                        CancellationToken.None))
                     .Returns(Task.FromResult(httpResponseMessage));
 
                 await this.oneDriveClient.Drive.Items["id"].Request().DeleteAsync();
@@ -179,7 +183,9 @@ namespace Test.OneDrive.Sdk.Requests
                                 request =>
                                     string.Equals(request.Method.ToString().ToUpperInvariant(), isUpdate ? "PATCH" : "PUT")
                                     && string.Equals(request.Content.Headers.ContentType.ToString(), "application/json")
-                                    && request.RequestUri.ToString().Equals(requestUrl))))
+                                    && request.RequestUri.ToString().Equals(requestUrl)),
+                            HttpCompletionOption.ResponseContentRead,
+                            CancellationToken.None))
                         .Returns(Task.FromResult(httpResponseMessage));
 
                 this.serializer.Setup(serializer => serializer.SerializeObject(It.IsAny<Item>())).Returns("body");

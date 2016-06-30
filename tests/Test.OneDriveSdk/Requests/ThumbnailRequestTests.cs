@@ -6,13 +6,12 @@ namespace Test.OneDrive.Sdk.Requests
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
     using System.Net.Http;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.OneDrive.Sdk;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Mocks;
     using Moq;
 
     [TestClass]
@@ -44,7 +43,9 @@ namespace Test.OneDrive.Sdk.Requests
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
-                            request => request.RequestUri.ToString().StartsWith(requestUrl))))
+                            request => request.RequestUri.ToString().StartsWith(requestUrl)),
+                        HttpCompletionOption.ResponseContentRead,
+                        CancellationToken.None))
                     .Returns(Task.FromResult(httpResponseMessage));
 
                 using (var response = await this.oneDriveClient.Drive.Items["id"].Thumbnails["0"]["id"].Content.Request().GetAsync())
@@ -74,7 +75,9 @@ namespace Test.OneDrive.Sdk.Requests
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
-                            request => request.RequestUri.ToString().StartsWith(requestUrl))))
+                            request => request.RequestUri.ToString().StartsWith(requestUrl)),
+                        HttpCompletionOption.ResponseContentRead,
+                        CancellationToken.None))
                     .Returns(Task.FromResult(httpResponseMessage));
 
                 var expectedThumbnail = new Thumbnail { Url = "https://localhost" };
