@@ -12,7 +12,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -87,5 +87,6 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The select value.</param>
         /// <returns>The request object to send.</returns>
         IPermissionRequest Select(string value);
+
     }
 }

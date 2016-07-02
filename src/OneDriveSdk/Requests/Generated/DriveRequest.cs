@@ -13,7 +13,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -156,10 +156,10 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="driveToInitialize">The <see cref="Drive"/> with the collection properties to initialize.</param>
         private void InitializeCollectionProperties(Drive driveToInitialize)
         {
-        
+
             if (driveToInitialize != null && driveToInitialize.AdditionalData != null)
             {
-        
+
                 if (driveToInitialize.Items != null && driveToInitialize.Items.CurrentPage != null)
                 {
                     driveToInitialize.Items.AdditionalData = driveToInitialize.AdditionalData;
@@ -175,7 +175,7 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-        
+
                 if (driveToInitialize.Shared != null && driveToInitialize.Shared.CurrentPage != null)
                 {
                     driveToInitialize.Shared.AdditionalData = driveToInitialize.AdditionalData;
@@ -191,7 +191,7 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-        
+
                 if (driveToInitialize.Special != null && driveToInitialize.Special.CurrentPage != null)
                 {
                     driveToInitialize.Special.AdditionalData = driveToInitialize.AdditionalData;
@@ -207,10 +207,10 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-        
+
             }
 
-        
+
         }
     }
 }

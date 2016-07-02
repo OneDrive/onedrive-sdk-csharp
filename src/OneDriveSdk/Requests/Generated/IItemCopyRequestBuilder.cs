@@ -9,7 +9,8 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.IO;
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -17,17 +18,6 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial interface IItemCopyRequestBuilder
     {
-    
-        /// <summary>
-        /// Gets the Name.
-        /// </summary>
-        string Name { get; }
-    
-        /// <summary>
-        /// Gets the ParentReference.
-        /// </summary>
-        ItemReference ParentReference { get; }
-    
         /// <summary>
         /// Builds the request.
         /// </summary>

@@ -12,7 +12,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -134,7 +134,7 @@ namespace Microsoft.OneDrive.Sdk
             this.QueryOptions.Add(new QueryOption("$top", value.ToString()));
             return this;
         }
-        
+
         /// <summary>
         /// Adds the specified filter value to the request.
         /// </summary>

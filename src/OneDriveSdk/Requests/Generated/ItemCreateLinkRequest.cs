@@ -13,7 +13,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -21,28 +21,25 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial class ItemCreateLinkRequest : BaseRequest, IItemCreateLinkRequest
     {
-    
         /// <summary>
         /// Constructs a new ItemCreateLinkRequest.
         /// </summary>
         public ItemCreateLinkRequest(
             string requestUrl,
             IBaseClient client,
-            IEnumerable<Option> options,
-            string type = null)
+            IEnumerable<Option> options)
             : base(requestUrl, client, options)
         {
             this.Method = "POST";
             this.ContentType = "application/json";
             this.RequestBody = new ItemCreateLinkRequestBody();
-            this.RequestBody.Type = type;
         }
-    
+
         /// <summary>
         /// Gets the request body.
         /// </summary>
         public ItemCreateLinkRequestBody RequestBody { get; private set; }
-    
+
         /// <summary>
         /// Issues the POST request.
         /// </summary>
@@ -54,15 +51,14 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>ThePermission</returns>
-        public Task<Permission> PostAsync(CancellationToken cancellationToken)
+        /// <param name=""cancellationToken"">The <see cref=""CancellationToken""/> for the request.</param>
+        /// <returns>The task to await for async call.</returns>
+        public Task<Permission> PostAsync(
+            CancellationToken cancellationToken)
         {
-    
             return this.SendAsync<Permission>(this.RequestBody, cancellationToken);
-    
         }
-    
+
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -84,6 +80,5 @@ namespace Microsoft.OneDrive.Sdk
             this.QueryOptions.Add(new QueryOption("$select", value));
             return this;
         }
-    
     }
 }

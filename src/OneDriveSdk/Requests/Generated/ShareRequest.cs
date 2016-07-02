@@ -13,7 +13,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -156,10 +156,10 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="shareToInitialize">The <see cref="Share"/> with the collection properties to initialize.</param>
         private void InitializeCollectionProperties(Share shareToInitialize)
         {
-        
+
             if (shareToInitialize != null && shareToInitialize.AdditionalData != null)
             {
-        
+
                 if (shareToInitialize.Items != null && shareToInitialize.Items.CurrentPage != null)
                 {
                     shareToInitialize.Items.AdditionalData = shareToInitialize.AdditionalData;
@@ -175,10 +175,10 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-        
+
             }
 
-        
+
         }
     }
 }

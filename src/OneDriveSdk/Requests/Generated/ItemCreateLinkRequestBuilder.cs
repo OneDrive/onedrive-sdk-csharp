@@ -9,58 +9,44 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
-    
+    using System.IO;
+
     using Microsoft.Graph;
 
     /// <summary>
-    /// The type ItemCreateLinkRequestBuilder.
+    /// The type DriveItemDeltaRequestBuilder.
     /// </summary>
-    public partial class ItemCreateLinkRequestBuilder : BaseRequestBuilder, IItemCreateLinkRequestBuilder
+    public partial class ItemCreateLinkRequestBuilder : BasePostMethodRequestBuilder<IItemCreateLinkRequest>, IItemCreateLinkRequestBuilder
     {
-    
+        /// <summary>
+        /// Constructs a new <see cref="ItemCreateLinkRequestBuilder"/>.
+        /// </summary>
+        /// <param name="requestUrl">The URL for the request.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
+        /// <param name="type">A type parameter for the OData method call.</param>
         public ItemCreateLinkRequestBuilder(
             string requestUrl,
             IBaseClient client,
             string type)
             : base(requestUrl, client)
         {
-            
-            this.Type = type;
-
+            SetParameter("type", type, false);
         }
-    
+
         /// <summary>
-        /// Gets the value of Type.
+        /// A method used by the base class to construct a request class instance.
         /// </summary>
-        public string Type { get; set; }
-    
-        /// <summary>
-        /// Builds the request.
-        /// </summary>
+        /// <param name="functionUrl">The request URL to </param>
         /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IItemCreateLinkRequest Request(IEnumerable<Option> options = null)
+        /// <returns>An instance of a specific request class.</returns>
+        protected override IItemCreateLinkRequest CreateRequest(string functionUrl, IEnumerable<Option> options)
         {
-        
-            if (this.Type == null)
-            {
-                throw new ServiceException(
-                    new Error
-                    {
-                        Code = "invalidRequest",
-                        Message = "type is a required parameter for this method request.",
-                    });
-            }
-                
-            return new ItemCreateLinkRequest(
-                this.RequestUrl,
-                this.Client,
-                options,
-                this.Type);
-        
-        }
+            var request = new ItemCreateLinkRequest(functionUrl, this.Client, options);
 
+            if (HasParameter("type"))
+                request.RequestBody.Type = GetParameter<string>("type");
+
+            return request;
+        }
     }
 }
-

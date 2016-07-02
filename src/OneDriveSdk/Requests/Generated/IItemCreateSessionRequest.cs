@@ -13,7 +13,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
     
     /// <summary>
@@ -21,12 +21,12 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial interface IItemCreateSessionRequest : IBaseRequest
     {
-    
+
         /// <summary>
         /// Gets the request body.
         /// </summary>
         ItemCreateSessionRequestBody RequestBody { get; }
-        
+
         /// <summary>
         /// Issues the POST request.
         /// </summary>
@@ -38,7 +38,7 @@ namespace Microsoft.OneDrive.Sdk
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>TheUploadSession</returns>
         Task<UploadSession> PostAsync(CancellationToken cancellationToken);
-            
+
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -52,6 +52,5 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The select value.</param>
         /// <returns>The request object to send.</returns>
         IItemCreateSessionRequest Select(string value);
-    
     }
 }

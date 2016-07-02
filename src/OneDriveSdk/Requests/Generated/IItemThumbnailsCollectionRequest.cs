@@ -12,7 +12,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -68,7 +68,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The top value.</param>
         /// <returns>The request object to send.</returns>
         IItemThumbnailsCollectionRequest Top(int value);
-        
+
         /// <summary>
         /// Adds the specified filter value to the request.
         /// </summary>

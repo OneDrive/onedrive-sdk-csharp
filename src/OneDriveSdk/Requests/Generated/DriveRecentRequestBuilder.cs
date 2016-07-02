@@ -9,38 +9,39 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
-    
+    using System.IO;
+
     using Microsoft.Graph;
 
     /// <summary>
-    /// The type DriveRecentRequestBuilder.
+    /// The type DriveItemDeltaRequestBuilder.
     /// </summary>
-    public partial class DriveRecentRequestBuilder : BaseRequestBuilder, IDriveRecentRequestBuilder
+    public partial class DriveRecentRequestBuilder : BaseGetMethodRequestBuilder<IDriveRecentRequest>, IDriveRecentRequestBuilder
     {
-    
+        /// <summary>
+        /// Constructs a new <see cref="DriveRecentRequestBuilder"/>.
+        /// </summary>
+        /// <param name="requestUrl">The URL for the request.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
         public DriveRecentRequestBuilder(
             string requestUrl,
             IBaseClient client)
             : base(requestUrl, client)
         {
-        }
-    
-        /// <summary>
-        /// Builds the request.
-        /// </summary>
-        /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IDriveRecentRequest Request(IEnumerable<Option> options = null)
-        {
-                
-            return new DriveRecentRequest(
-                this.RequestUrl,
-                this.Client,
-                options);
-        
+            this.passParametersInQueryString = true;
         }
 
+        /// <summary>
+        /// A method used by the base class to construct a request class instance.
+        /// </summary>
+        /// <param name="functionUrl">The request URL to </param>
+        /// <param name="options">The query and header options for the request.</param>
+        /// <returns>An instance of a specific request class.</returns>
+        protected override IDriveRecentRequest CreateRequest(string functionUrl, IEnumerable<Option> options)
+        {
+            var request = new DriveRecentRequest(functionUrl, this.Client, options);
+
+            return request;
+        }
     }
 }
-

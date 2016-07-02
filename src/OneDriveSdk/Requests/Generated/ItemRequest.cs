@@ -13,7 +13,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -156,10 +156,10 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="itemToInitialize">The <see cref="Item"/> with the collection properties to initialize.</param>
         private void InitializeCollectionProperties(Item itemToInitialize)
         {
-        
+
             if (itemToInitialize != null && itemToInitialize.AdditionalData != null)
             {
-        
+
                 if (itemToInitialize.Permissions != null && itemToInitialize.Permissions.CurrentPage != null)
                 {
                     itemToInitialize.Permissions.AdditionalData = itemToInitialize.AdditionalData;
@@ -175,7 +175,7 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-        
+
                 if (itemToInitialize.Versions != null && itemToInitialize.Versions.CurrentPage != null)
                 {
                     itemToInitialize.Versions.AdditionalData = itemToInitialize.AdditionalData;
@@ -191,7 +191,7 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-        
+
                 if (itemToInitialize.Children != null && itemToInitialize.Children.CurrentPage != null)
                 {
                     itemToInitialize.Children.AdditionalData = itemToInitialize.AdditionalData;
@@ -207,7 +207,7 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-        
+
                 if (itemToInitialize.Thumbnails != null && itemToInitialize.Thumbnails.CurrentPage != null)
                 {
                     itemToInitialize.Thumbnails.AdditionalData = itemToInitialize.AdditionalData;
@@ -223,10 +223,10 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-        
+
             }
 
-        
+
         }
     }
 }

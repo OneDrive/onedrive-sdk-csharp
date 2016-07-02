@@ -238,9 +238,8 @@
     <Compile Include="Requests\IAsyncMonitor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Graph.Core">
-      <HintPath>..\..\packages\Microsoft.Graph.Core.1.0.0-rc\lib\portable-net45+netcore50+wpa81+win8\Microsoft.Graph.Core.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Graph.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Graph.Core.1.0.0-rc4\lib\portable-net45+netcore50+wpa81+win8\Microsoft.Graph.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
@@ -250,7 +249,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

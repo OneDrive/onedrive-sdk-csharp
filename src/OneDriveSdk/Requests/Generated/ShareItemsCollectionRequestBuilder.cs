@@ -8,7 +8,7 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    
+
     using Microsoft.Graph;
 
     /// <summary>

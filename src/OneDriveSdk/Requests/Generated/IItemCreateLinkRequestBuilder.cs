@@ -9,7 +9,8 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.IO;
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -17,12 +18,6 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial interface IItemCreateLinkRequestBuilder
     {
-    
-        /// <summary>
-        /// Gets the Type.
-        /// </summary>
-        string Type { get; }
-    
         /// <summary>
         /// Builds the request.
         /// </summary>

@@ -13,7 +13,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -156,7 +156,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="permissionToInitialize">The <see cref="Permission"/> with the collection properties to initialize.</param>
         private void InitializeCollectionProperties(Permission permissionToInitialize)
         {
-        
+
         }
     }
 }

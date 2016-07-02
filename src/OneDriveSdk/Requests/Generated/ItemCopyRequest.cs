@@ -13,7 +13,7 @@ namespace Microsoft.OneDrive.Sdk
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    
+
     using Microsoft.Graph;
 
     /// <summary>
@@ -21,31 +21,25 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial class ItemCopyRequest : BaseRequest, IItemCopyRequest
     {
-    
         /// <summary>
         /// Constructs a new ItemCopyRequest.
         /// </summary>
         public ItemCopyRequest(
             string requestUrl,
             IBaseClient client,
-            IEnumerable<Option> options,
-            string name = null,
-            ItemReference parentReference = null)
+            IEnumerable<Option> options)
             : base(requestUrl, client, options)
         {
             this.Method = "POST";
-            this.Headers.Add(new HeaderOption("Prefer", "respond-async"));
             this.ContentType = "application/json";
             this.RequestBody = new ItemCopyRequestBody();
-            this.RequestBody.Name = name;
-            this.RequestBody.ParentReference = parentReference;
         }
-    
+
         /// <summary>
         /// Gets the request body.
         /// </summary>
         public ItemCopyRequestBody RequestBody { get; private set; }
-    
+
         /// <summary>
         /// Issues the POST request.
         /// </summary>
@@ -57,17 +51,17 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>TheIItemCopyAsyncMonitor</returns>
-        public async Task<IItemCopyAsyncMonitor> PostAsync(CancellationToken cancellationToken)
+        /// <param name=""cancellationToken"">The <see cref=""CancellationToken""/> for the request.</param>
+        /// <returns>The task to await for async call.</returns>
+        public async Task<IItemCopyAsyncMonitor> PostAsync(
+            CancellationToken cancellationToken)
         {
-                using (var response = await this.SendRequestAsync(this.RequestBody, cancellationToken).ConfigureAwait(false))
+            using (var response = await this.SendRequestAsync(this.RequestBody, cancellationToken).ConfigureAwait(false))
             {
                 return new ItemCopyAsyncMonitor(this.Client, response.Headers.Location.ToString());
             }
-    
-        }
-    
+            }
+
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -89,6 +83,5 @@ namespace Microsoft.OneDrive.Sdk
             this.QueryOptions.Add(new QueryOption("$select", value));
             return this;
         }
-    
     }
 }
