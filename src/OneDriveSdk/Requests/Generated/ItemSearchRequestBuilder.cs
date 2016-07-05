@@ -14,7 +14,7 @@ namespace Microsoft.OneDrive.Sdk
     using Microsoft.Graph;
 
     /// <summary>
-    /// The type DriveItemDeltaRequestBuilder.
+    /// The type ItemSearchRequestBuilder.
     /// </summary>
     public partial class ItemSearchRequestBuilder : BaseGetMethodRequestBuilder<IItemSearchRequest>, IItemSearchRequestBuilder
     {
@@ -31,7 +31,7 @@ namespace Microsoft.OneDrive.Sdk
             : base(requestUrl, client)
         {
             this.passParametersInQueryString = true;
-            SetParameter("q", q, true);
+            this.SetParameter("q", q, true);
         }
 
         /// <summary>

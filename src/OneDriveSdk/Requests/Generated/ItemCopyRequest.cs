@@ -43,7 +43,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        public Task<IItemCopyAsyncMonitor> PostAsync()
+        public Task<IAsyncMonitor<Item>> PostAsync()
         {
             return this.PostAsync(CancellationToken.None);
         }
@@ -53,14 +53,14 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name=""cancellationToken"">The <see cref=""CancellationToken""/> for the request.</param>
         /// <returns>The task to await for async call.</returns>
-        public async Task<IItemCopyAsyncMonitor> PostAsync(
+        public async Task<IAsyncMonitor<Item>> PostAsync(
             CancellationToken cancellationToken)
         {
             using (var response = await this.SendRequestAsync(this.RequestBody, cancellationToken).ConfigureAwait(false))
             {
-                return new ItemCopyAsyncMonitor(this.Client, response.Headers.Location.ToString());
+                return new AsyncMonitor<Item>(this.Client, response.Headers.Location.ToString());
             }
-            }
+        }
 
         /// <summary>
         /// Adds the specified expand value to the request.

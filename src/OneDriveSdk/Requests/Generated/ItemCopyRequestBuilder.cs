@@ -14,7 +14,7 @@ namespace Microsoft.OneDrive.Sdk
     using Microsoft.Graph;
 
     /// <summary>
-    /// The type DriveItemDeltaRequestBuilder.
+    /// The type ItemCopyRequestBuilder.
     /// </summary>
     public partial class ItemCopyRequestBuilder : BasePostMethodRequestBuilder<IItemCopyRequest>, IItemCopyRequestBuilder
     {
@@ -32,8 +32,8 @@ namespace Microsoft.OneDrive.Sdk
             ItemReference parentReference)
             : base(requestUrl, client)
         {
-            SetParameter("name", name, true);
-            SetParameter("parentReference", parentReference, true);
+            this.SetParameter("name", name, true);
+            this.SetParameter("parentReference", parentReference, true);
         }
 
         /// <summary>
@@ -46,11 +46,15 @@ namespace Microsoft.OneDrive.Sdk
         {
             var request = new ItemCopyRequest(functionUrl, this.Client, options);
 
-            if (HasParameter("name"))
-                request.RequestBody.Name = GetParameter<string>("name");
+            if (this.HasParameter("name"))
+            {
+                request.RequestBody.Name = this.GetParameter<string>("name");
+            }
 
-            if (HasParameter("parentReference"))
-                request.RequestBody.ParentReference = GetParameter<ItemReference>("parentReference");
+            if (this.HasParameter("parentReference"))
+            {
+                request.RequestBody.ParentReference = this.GetParameter<ItemReference>("parentReference");
+            }
 
             return request;
         }

@@ -73,7 +73,7 @@ namespace Microsoft.OneDrive.Sdk
             }
 
             return null;
-        }
+    }
 
         /// <summary>
         /// Adds the specified expand value to the request.

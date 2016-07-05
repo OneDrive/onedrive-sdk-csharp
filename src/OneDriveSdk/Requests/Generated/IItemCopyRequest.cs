@@ -30,14 +30,14 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        Task<IItemCopyAsyncMonitor> PostAsync();
+        Task<IAsyncMonitor<Item>> PostAsync();
 
         /// <summary>
         /// Issues the POST request.
         /// </summary>
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>TheIItemCopyAsyncMonitor</returns>
-        Task<IItemCopyAsyncMonitor> PostAsync(CancellationToken cancellationToken);
+        /// <returns>TheIAsyncMonitor<Item></returns>
+        Task<IAsyncMonitor<Item>> PostAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.

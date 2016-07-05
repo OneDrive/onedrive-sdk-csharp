@@ -14,7 +14,7 @@ namespace Microsoft.OneDrive.Sdk
     using Microsoft.Graph;
 
     /// <summary>
-    /// The type DriveItemDeltaRequestBuilder.
+    /// The type ItemCreateSessionRequestBuilder.
     /// </summary>
     public partial class ItemCreateSessionRequestBuilder : BasePostMethodRequestBuilder<IItemCreateSessionRequest>, IItemCreateSessionRequestBuilder
     {
@@ -30,7 +30,7 @@ namespace Microsoft.OneDrive.Sdk
             ChunkedUploadSessionDescriptor item)
             : base(requestUrl, client)
         {
-            SetParameter("item", item, true);
+            this.SetParameter("item", item, true);
         }
 
         /// <summary>
@@ -43,8 +43,10 @@ namespace Microsoft.OneDrive.Sdk
         {
             var request = new ItemCreateSessionRequest(functionUrl, this.Client, options);
 
-            if (HasParameter("item"))
-                request.RequestBody.Item = GetParameter<ChunkedUploadSessionDescriptor>("item");
+            if (this.HasParameter("item"))
+            {
+                request.RequestBody.Item = this.GetParameter<ChunkedUploadSessionDescriptor>("item");
+            }
 
             return request;
         }

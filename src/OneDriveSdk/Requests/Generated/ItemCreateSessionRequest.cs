@@ -57,7 +57,7 @@ namespace Microsoft.OneDrive.Sdk
             CancellationToken cancellationToken)
         {
             return this.SendAsync<UploadSession>(this.RequestBody, cancellationToken);
-        }
+    }
 
         /// <summary>
         /// Adds the specified expand value to the request.

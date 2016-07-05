@@ -14,7 +14,7 @@ namespace Microsoft.OneDrive.Sdk
     using Microsoft.Graph;
 
     /// <summary>
-    /// The type DriveItemDeltaRequestBuilder.
+    /// The type DriveRecentRequestBuilder.
     /// </summary>
     public partial class DriveRecentRequestBuilder : BaseGetMethodRequestBuilder<IDriveRecentRequest>, IDriveRecentRequestBuilder
     {

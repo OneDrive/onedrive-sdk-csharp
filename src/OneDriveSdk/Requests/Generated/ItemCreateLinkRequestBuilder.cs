@@ -14,7 +14,7 @@ namespace Microsoft.OneDrive.Sdk
     using Microsoft.Graph;
 
     /// <summary>
-    /// The type DriveItemDeltaRequestBuilder.
+    /// The type ItemCreateLinkRequestBuilder.
     /// </summary>
     public partial class ItemCreateLinkRequestBuilder : BasePostMethodRequestBuilder<IItemCreateLinkRequest>, IItemCreateLinkRequestBuilder
     {
@@ -30,7 +30,7 @@ namespace Microsoft.OneDrive.Sdk
             string type)
             : base(requestUrl, client)
         {
-            SetParameter("type", type, false);
+            this.SetParameter("type", type, false);
         }
 
         /// <summary>
@@ -43,8 +43,10 @@ namespace Microsoft.OneDrive.Sdk
         {
             var request = new ItemCreateLinkRequest(functionUrl, this.Client, options);
 
-            if (HasParameter("type"))
-                request.RequestBody.Type = GetParameter<string>("type");
+            if (this.HasParameter("type"))
+            {
+                request.RequestBody.Type = this.GetParameter<string>("type");
+            }
 
             return request;
         }
