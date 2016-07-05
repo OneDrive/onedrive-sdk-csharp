@@ -49,7 +49,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ShareRequest(this.RequestUrl, this.Client, options);
         }
-        
+    
         /// <summary>
         /// Gets the request builder for Items.
         /// </summary>

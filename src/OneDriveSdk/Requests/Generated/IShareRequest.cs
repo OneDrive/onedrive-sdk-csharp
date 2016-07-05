@@ -11,7 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
 
@@ -25,46 +24,46 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="shareToCreate">The Share to create.</param>
         /// <returns>The created Share.</returns>
-        Task<Share> CreateAsync(Share shareToCreate);        /// <summary>
+        System.Threading.Tasks.Task<Share> CreateAsync(Share shareToCreate);        /// <summary>
         /// Creates the specified Share using PUT.
         /// </summary>
         /// <param name="shareToCreate">The Share to create.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created Share.</returns>
-        Task<Share> CreateAsync(Share shareToCreate, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Share> CreateAsync(Share shareToCreate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes the specified Share.
         /// </summary>
         /// <returns>The task to await.</returns>
-        Task DeleteAsync();
+        System.Threading.Tasks.Task DeleteAsync();
 
         /// <summary>
         /// Deletes the specified Share.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The task to await.</returns>
-        Task DeleteAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task DeleteAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the specified Share.
         /// </summary>
         /// <returns>The Share.</returns>
-        Task<Share> GetAsync();
+        System.Threading.Tasks.Task<Share> GetAsync();
 
         /// <summary>
         /// Gets the specified Share.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The Share.</returns>
-        Task<Share> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Share> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates the specified Share using PATCH.
         /// </summary>
         /// <param name="shareToUpdate">The Share to update.</param>
         /// <returns>The updated Share.</returns>
-        Task<Share> UpdateAsync(Share shareToUpdate);
+        System.Threading.Tasks.Task<Share> UpdateAsync(Share shareToUpdate);
 
         /// <summary>
         /// Updates the specified Share using PATCH.
@@ -72,7 +71,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="shareToUpdate">The Share to update.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The updated Share.</returns>
-        Task<Share> UpdateAsync(Share shareToUpdate, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Share> UpdateAsync(Share shareToUpdate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.

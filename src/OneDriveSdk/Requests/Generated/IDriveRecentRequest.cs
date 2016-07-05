@@ -12,10 +12,9 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
-    
+
     /// <summary>
     /// The interface IDriveRecentRequest.
     /// </summary>
@@ -25,14 +24,14 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the GET request.
         /// </summary>
-        Task<IDriveRecentCollectionPage> GetAsync();
+        System.Threading.Tasks.Task<IDriveRecentCollectionPage> GetAsync();
 
         /// <summary>
         /// Issues the GET request.
         /// </summary>
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>TheIDriveRecentCollectionPage</returns>
-        Task<IDriveRecentCollectionPage> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<IDriveRecentCollectionPage> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.

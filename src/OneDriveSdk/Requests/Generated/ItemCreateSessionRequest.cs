@@ -12,7 +12,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
 
@@ -43,17 +42,17 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        public Task<UploadSession> PostAsync()
+        public System.Threading.Tasks.Task<UploadSession> PostAsync()
         {
             return this.PostAsync(CancellationToken.None);
         }
-        
+
         /// <summary>
         /// Issues the POST request.
         /// </summary>
         /// <param name=""cancellationToken"">The <see cref=""CancellationToken""/> for the request.</param>
         /// <returns>The task to await for async call.</returns>
-        public Task<UploadSession> PostAsync(
+        public System.Threading.Tasks.Task<UploadSession> PostAsync(
             CancellationToken cancellationToken)
         {
             return this.SendAsync<UploadSession>(this.RequestBody, cancellationToken);

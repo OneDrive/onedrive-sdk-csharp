@@ -11,7 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
 
@@ -26,7 +25,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="item">The Item to add.</param>
         /// <returns>The created Item.</returns>
-        Task<Item> AddAsync(Item item);
+        System.Threading.Tasks.Task<Item> AddAsync(Item item);
 
         /// <summary>
         /// Adds the specified Item to the collection via POST.
@@ -34,19 +33,19 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="item">The Item to add.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created Item.</returns>
-        Task<Item> AddAsync(Item item, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Item> AddAsync(Item item, CancellationToken cancellationToken);
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <returns>The collection page.</returns>
-        Task<IItemVersionsCollectionPage> GetAsync();
-        
+        System.Threading.Tasks.Task<IItemVersionsCollectionPage> GetAsync();
+
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The collection page.</returns>
-        Task<IItemVersionsCollectionPage> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<IItemVersionsCollectionPage> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.

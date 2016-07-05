@@ -11,7 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
 
@@ -40,7 +39,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="drive">The Drive to add.</param>
         /// <returns>The created Drive.</returns>
-        public Task<Drive> AddAsync(Drive drive)
+        public System.Threading.Tasks.Task<Drive> AddAsync(Drive drive)
         {
             return this.AddAsync(drive, CancellationToken.None);
         }
@@ -51,28 +50,28 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="drive">The Drive to add.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created Drive.</returns>
-        public Task<Drive> AddAsync(Drive drive, CancellationToken cancellationToken)
+        public System.Threading.Tasks.Task<Drive> AddAsync(Drive drive, CancellationToken cancellationToken)
         {
             this.ContentType = "application/json";
             this.Method = "POST";
             return this.SendAsync<Drive>(drive, cancellationToken);
         }
-  
+
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <returns>The collection page.</returns>
-        public Task<IOneDriveDrivesCollectionPage> GetAsync()
+        public System.Threading.Tasks.Task<IOneDriveDrivesCollectionPage> GetAsync()
         {
             return this.GetAsync(CancellationToken.None);
         }
-        
+
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The collection page.</returns>
-        public async Task<IOneDriveDrivesCollectionPage> GetAsync(CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<IOneDriveDrivesCollectionPage> GetAsync(CancellationToken cancellationToken)
         {
             this.Method = "GET";
             var response = await this.SendAsync<OneDriveDrivesCollectionResponse>(null, cancellationToken).ConfigureAwait(false);
@@ -91,7 +90,7 @@ namespace Microsoft.OneDrive.Sdk
                             this.Client,
                             nextPageLinkString);
                     }
-                    
+
                     // Copy the additional data collection to the page itself so that information is not lost
                     response.Value.AdditionalData = response.AdditionalData;
                 }

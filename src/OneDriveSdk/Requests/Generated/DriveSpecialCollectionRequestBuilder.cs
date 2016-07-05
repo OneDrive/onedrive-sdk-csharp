@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// The type DriveSpecialCollectionRequestBuilder.
     /// </summary>
     public partial class DriveSpecialCollectionRequestBuilder : BaseRequestBuilder, IDriveSpecialCollectionRequestBuilder
-    {  
+    {
         /// <summary>
         /// Constructs a new DriveSpecialCollectionRequestBuilder.
         /// </summary>

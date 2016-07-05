@@ -11,7 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
 
@@ -26,7 +25,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="permission">The Permission to add.</param>
         /// <returns>The created Permission.</returns>
-        Task<Permission> AddAsync(Permission permission);
+        System.Threading.Tasks.Task<Permission> AddAsync(Permission permission);
 
         /// <summary>
         /// Adds the specified Permission to the collection via POST.
@@ -34,19 +33,19 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="permission">The Permission to add.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created Permission.</returns>
-        Task<Permission> AddAsync(Permission permission, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Permission> AddAsync(Permission permission, CancellationToken cancellationToken);
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <returns>The collection page.</returns>
-        Task<IItemPermissionsCollectionPage> GetAsync();
-        
+        System.Threading.Tasks.Task<IItemPermissionsCollectionPage> GetAsync();
+
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The collection page.</returns>
-        Task<IItemPermissionsCollectionPage> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<IItemPermissionsCollectionPage> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.

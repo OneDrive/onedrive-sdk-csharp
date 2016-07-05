@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// The type ItemChildrenCollectionRequestBuilder.
     /// </summary>
     public partial class ItemChildrenCollectionRequestBuilder : BaseRequestBuilder, IItemChildrenCollectionRequestBuilder
-    {  
+    {
         /// <summary>
         /// Constructs a new ItemChildrenCollectionRequestBuilder.
         /// </summary>

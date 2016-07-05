@@ -12,7 +12,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
 
@@ -41,7 +40,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="itemToCreate">The Item to create.</param>
         /// <returns>The created Item.</returns>
-        public Task<Item> CreateAsync(Item itemToCreate)
+        public System.Threading.Tasks.Task<Item> CreateAsync(Item itemToCreate)
         {
             return this.CreateAsync(itemToCreate, CancellationToken.None);
         }
@@ -52,7 +51,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="itemToCreate">The Item to create.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created Item.</returns>
-        public async Task<Item> CreateAsync(Item itemToCreate, CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<Item> CreateAsync(Item itemToCreate, CancellationToken cancellationToken)
         {
             this.ContentType = "application/json";
             this.Method = "PUT";
@@ -65,7 +64,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Deletes the specified Item.
         /// </summary>
         /// <returns>The task to await.</returns>
-        public Task DeleteAsync()
+        public System.Threading.Tasks.Task DeleteAsync()
         {
             return this.DeleteAsync(CancellationToken.None);
         }
@@ -75,7 +74,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The task to await.</returns>
-        public async Task DeleteAsync(CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task DeleteAsync(CancellationToken cancellationToken)
         {
             this.Method = "DELETE";
             await this.SendAsync<Item>(null, cancellationToken).ConfigureAwait(false);
@@ -85,7 +84,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets the specified Item.
         /// </summary>
         /// <returns>The Item.</returns>
-        public Task<Item> GetAsync()
+        public System.Threading.Tasks.Task<Item> GetAsync()
         {
             return this.GetAsync(CancellationToken.None);
         }
@@ -95,7 +94,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The Item.</returns>
-        public async Task<Item> GetAsync(CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<Item> GetAsync(CancellationToken cancellationToken)
         {
             this.Method = "GET";
             var retrievedEntity = await this.SendAsync<Item>(null, cancellationToken).ConfigureAwait(false);
@@ -108,7 +107,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="itemToUpdate">The Item to update.</param>
         /// <returns>The updated Item.</returns>
-        public Task<Item> UpdateAsync(Item itemToUpdate)
+        public System.Threading.Tasks.Task<Item> UpdateAsync(Item itemToUpdate)
         {
             return this.UpdateAsync(itemToUpdate, CancellationToken.None);
         }
@@ -119,7 +118,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="itemToUpdate">The Item to update.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The updated Item.</returns>
-        public async Task<Item> UpdateAsync(Item itemToUpdate, CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<Item> UpdateAsync(Item itemToUpdate, CancellationToken cancellationToken)
         {
             this.ContentType = "application/json";
             this.Method = "PATCH";

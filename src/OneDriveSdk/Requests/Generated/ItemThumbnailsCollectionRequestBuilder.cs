@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// The type ItemThumbnailsCollectionRequestBuilder.
     /// </summary>
     public partial class ItemThumbnailsCollectionRequestBuilder : BaseRequestBuilder, IItemThumbnailsCollectionRequestBuilder
-    {  
+    {
         /// <summary>
         /// Constructs a new ItemThumbnailsCollectionRequestBuilder.
         /// </summary>

@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// The type ItemPermissionsCollectionRequestBuilder.
     /// </summary>
     public partial class ItemPermissionsCollectionRequestBuilder : BaseRequestBuilder, IItemPermissionsCollectionRequestBuilder
-    {  
+    {
         /// <summary>
         /// Constructs a new ItemPermissionsCollectionRequestBuilder.
         /// </summary>

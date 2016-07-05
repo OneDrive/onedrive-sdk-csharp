@@ -12,10 +12,9 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
-    
+
     /// <summary>
     /// The interface IItemCreateSessionRequest.
     /// </summary>
@@ -30,14 +29,14 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        Task<UploadSession> PostAsync();
+        System.Threading.Tasks.Task<UploadSession> PostAsync();
 
         /// <summary>
         /// Issues the POST request.
         /// </summary>
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>TheUploadSession</returns>
-        Task<UploadSession> PostAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UploadSession> PostAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.

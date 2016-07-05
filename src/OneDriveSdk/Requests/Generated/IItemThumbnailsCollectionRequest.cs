@@ -11,7 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
 
@@ -26,7 +25,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="thumbnailSet">The ThumbnailSet to add.</param>
         /// <returns>The created ThumbnailSet.</returns>
-        Task<ThumbnailSet> AddAsync(ThumbnailSet thumbnailSet);
+        System.Threading.Tasks.Task<ThumbnailSet> AddAsync(ThumbnailSet thumbnailSet);
 
         /// <summary>
         /// Adds the specified ThumbnailSet to the collection via POST.
@@ -34,19 +33,19 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="thumbnailSet">The ThumbnailSet to add.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created ThumbnailSet.</returns>
-        Task<ThumbnailSet> AddAsync(ThumbnailSet thumbnailSet, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ThumbnailSet> AddAsync(ThumbnailSet thumbnailSet, CancellationToken cancellationToken);
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <returns>The collection page.</returns>
-        Task<IItemThumbnailsCollectionPage> GetAsync();
-        
+        System.Threading.Tasks.Task<IItemThumbnailsCollectionPage> GetAsync();
+
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The collection page.</returns>
-        Task<IItemThumbnailsCollectionPage> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<IItemThumbnailsCollectionPage> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.

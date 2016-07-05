@@ -12,10 +12,9 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
-    
+
     /// <summary>
     /// The interface IItemDeltaRequest.
     /// </summary>
@@ -25,14 +24,14 @@ namespace Microsoft.OneDrive.Sdk
         /// <summary>
         /// Issues the GET request.
         /// </summary>
-        Task<IItemDeltaCollectionPage> GetAsync();
+        System.Threading.Tasks.Task<IItemDeltaCollectionPage> GetAsync();
 
         /// <summary>
         /// Issues the GET request.
         /// </summary>
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>TheIItemDeltaCollectionPage</returns>
-        Task<IItemDeltaCollectionPage> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<IItemDeltaCollectionPage> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.

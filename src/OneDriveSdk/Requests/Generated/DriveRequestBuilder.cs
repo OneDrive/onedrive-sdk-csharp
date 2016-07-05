@@ -49,7 +49,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new DriveRequest(this.RequestUrl, this.Client, options);
         }
-        
+    
         /// <summary>
         /// Gets the request builder for Items.
         /// </summary>
@@ -85,7 +85,7 @@ namespace Microsoft.OneDrive.Sdk
                 return new DriveSpecialCollectionRequestBuilder(this.AppendSegmentToRequestUrl("special"), this.Client);
             }
         }
-        
+    
         /// <summary>
         /// Gets the request builder for DriveRecent.
         /// </summary>

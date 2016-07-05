@@ -30,7 +30,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="options">The query and header options for the request.</param>
         /// <returns>The built request.</returns>
         IShareRequest Request(IEnumerable<Option> options);
-        
+    
         /// <summary>
         /// Gets the request builder for Items.
         /// </summary>

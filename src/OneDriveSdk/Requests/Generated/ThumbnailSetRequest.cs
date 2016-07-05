@@ -12,7 +12,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Microsoft.Graph;
 
@@ -41,7 +40,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="thumbnailSetToCreate">The ThumbnailSet to create.</param>
         /// <returns>The created ThumbnailSet.</returns>
-        public Task<ThumbnailSet> CreateAsync(ThumbnailSet thumbnailSetToCreate)
+        public System.Threading.Tasks.Task<ThumbnailSet> CreateAsync(ThumbnailSet thumbnailSetToCreate)
         {
             return this.CreateAsync(thumbnailSetToCreate, CancellationToken.None);
         }
@@ -52,7 +51,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="thumbnailSetToCreate">The ThumbnailSet to create.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created ThumbnailSet.</returns>
-        public async Task<ThumbnailSet> CreateAsync(ThumbnailSet thumbnailSetToCreate, CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<ThumbnailSet> CreateAsync(ThumbnailSet thumbnailSetToCreate, CancellationToken cancellationToken)
         {
             this.ContentType = "application/json";
             this.Method = "PUT";
@@ -65,7 +64,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Deletes the specified ThumbnailSet.
         /// </summary>
         /// <returns>The task to await.</returns>
-        public Task DeleteAsync()
+        public System.Threading.Tasks.Task DeleteAsync()
         {
             return this.DeleteAsync(CancellationToken.None);
         }
@@ -75,7 +74,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The task to await.</returns>
-        public async Task DeleteAsync(CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task DeleteAsync(CancellationToken cancellationToken)
         {
             this.Method = "DELETE";
             await this.SendAsync<ThumbnailSet>(null, cancellationToken).ConfigureAwait(false);
@@ -85,7 +84,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets the specified ThumbnailSet.
         /// </summary>
         /// <returns>The ThumbnailSet.</returns>
-        public Task<ThumbnailSet> GetAsync()
+        public System.Threading.Tasks.Task<ThumbnailSet> GetAsync()
         {
             return this.GetAsync(CancellationToken.None);
         }
@@ -95,7 +94,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The ThumbnailSet.</returns>
-        public async Task<ThumbnailSet> GetAsync(CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<ThumbnailSet> GetAsync(CancellationToken cancellationToken)
         {
             this.Method = "GET";
             var retrievedEntity = await this.SendAsync<ThumbnailSet>(null, cancellationToken).ConfigureAwait(false);
@@ -108,7 +107,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="thumbnailSetToUpdate">The ThumbnailSet to update.</param>
         /// <returns>The updated ThumbnailSet.</returns>
-        public Task<ThumbnailSet> UpdateAsync(ThumbnailSet thumbnailSetToUpdate)
+        public System.Threading.Tasks.Task<ThumbnailSet> UpdateAsync(ThumbnailSet thumbnailSetToUpdate)
         {
             return this.UpdateAsync(thumbnailSetToUpdate, CancellationToken.None);
         }
@@ -119,7 +118,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="thumbnailSetToUpdate">The ThumbnailSet to update.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The updated ThumbnailSet.</returns>
-        public async Task<ThumbnailSet> UpdateAsync(ThumbnailSet thumbnailSetToUpdate, CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<ThumbnailSet> UpdateAsync(ThumbnailSet thumbnailSetToUpdate, CancellationToken cancellationToken)
         {
             this.ContentType = "application/json";
             this.Method = "PATCH";

@@ -30,7 +30,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="options">The query and header options for the request.</param>
         /// <returns>The built request.</returns>
         IDriveRequest Request(IEnumerable<Option> options);
-        
+    
         /// <summary>
         /// Gets the request builder for Items.
         /// </summary>
@@ -48,7 +48,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <returns>The <see cref="IDriveSpecialCollectionRequestBuilder"/>.</returns>
         IDriveSpecialCollectionRequestBuilder Special { get; }
-        
+    
         /// <summary>
         /// Gets the request builder for DriveRecent.
         /// </summary>

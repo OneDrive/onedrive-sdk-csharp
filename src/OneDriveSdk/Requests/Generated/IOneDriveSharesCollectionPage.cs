@@ -11,7 +11,7 @@ namespace Microsoft.OneDrive.Sdk
 
     using Microsoft.Graph;
     using Newtonsoft.Json;
-    
+
     /// <summary>
     /// The interface IOneDriveSharesCollectionPage.
     /// </summary>

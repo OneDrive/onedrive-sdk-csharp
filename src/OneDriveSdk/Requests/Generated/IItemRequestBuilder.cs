@@ -30,7 +30,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="options">The query and header options for the request.</param>
         /// <returns>The built request.</returns>
         IItemRequest Request(IEnumerable<Option> options);
-        
+    
         /// <summary>
         /// Gets the request builder for Permissions.
         /// </summary>
@@ -60,7 +60,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <returns>The <see cref="IItemContentRequestBuilder"/>.</returns>
         IItemContentRequestBuilder Content { get; }
-        
+    
         /// <summary>
         /// Gets the request builder for ItemCreateSession.
         /// </summary>
