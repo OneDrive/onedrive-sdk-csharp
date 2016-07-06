@@ -12,7 +12,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-
     using Microsoft.Graph;
 
     /// <summary>
@@ -56,7 +55,7 @@ namespace Microsoft.OneDrive.Sdk
             CancellationToken cancellationToken)
         {
             return this.SendAsync<UploadSession>(this.RequestBody, cancellationToken);
-    }
+        }
 
         /// <summary>
         /// Adds the specified expand value to the request.

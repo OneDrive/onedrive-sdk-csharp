@@ -11,7 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
-
     using Microsoft.Graph;
 
     /// <summary>

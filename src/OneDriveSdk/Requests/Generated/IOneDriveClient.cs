@@ -8,22 +8,20 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using Microsoft.Graph;
-    
+
+
     /// <summary>
     /// The interface IOneDriveClient.
     /// </summary>
     public partial interface IOneDriveClient : IBaseClient
     {
-    
         /// <summary>
         /// Gets the OneDriveDrives request builder.
         /// </summary>
         IOneDriveDrivesCollectionRequestBuilder Drives { get; }
-    
         /// <summary>
         /// Gets the OneDriveShares request builder.
         /// </summary>
         IOneDriveSharesCollectionRequestBuilder Shares { get; }
-    
     }
 }

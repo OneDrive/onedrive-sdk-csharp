@@ -12,7 +12,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-
     using Microsoft.Graph;
 
     /// <summary>
@@ -67,12 +66,12 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-    
+
                 return response.Value;
             }
 
             return null;
-    }
+        }
 
         /// <summary>
         /// Adds the specified expand value to the request.

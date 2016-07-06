@@ -18,7 +18,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets the next page <see cref="IDriveRecentRequest"/> instance.
         /// </summary>
         public IDriveRecentRequest NextPageRequest { get; private set; }
-        
+
         /// <summary>
         /// Initializes the NextPageRequest property.
         /// </summary>

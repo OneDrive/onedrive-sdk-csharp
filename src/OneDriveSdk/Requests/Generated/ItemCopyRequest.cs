@@ -12,7 +12,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-
     using Microsoft.Graph;
 
     /// <summary>
@@ -59,6 +58,7 @@ namespace Microsoft.OneDrive.Sdk
             {
                 return new AsyncMonitor<Item>(this.Client, response.Headers.Location.ToString());
             }
+
         }
 
         /// <summary>

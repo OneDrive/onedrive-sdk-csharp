@@ -10,7 +10,6 @@ namespace Microsoft.OneDrive.Sdk
     using System;
     using System.Collections.Generic;
     using System.IO;
-
     using Microsoft.Graph;
 
     /// <summary>

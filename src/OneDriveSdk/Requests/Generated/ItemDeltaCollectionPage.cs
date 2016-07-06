@@ -18,17 +18,17 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets the next page <see cref="IItemDeltaRequest"/> instance.
         /// </summary>
         public IItemDeltaRequest NextPageRequest { get; private set; }
-        
+
         /// <summary>
         /// Gets or sets the Token.
         /// </summary>
         public string Token { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the DeltaLink.
         /// </summary>
         public string DeltaLink { get; set; }
-        
+
         /// <summary>
         /// Initializes the NextPageRequest property.
         /// </summary>

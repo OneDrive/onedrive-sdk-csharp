@@ -20,7 +20,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets the next page <see cref="IItemSearchRequest"/> instance.
         /// </summary>
         IItemSearchRequest NextPageRequest { get; }
-        
+
         /// <summary>
         /// Initializes the NextPageRequest property.
         /// </summary>
