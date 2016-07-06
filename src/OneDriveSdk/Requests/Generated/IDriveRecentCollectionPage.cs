@@ -9,7 +9,7 @@ namespace Microsoft.OneDrive.Sdk
 {
     using Microsoft.Graph;
     using Newtonsoft.Json;
-    
+
     /// <summary>
     /// The interface IDriveRecentCollectionPage.
     /// </summary>
@@ -20,7 +20,7 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets the next page <see cref="IDriveRecentRequest"/> instance.
         /// </summary>
         IDriveRecentRequest NextPageRequest { get; }
-        
+
         /// <summary>
         /// Initializes the NextPageRequest property.
         /// </summary>

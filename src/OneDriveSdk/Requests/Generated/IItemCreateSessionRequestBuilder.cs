@@ -9,7 +9,7 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.IO;
     using Microsoft.Graph;
 
     /// <summary>
@@ -17,12 +17,6 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial interface IItemCreateSessionRequestBuilder
     {
-    
-        /// <summary>
-        /// Gets the Item.
-        /// </summary>
-        ChunkedUploadSessionDescriptor Item { get; }
-    
         /// <summary>
         /// Builds the request.
         /// </summary>

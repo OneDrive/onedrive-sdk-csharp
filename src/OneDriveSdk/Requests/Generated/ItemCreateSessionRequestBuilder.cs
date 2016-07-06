@@ -9,48 +9,45 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
-    
+    using System.IO;
     using Microsoft.Graph;
 
     /// <summary>
     /// The type ItemCreateSessionRequestBuilder.
     /// </summary>
-    public partial class ItemCreateSessionRequestBuilder : BaseRequestBuilder, IItemCreateSessionRequestBuilder
+    public partial class ItemCreateSessionRequestBuilder : BasePostMethodRequestBuilder<IItemCreateSessionRequest>, IItemCreateSessionRequestBuilder
     {
-    
+        /// <summary>
+        /// Constructs a new <see cref="ItemCreateSessionRequestBuilder"/>.
+        /// </summary>
+        /// <param name="requestUrl">The URL for the request.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
+        /// <param name="item">A item parameter for the OData method call.</param>
         public ItemCreateSessionRequestBuilder(
             string requestUrl,
             IBaseClient client,
-            ChunkedUploadSessionDescriptor item = null)
+            ChunkedUploadSessionDescriptor item)
             : base(requestUrl, client)
         {
-            
-            this.Item = item;
-
+            this.SetParameter("item", item, true);
         }
-    
+
         /// <summary>
-        /// Gets the value of Item.
+        /// A method used by the base class to construct a request class instance.
         /// </summary>
-        public ChunkedUploadSessionDescriptor Item { get; set; }
-    
-        /// <summary>
-        /// Builds the request.
-        /// </summary>
+        /// <param name="functionUrl">The request URL to </param>
         /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IItemCreateSessionRequest Request(IEnumerable<Option> options = null)
+        /// <returns>An instance of a specific request class.</returns>
+        protected override IItemCreateSessionRequest CreateRequest(string functionUrl, IEnumerable<Option> options)
         {
-                
-            return new ItemCreateSessionRequest(
-                this.RequestUrl,
-                this.Client,
-                options,
-                this.Item);
-        
-        }
+            var request = new ItemCreateSessionRequest(functionUrl, this.Client, options);
 
+            if (this.HasParameter("item"))
+            {
+                request.RequestBody.Item = this.GetParameter<ChunkedUploadSessionDescriptor>("item");
+            }
+
+            return request;
+        }
     }
 }
-

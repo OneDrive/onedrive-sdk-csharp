@@ -9,7 +9,7 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.IO;
     using Microsoft.Graph;
 
     /// <summary>
@@ -48,7 +48,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ShareRequest(this.RequestUrl, this.Client, options);
         }
-        
+    
         /// <summary>
         /// Gets the request builder for Items.
         /// </summary>

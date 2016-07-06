@@ -9,62 +9,41 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
-    
+    using System.IO;
     using Microsoft.Graph;
 
     /// <summary>
     /// The type ItemSearchRequestBuilder.
     /// </summary>
-    public partial class ItemSearchRequestBuilder : BaseRequestBuilder, IItemSearchRequestBuilder
+    public partial class ItemSearchRequestBuilder : BaseGetMethodRequestBuilder<IItemSearchRequest>, IItemSearchRequestBuilder
     {
-    
+        /// <summary>
+        /// Constructs a new <see cref="ItemSearchRequestBuilder"/>.
+        /// </summary>
+        /// <param name="requestUrl">The URL for the request.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
+        /// <param name="q">A q parameter for the OData method call.</param>
         public ItemSearchRequestBuilder(
             string requestUrl,
             IBaseClient client,
-            string q = null)
+            string q)
             : base(requestUrl, client)
         {
-            
-            this.Q = q;
-
+            this.passParametersInQueryString = true;
+            this.SetParameter("q", q, true);
         }
-    
+
         /// <summary>
-        /// Gets the value of Q.
+        /// A method used by the base class to construct a request class instance.
         /// </summary>
-        public string Q { get; set; }
-    
-        /// <summary>
-        /// Builds the request.
-        /// </summary>
+        /// <param name="functionUrl">The request URL to </param>
         /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IItemSearchRequest Request(IEnumerable<Option> options = null)
+        /// <returns>An instance of a specific request class.</returns>
+        protected override IItemSearchRequest CreateRequest(string functionUrl, IEnumerable<Option> options)
         {
-        
-            var functionRequestUrl = this.RequestUrl;
-            
-            var functionParametersStringBuilder = new StringBuilder();
+            var request = new ItemSearchRequest(functionUrl, this.Client, options);
 
-            if (this.Q != null)
-            {
-                functionParametersStringBuilder.AppendFormat("q='{0}'", this.Q);
-            }
-            else
-            {
-                functionParametersStringBuilder.Append("q=null");
-            }
-
-            functionRequestUrl = string.Format("{0}({1})", this.RequestUrl, functionParametersStringBuilder.ToString());
-            
-            return new ItemSearchRequest(
-                functionRequestUrl,
-                this.Client,
-                options);
-        
+            return request;
         }
-
     }
 }
-

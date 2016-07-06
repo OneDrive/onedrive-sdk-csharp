@@ -12,28 +12,26 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
-    
     using Microsoft.Graph;
-    
+
     /// <summary>
     /// The interface IItemSearchRequest.
     /// </summary>
     public partial interface IItemSearchRequest : IBaseRequest
     {
-        
+
         /// <summary>
         /// Issues the GET request.
         /// </summary>
-        Task<IItemSearchCollectionPage> GetAsync();
+        System.Threading.Tasks.Task<IItemSearchCollectionPage> GetAsync();
 
         /// <summary>
         /// Issues the GET request.
         /// </summary>
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>TheIItemSearchCollectionPage</returns>
-        Task<IItemSearchCollectionPage> GetAsync(CancellationToken cancellationToken);
-            
+        System.Threading.Tasks.Task<IItemSearchCollectionPage> GetAsync(CancellationToken cancellationToken);
+
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -47,14 +45,14 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The select value.</param>
         /// <returns>The request object to send.</returns>
         IItemSearchRequest Select(string value);
-    
+
         /// <summary>
         /// Adds the specified top value to the request.
         /// </summary>
         /// <param name="value">The top value.</param>
         /// <returns>The request object to send.</returns>
         IItemSearchRequest Top(int value);
-        
+
         /// <summary>
         /// Adds the specified filter value to the request.
         /// </summary>
@@ -75,6 +73,5 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The orderby value.</param>
         /// <returns>The request object to send.</returns>
         IItemSearchRequest OrderBy(string value);
-    
     }
 }

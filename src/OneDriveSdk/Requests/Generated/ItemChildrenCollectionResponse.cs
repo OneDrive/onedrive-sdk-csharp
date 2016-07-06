@@ -8,7 +8,6 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System.Collections.Generic;
     using System.Runtime.Serialization;
-
     using Microsoft.Graph;
     using Newtonsoft.Json;
 

@@ -11,7 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.Serialization;
-
     using Microsoft.Graph;
     using Newtonsoft.Json;
 
@@ -52,7 +51,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         [DataMember(Name = "@odata.type", EmitDefaultValue = false, IsRequired = false)]
         public string ODataType { get; set; }
-        
+
         /// <summary>
         /// Gets or sets additional data.
         /// </summary>

@@ -8,7 +8,7 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using Microsoft.Graph;
-   
+
     /// <summary>
     /// The type OneDriveClient.
     /// </summary>
@@ -39,7 +39,7 @@ namespace Microsoft.OneDrive.Sdk
             : base(baseUrl, authenticationProvider, httpProvider)
         {
         }
-    
+
         /// <summary>
         /// Gets the OneDriveDrives request builder.
         /// </summary>
@@ -50,7 +50,7 @@ namespace Microsoft.OneDrive.Sdk
                 return new OneDriveDrivesCollectionRequestBuilder(this.BaseUrl + "/drives", this);
             }
         }
-    
+
         /// <summary>
         /// Gets the OneDriveShares request builder.
         /// </summary>
@@ -61,6 +61,5 @@ namespace Microsoft.OneDrive.Sdk
                 return new OneDriveSharesCollectionRequestBuilder(this.BaseUrl + "/shares", this);
             }
         }
-    
     }
 }

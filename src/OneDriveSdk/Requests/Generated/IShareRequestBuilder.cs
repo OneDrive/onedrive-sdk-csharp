@@ -9,7 +9,7 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.IO;
     using Microsoft.Graph;
 
     /// <summary>
@@ -29,7 +29,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="options">The query and header options for the request.</param>
         /// <returns>The built request.</returns>
         IShareRequest Request(IEnumerable<Option> options);
-        
+    
         /// <summary>
         /// Gets the request builder for Items.
         /// </summary>

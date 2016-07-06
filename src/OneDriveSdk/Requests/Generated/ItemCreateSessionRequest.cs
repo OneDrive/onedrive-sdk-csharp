@@ -12,8 +12,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
-    
     using Microsoft.Graph;
 
     /// <summary>
@@ -21,48 +19,44 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial class ItemCreateSessionRequest : BaseRequest, IItemCreateSessionRequest
     {
-    
         /// <summary>
         /// Constructs a new ItemCreateSessionRequest.
         /// </summary>
         public ItemCreateSessionRequest(
             string requestUrl,
             IBaseClient client,
-            IEnumerable<Option> options,
-            ChunkedUploadSessionDescriptor item = null)
+            IEnumerable<Option> options)
             : base(requestUrl, client, options)
         {
             this.Method = "POST";
             this.ContentType = "application/json";
             this.RequestBody = new ItemCreateSessionRequestBody();
-            this.RequestBody.Item = item;
         }
-    
+
         /// <summary>
         /// Gets the request body.
         /// </summary>
         public ItemCreateSessionRequestBody RequestBody { get; private set; }
-    
+
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        public Task<UploadSession> PostAsync()
+        public System.Threading.Tasks.Task<UploadSession> PostAsync()
         {
             return this.PostAsync(CancellationToken.None);
         }
-        
+
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>TheUploadSession</returns>
-        public Task<UploadSession> PostAsync(CancellationToken cancellationToken)
+        /// <param name=""cancellationToken"">The <see cref=""CancellationToken""/> for the request.</param>
+        /// <returns>The task to await for async call.</returns>
+        public System.Threading.Tasks.Task<UploadSession> PostAsync(
+            CancellationToken cancellationToken)
         {
-    
             return this.SendAsync<UploadSession>(this.RequestBody, cancellationToken);
-    
         }
-    
+
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -84,6 +78,5 @@ namespace Microsoft.OneDrive.Sdk
             this.QueryOptions.Add(new QueryOption("$select", value));
             return this;
         }
-    
     }
 }

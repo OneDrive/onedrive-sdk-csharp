@@ -11,8 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
-    
     using Microsoft.Graph;
 
     /// <summary>
@@ -24,25 +22,25 @@ namespace Microsoft.OneDrive.Sdk
         /// Gets the stream.
         /// </summary>
         /// <returns>The stream.</returns>
-        Task<Stream> GetAsync();
-        
+        System.Threading.Tasks.Task<Stream> GetAsync();
+
         /// <summary>
         /// Gets the stream.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <param name="completionOption">The <see cref="HttpCompletionOption"/> to pass to the <see cref="IHttpProvider"/> on send.</param>
         /// <returns>The stream.</returns>
-        Task<Stream> GetAsync(CancellationToken cancellationToken, HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead);
+        System.Threading.Tasks.Task<Stream> GetAsync(CancellationToken cancellationToken, HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead);
 
-    
+
         /// <summary>
         /// PUTs the specified stream.
         /// </summary>
         /// <typeparam name="T">The type returned by the PUT call.</typeparam>
         /// <param name="content">The stream to PUT.</param>
         /// <returns>The object returned by the PUT call.</returns>
-        Task<T> PutAsync<T>(Stream content) where T : Thumbnail;
-        
+        System.Threading.Tasks.Task<T> PutAsync<T>(Stream content) where T : Thumbnail;
+
         /// <summary>
         /// PUTs the specified stream.
         /// </summary>
@@ -51,7 +49,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <param name="completionOption">The <see cref="HttpCompletionOption"/> to pass to the <see cref="IHttpProvider"/> on send.</param>
         /// <returns>The object returned by the PUT call.</returns>
-        Task<T> PutAsync<T>(Stream content, CancellationToken cancellationToken, HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead) where T : Thumbnail;
+        System.Threading.Tasks.Task<T> PutAsync<T>(Stream content, CancellationToken cancellationToken, HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead) where T : Thumbnail;
     
     }
 }

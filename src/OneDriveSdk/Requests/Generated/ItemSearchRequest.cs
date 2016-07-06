@@ -12,8 +12,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
-    
     using Microsoft.Graph;
 
     /// <summary>
@@ -21,7 +19,6 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial class ItemSearchRequest : BaseRequest, IItemSearchRequest
     {
-    
         /// <summary>
         /// Constructs a new ItemSearchRequest.
         /// </summary>
@@ -33,30 +30,30 @@ namespace Microsoft.OneDrive.Sdk
         {
             this.Method = "GET";
         }
-    
+
         /// <summary>
         /// Issues the GET request.
         /// </summary>
-        public Task<IItemSearchCollectionPage> GetAsync()
+        public System.Threading.Tasks.Task<IItemSearchCollectionPage> GetAsync()
         {
             return this.GetAsync(CancellationToken.None);
         }
-        
+
         /// <summary>
         /// Issues the GET request.
         /// </summary>
-        /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>TheIItemSearchCollectionPage</returns>
-        public async Task<IItemSearchCollectionPage> GetAsync(CancellationToken cancellationToken)
+        /// <param name=""cancellationToken"">The <see cref=""CancellationToken""/> for the request.</param>
+        /// <returns>The task to await for async call.</returns>
+        public async System.Threading.Tasks.Task<IItemSearchCollectionPage> GetAsync(
+            CancellationToken cancellationToken)
         {
-    
             var response = await this.SendAsync<ItemSearchCollectionResponse>(null, cancellationToken).ConfigureAwait(false);
             if (response != null && response.Value != null && response.Value.CurrentPage != null)
             {
                 if (response.AdditionalData != null)
                 {
                     response.Value.AdditionalData = response.AdditionalData;
-                    
+
                     object nextPageLink;
                     response.AdditionalData.TryGetValue("@odata.nextLink", out nextPageLink);
 
@@ -69,14 +66,13 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-    
+
                 return response.Value;
             }
 
             return null;
-    
         }
-    
+
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -98,7 +94,7 @@ namespace Microsoft.OneDrive.Sdk
             this.QueryOptions.Add(new QueryOption("$select", value));
             return this;
         }
-    
+
         /// <summary>
         /// Adds the specified top value to the request.
         /// </summary>
@@ -109,7 +105,7 @@ namespace Microsoft.OneDrive.Sdk
             this.QueryOptions.Add(new QueryOption("$top", value.ToString()));
             return this;
         }
-		
+
         /// <summary>
         /// Adds the specified filter value to the request.
         /// </summary>
@@ -142,6 +138,5 @@ namespace Microsoft.OneDrive.Sdk
             this.QueryOptions.Add(new QueryOption("$orderby", value));
             return this;
         }
-    
     }
 }

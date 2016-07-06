@@ -9,7 +9,7 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.IO;
     using Microsoft.Graph;
 
     /// <summary>
@@ -48,7 +48,7 @@ namespace Microsoft.OneDrive.Sdk
         {
             return new ItemRequest(this.RequestUrl, this.Client, options);
         }
-        
+    
         /// <summary>
         /// Gets the request builder for Permissions.
         /// </summary>
@@ -108,7 +108,7 @@ namespace Microsoft.OneDrive.Sdk
                 return new ItemContentRequestBuilder(this.AppendSegmentToRequestUrl("content"), this.Client);
             }
         }
-        
+    
         /// <summary>
         /// Gets the request builder for ItemCreateSession.
         /// </summary>

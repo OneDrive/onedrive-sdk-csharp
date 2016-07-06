@@ -9,62 +9,41 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
-    
+    using System.IO;
     using Microsoft.Graph;
 
     /// <summary>
     /// The type ItemDeltaRequestBuilder.
     /// </summary>
-    public partial class ItemDeltaRequestBuilder : BaseRequestBuilder, IItemDeltaRequestBuilder
+    public partial class ItemDeltaRequestBuilder : BaseGetMethodRequestBuilder<IItemDeltaRequest>, IItemDeltaRequestBuilder
     {
-    
+        /// <summary>
+        /// Constructs a new <see cref="ItemDeltaRequestBuilder"/>.
+        /// </summary>
+        /// <param name="requestUrl">The URL for the request.</param>
+        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
+        /// <param name="token">A token parameter for the OData method call.</param>
         public ItemDeltaRequestBuilder(
             string requestUrl,
             IBaseClient client,
-            string token = null)
+            string token)
             : base(requestUrl, client)
         {
-            
-            this.Token = token;
-
+            this.passParametersInQueryString = true;
+            this.SetParameter("token", token, true);
         }
-    
+
         /// <summary>
-        /// Gets the value of Token.
+        /// A method used by the base class to construct a request class instance.
         /// </summary>
-        public string Token { get; set; }
-    
-        /// <summary>
-        /// Builds the request.
-        /// </summary>
+        /// <param name="functionUrl">The request URL to </param>
         /// <param name="options">The query and header options for the request.</param>
-        /// <returns>The built request.</returns>
-        public IItemDeltaRequest Request(IEnumerable<Option> options = null)
+        /// <returns>An instance of a specific request class.</returns>
+        protected override IItemDeltaRequest CreateRequest(string functionUrl, IEnumerable<Option> options)
         {
-        
-            var functionRequestUrl = this.RequestUrl;
-            
-            var functionParametersStringBuilder = new StringBuilder();
+            var request = new ItemDeltaRequest(functionUrl, this.Client, options);
 
-            if (this.Token != null)
-            {
-                functionParametersStringBuilder.AppendFormat("token='{0}'", this.Token);
-            }
-            else
-            {
-                functionParametersStringBuilder.Append("token=null");
-            }
-
-            functionRequestUrl = string.Format("{0}({1})", this.RequestUrl, functionParametersStringBuilder.ToString());
-            
-            return new ItemDeltaRequest(
-                functionRequestUrl,
-                this.Client,
-                options);
-        
+            return request;
         }
-
     }
 }
-

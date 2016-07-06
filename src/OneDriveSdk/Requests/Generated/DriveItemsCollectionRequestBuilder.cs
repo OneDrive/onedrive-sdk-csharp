@@ -8,14 +8,13 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    
     using Microsoft.Graph;
 
     /// <summary>
     /// The type DriveItemsCollectionRequestBuilder.
     /// </summary>
     public partial class DriveItemsCollectionRequestBuilder : BaseRequestBuilder, IDriveItemsCollectionRequestBuilder
-    {  
+    {
         /// <summary>
         /// Constructs a new DriveItemsCollectionRequestBuilder.
         /// </summary>

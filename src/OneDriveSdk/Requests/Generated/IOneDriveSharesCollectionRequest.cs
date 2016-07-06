@@ -11,8 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
-    
     using Microsoft.Graph;
 
     /// <summary>
@@ -26,7 +24,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="share">The Share to add.</param>
         /// <returns>The created Share.</returns>
-        Task<Share> AddAsync(Share share);
+        System.Threading.Tasks.Task<Share> AddAsync(Share share);
 
         /// <summary>
         /// Adds the specified Share to the collection via POST.
@@ -34,19 +32,19 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="share">The Share to add.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created Share.</returns>
-        Task<Share> AddAsync(Share share, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Share> AddAsync(Share share, CancellationToken cancellationToken);
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <returns>The collection page.</returns>
-        Task<IOneDriveSharesCollectionPage> GetAsync();
-        
+        System.Threading.Tasks.Task<IOneDriveSharesCollectionPage> GetAsync();
+
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The collection page.</returns>
-        Task<IOneDriveSharesCollectionPage> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<IOneDriveSharesCollectionPage> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.
@@ -68,7 +66,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The top value.</param>
         /// <returns>The request object to send.</returns>
         IOneDriveSharesCollectionRequest Top(int value);
-        
+
         /// <summary>
         /// Adds the specified filter value to the request.
         /// </summary>

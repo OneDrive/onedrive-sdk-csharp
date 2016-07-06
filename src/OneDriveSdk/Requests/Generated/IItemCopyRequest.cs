@@ -12,33 +12,31 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
-    
     using Microsoft.Graph;
-    
+
     /// <summary>
     /// The interface IItemCopyRequest.
     /// </summary>
     public partial interface IItemCopyRequest : IBaseRequest
     {
-    
+
         /// <summary>
         /// Gets the request body.
         /// </summary>
         ItemCopyRequestBody RequestBody { get; }
-        
+
         /// <summary>
         /// Issues the POST request.
         /// </summary>
-        Task<IItemCopyAsyncMonitor> PostAsync();
+        System.Threading.Tasks.Task<IAsyncMonitor<Item>> PostAsync();
 
         /// <summary>
         /// Issues the POST request.
         /// </summary>
         /// /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>TheIItemCopyAsyncMonitor</returns>
-        Task<IItemCopyAsyncMonitor> PostAsync(CancellationToken cancellationToken);
-            
+        /// <returns>TheIAsyncMonitor<Item></returns>
+        System.Threading.Tasks.Task<IAsyncMonitor<Item>> PostAsync(CancellationToken cancellationToken);
+
         /// <summary>
         /// Adds the specified expand value to the request.
         /// </summary>
@@ -52,6 +50,5 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The select value.</param>
         /// <returns>The request object to send.</returns>
         IItemCopyRequest Select(string value);
-    
     }
 }

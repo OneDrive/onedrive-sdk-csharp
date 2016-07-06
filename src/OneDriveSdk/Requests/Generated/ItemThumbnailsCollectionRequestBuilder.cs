@@ -8,14 +8,13 @@ namespace Microsoft.OneDrive.Sdk
 {
     using System;
     using System.Collections.Generic;
-    
     using Microsoft.Graph;
 
     /// <summary>
     /// The type ItemThumbnailsCollectionRequestBuilder.
     /// </summary>
     public partial class ItemThumbnailsCollectionRequestBuilder : BaseRequestBuilder, IItemThumbnailsCollectionRequestBuilder
-    {  
+    {
         /// <summary>
         /// Constructs a new ItemThumbnailsCollectionRequestBuilder.
         /// </summary>

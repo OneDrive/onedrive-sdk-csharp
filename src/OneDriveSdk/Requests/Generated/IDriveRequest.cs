@@ -11,8 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
-    
     using Microsoft.Graph;
 
     /// <summary>
@@ -25,46 +23,46 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="driveToCreate">The Drive to create.</param>
         /// <returns>The created Drive.</returns>
-        Task<Drive> CreateAsync(Drive driveToCreate);        /// <summary>
+        System.Threading.Tasks.Task<Drive> CreateAsync(Drive driveToCreate);        /// <summary>
         /// Creates the specified Drive using PUT.
         /// </summary>
         /// <param name="driveToCreate">The Drive to create.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created Drive.</returns>
-        Task<Drive> CreateAsync(Drive driveToCreate, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Drive> CreateAsync(Drive driveToCreate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes the specified Drive.
         /// </summary>
         /// <returns>The task to await.</returns>
-        Task DeleteAsync();
+        System.Threading.Tasks.Task DeleteAsync();
 
         /// <summary>
         /// Deletes the specified Drive.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The task to await.</returns>
-        Task DeleteAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task DeleteAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the specified Drive.
         /// </summary>
         /// <returns>The Drive.</returns>
-        Task<Drive> GetAsync();
+        System.Threading.Tasks.Task<Drive> GetAsync();
 
         /// <summary>
         /// Gets the specified Drive.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The Drive.</returns>
-        Task<Drive> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Drive> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates the specified Drive using PATCH.
         /// </summary>
         /// <param name="driveToUpdate">The Drive to update.</param>
         /// <returns>The updated Drive.</returns>
-        Task<Drive> UpdateAsync(Drive driveToUpdate);
+        System.Threading.Tasks.Task<Drive> UpdateAsync(Drive driveToUpdate);
 
         /// <summary>
         /// Updates the specified Drive using PATCH.
@@ -72,7 +70,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="driveToUpdate">The Drive to update.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The updated Drive.</returns>
-        Task<Drive> UpdateAsync(Drive driveToUpdate, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Drive> UpdateAsync(Drive driveToUpdate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.
@@ -87,5 +85,6 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The select value.</param>
         /// <returns>The request object to send.</returns>
         IDriveRequest Select(string value);
+
     }
 }

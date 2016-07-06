@@ -11,8 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.IO;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
-    
     using Microsoft.Graph;
 
     /// <summary>
@@ -25,46 +23,46 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="thumbnailSetToCreate">The ThumbnailSet to create.</param>
         /// <returns>The created ThumbnailSet.</returns>
-        Task<ThumbnailSet> CreateAsync(ThumbnailSet thumbnailSetToCreate);        /// <summary>
+        System.Threading.Tasks.Task<ThumbnailSet> CreateAsync(ThumbnailSet thumbnailSetToCreate);        /// <summary>
         /// Creates the specified ThumbnailSet using PUT.
         /// </summary>
         /// <param name="thumbnailSetToCreate">The ThumbnailSet to create.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created ThumbnailSet.</returns>
-        Task<ThumbnailSet> CreateAsync(ThumbnailSet thumbnailSetToCreate, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ThumbnailSet> CreateAsync(ThumbnailSet thumbnailSetToCreate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes the specified ThumbnailSet.
         /// </summary>
         /// <returns>The task to await.</returns>
-        Task DeleteAsync();
+        System.Threading.Tasks.Task DeleteAsync();
 
         /// <summary>
         /// Deletes the specified ThumbnailSet.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The task to await.</returns>
-        Task DeleteAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task DeleteAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the specified ThumbnailSet.
         /// </summary>
         /// <returns>The ThumbnailSet.</returns>
-        Task<ThumbnailSet> GetAsync();
+        System.Threading.Tasks.Task<ThumbnailSet> GetAsync();
 
         /// <summary>
         /// Gets the specified ThumbnailSet.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The ThumbnailSet.</returns>
-        Task<ThumbnailSet> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ThumbnailSet> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Updates the specified ThumbnailSet using PATCH.
         /// </summary>
         /// <param name="thumbnailSetToUpdate">The ThumbnailSet to update.</param>
         /// <returns>The updated ThumbnailSet.</returns>
-        Task<ThumbnailSet> UpdateAsync(ThumbnailSet thumbnailSetToUpdate);
+        System.Threading.Tasks.Task<ThumbnailSet> UpdateAsync(ThumbnailSet thumbnailSetToUpdate);
 
         /// <summary>
         /// Updates the specified ThumbnailSet using PATCH.
@@ -72,7 +70,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="thumbnailSetToUpdate">The ThumbnailSet to update.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The updated ThumbnailSet.</returns>
-        Task<ThumbnailSet> UpdateAsync(ThumbnailSet thumbnailSetToUpdate, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ThumbnailSet> UpdateAsync(ThumbnailSet thumbnailSetToUpdate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.
@@ -87,5 +85,6 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The select value.</param>
         /// <returns>The request object to send.</returns>
         IThumbnailSetRequest Select(string value);
+
     }
 }

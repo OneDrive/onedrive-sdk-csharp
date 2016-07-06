@@ -8,10 +8,9 @@
 namespace Microsoft.OneDrive.Sdk
 {
     using System;
-
     using Microsoft.Graph;
     using Newtonsoft.Json;
-    
+
     /// <summary>
     /// The interface IDriveSpecialCollectionPage.
     /// </summary>

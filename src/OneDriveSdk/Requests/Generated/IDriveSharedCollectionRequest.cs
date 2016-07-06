@@ -11,8 +11,6 @@ namespace Microsoft.OneDrive.Sdk
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
-    
     using Microsoft.Graph;
 
     /// <summary>
@@ -26,7 +24,7 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <param name="item">The Item to add.</param>
         /// <returns>The created Item.</returns>
-        Task<Item> AddAsync(Item item);
+        System.Threading.Tasks.Task<Item> AddAsync(Item item);
 
         /// <summary>
         /// Adds the specified Item to the collection via POST.
@@ -34,19 +32,19 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="item">The Item to add.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The created Item.</returns>
-        Task<Item> AddAsync(Item item, CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Item> AddAsync(Item item, CancellationToken cancellationToken);
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <returns>The collection page.</returns>
-        Task<IDriveSharedCollectionPage> GetAsync();
-        
+        System.Threading.Tasks.Task<IDriveSharedCollectionPage> GetAsync();
+
         /// <summary>
         /// Gets the collection page.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
         /// <returns>The collection page.</returns>
-        Task<IDriveSharedCollectionPage> GetAsync(CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<IDriveSharedCollectionPage> GetAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Adds the specified expand value to the request.
@@ -68,7 +66,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="value">The top value.</param>
         /// <returns>The request object to send.</returns>
         IDriveSharedCollectionRequest Top(int value);
-        
+
         /// <summary>
         /// Adds the specified filter value to the request.
         /// </summary>
