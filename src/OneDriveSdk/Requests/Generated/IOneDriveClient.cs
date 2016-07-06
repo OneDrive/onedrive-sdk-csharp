@@ -9,7 +9,6 @@ namespace Microsoft.OneDrive.Sdk
 {
     using Microsoft.Graph;
 
-
     /// <summary>
     /// The interface IOneDriveClient.
     /// </summary>
