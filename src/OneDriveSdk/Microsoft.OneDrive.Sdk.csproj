@@ -62,7 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Graph.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Graph.Core.1.0.0-rc6\lib\portable-net45+netcore50+wpa81+win8\Microsoft.Graph.Core.dll</HintPath>
+      <HintPath>..\..\packages\lib\portable-net45+netcore50+wpa81+win8\Microsoft.Graph.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
