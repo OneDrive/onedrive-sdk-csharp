@@ -20,6 +20,14 @@ namespace Microsoft.OneDrive.Sdk
             public const string Root = "root";
 
             public const string AppRoot = "approot";
+            
+            public const string Documents = "documents";
+            
+            public const string Photos = "photos";
+            
+            public const string CameraRoll = "cameraroll";
+            
+            public const string Music = "music";
         }
     }
 }
