@@ -61,8 +61,8 @@
     <Compile Include="Requests\ThumbnailRequestBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Graph.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\lib\portable-net45+netcore50+wpa81+win8\Microsoft.Graph.Core.dll</HintPath>
+    <Reference Include="Microsoft.Graph.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Graph.Core.1.1.0\lib\portable45-net45+win8+wpa81\Microsoft.Graph.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
