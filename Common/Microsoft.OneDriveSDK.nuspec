@@ -15,7 +15,7 @@
     <tags>onedrive sharepoint files livesdk liveconnect cloud storage microsoftaccount windowsliveid microsoftid windowsphone windowsstore metro xaml html</tags>
     <dependencies>
       <group>
-        <dependency id="Microsoft.Graph.Core" version="1.1.0" />
+        <dependency id="Microsoft.Graph.Core" version="1.1.1" />
         <dependency id="Newtonsoft.Json" version="6.0.2" />
       </group>
     </dependencies>
