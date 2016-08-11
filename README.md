@@ -38,8 +38,21 @@ For more information, see [Authentication scopes](https://dev.onedrive.com/auth/
 
 ### 3. Getting an authenticated OneDriveClient object
 
-The **OneDriveClient** object will handle authentication for you. You must get a **OneDriveClient** object in order for your app to make requests to the service. 
-For more information, see [Authenticate your C# app for OneDrive](docs/auth.md).
+You must get a **OneDriveClient** object in order for your app to make requests to the service, but first you must have an instance of an object that implements `IAuthenticationProvider` in Microsoft.Graph.Core.
+An example of such an imlementation can be found [MSA Auth Adapter repository](https://github.com/OneDrive/onedrive-sdk-dotnet-msa-auth-adapter). You should create the `IAuthenticationProvider`, authenticate
+using `AuthenticateUserAsync()`, and then create a `OneDriveClient` using the auth provider as a constructor argument. You must also provide the ClientId of your app, the return URL you have specified for your app,
+and the base URL for the API. Below is a sample of that pattern for authentication on the OneDrive service.
+
+```csharp
+var msaAuthProvider = new myAuthProvider(
+    myClientId,
+    "https://login.live.com/oauth20_desktop.srf",
+    { "onedrive.readonly", "wl.signin" });
+await msaAuthProvider.AuthenticateUserAsync();
+var oneDriveClient = new OneDriveClient("https://api.onedrive.com/v1.0", msaAuthProvider);
+```
+
+After that, you will be able to use the `oneDriveClient` object to make calls to the service. For more information, see [Authenticate your C# app for OneDrive](docs/auth.md).
 
 ### 4. Making requests to the service
 

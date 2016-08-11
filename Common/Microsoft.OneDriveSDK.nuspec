@@ -2,47 +2,27 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
   <metadata>
     <id>Microsoft.OneDriveSDK</id>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <title>OneDrive .NET SDK</title>
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Integrate the OneDrive API into your .NET App!</description>
-    <copyright>Copyright 2015 Microsoft Corporation</copyright>
+    <copyright>Copyright 2016 Microsoft Corporation</copyright>
     <projectUrl>https://github.com/OneDrive/onedrive-sdk-csharp</projectUrl>
     <licenseUrl>http://msdn.microsoft.com/en-US/cc300389</licenseUrl>
     <iconUrl>https://dev.onedrive.com/images/OneDriveCloud.png</iconUrl>
     <tags>onedrive sharepoint files livesdk liveconnect cloud storage microsoftaccount windowsliveid microsoftid windowsphone windowsstore metro xaml html</tags>
     <dependencies>
       <group>
-        <dependency id="Newtonsoft.Json" version="6.0.2" />
-      </group>
-      <group targetFramework="net451">
-        <dependency id="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.21.301221612" />
-        <dependency id="Newtonsoft.Json" version="6.0.2" />
-      </group>
-      <group targetFramework="win81">
-        <dependency id="Microsoft.IdentityModel.Clients.ActiveDirectory" version="2.21.301221612" />
+        <dependency id="Microsoft.Graph.Core" version="1.1.0" />
         <dependency id="Newtonsoft.Json" version="6.0.2" />
       </group>
     </dependencies>
 
   </metadata>
-  <files>
-    <!-- PCL projects -->
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-net45+netcore45+wpa81+win8\OneDriveSdk.dll" />         
-
-    <!-- Standard .NET projects, like Windows Forms or ASP.NET -->  
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\net451\OneDriveSdk.dll" />  
-    <file src="..\src\OneDriveSdk.WindowsForms\bin\Release\OneDriveSdk.WindowsForms.dll" target="lib\net451\OneDriveSdk.WindowsForms.dll" />  
-
-    <!-- Windows Phone 8.1 -->
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-win81+wpa81\OneDriveSdk.dll" />  
-    <file src="..\src\OneDriveSdk.WinStore\bin\Release\OneDriveSdk.WinStore.dll" target="lib\portable-win81+wpa81\OneDriveSdk.WinStore.dll" />  
-
-    <!-- Windows 8.1 -->
-    <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\win81\OneDriveSdk.dll" />  
-    <file src="..\src\OneDriveSdk.WinRT\bin\Release\OneDriveSdk.WinRT.dll" target="lib\win81\OneDriveSdk.WinRT.dll" />
-    <file src="..\src\OneDriveSdk.WinStore\bin\Release\OneDriveSdk.WinStore.dll" target="lib\win81\OneDriveSdk.WinStore.dll" />  
-  </files>
+    <files>
+        <!-- PCL projects -->
+        <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-net45+netcore45+wpa81+win8\OneDriveSdk.dll" />
+    </files>
 </package>

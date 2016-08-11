@@ -1,37 +1,17 @@
 ﻿// ------------------------------------------------------------------------------
-//  Copyright (c) 2015 Microsoft Corporation
-// 
-//  Permission is hereby granted, free of charge, to any person obtaining a copy
-//  of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//  copies of the Software, and to permit persons to whom the Software is
-//  furnished to do so, subject to the following conditions:
-// 
-//  The above copyright notice and this permission notice shall be included in
-//  all copies or substantial portions of the Software.
-// 
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//  THE SOFTWARE.
+//  Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
-
-namespace Test.OneDriveSdk.Requests
+namespace Test.OneDrive.Sdk.Requests
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
     using System.Net.Http;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.OneDrive.Sdk;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Mocks;
     using Moq;
 
     [TestClass]
@@ -40,7 +20,7 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ThumbnailContentRequest_BuildRequest()
         {
-            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/thumbnails/0/id/content");
+            var expectedRequestUri = new Uri("https://api.onedrive.com/v1.0/drive/items/id/thumbnails/0/id/content");
             var thumbnailContentRequestBuilder = this.oneDriveClient.Drive.Items["id"].Thumbnails["0"]["id"].Content as ThumbnailContentRequestBuilder;
 
             Assert.IsNotNull(thumbnailContentRequestBuilder, "Unexpected request builder.");
@@ -59,11 +39,13 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = stringContent;
 
-                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/thumbnails/0/id/content";
+                var requestUrl = "https://api.onedrive.com/v1.0/drive/items/id/thumbnails/0/id/content";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
-                            request => request.RequestUri.ToString().StartsWith(requestUrl))))
+                            request => request.RequestUri.ToString().StartsWith(requestUrl)),
+                        HttpCompletionOption.ResponseContentRead,
+                        CancellationToken.None))
                     .Returns(Task.FromResult(httpResponseMessage));
 
                 using (var response = await this.oneDriveClient.Drive.Items["id"].Thumbnails["0"]["id"].Content.Request().GetAsync())
@@ -89,11 +71,13 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = streamContent;
 
-                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/thumbnails/0/id/content";
+                var requestUrl = "https://api.onedrive.com/v1.0/drive/items/id/thumbnails/0/id/content";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
-                            request => request.RequestUri.ToString().StartsWith(requestUrl))))
+                            request => request.RequestUri.ToString().StartsWith(requestUrl)),
+                        HttpCompletionOption.ResponseContentRead,
+                        CancellationToken.None))
                     .Returns(Task.FromResult(httpResponseMessage));
 
                 var expectedThumbnail = new Thumbnail { Url = "https://localhost" };

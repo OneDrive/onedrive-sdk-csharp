@@ -1,37 +1,18 @@
 ﻿// ------------------------------------------------------------------------------
-//  Copyright (c) 2015 Microsoft Corporation
-// 
-//  Permission is hereby granted, free of charge, to any person obtaining a copy
-//  of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//  copies of the Software, and to permit persons to whom the Software is
-//  furnished to do so, subject to the following conditions:
-// 
-//  The above copyright notice and this permission notice shall be included in
-//  all copies or substantial portions of the Software.
-// 
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//  THE SOFTWARE.
+//  Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
 
-namespace Test.OneDriveSdk.Requests
+namespace Test.OneDrive.Sdk.Requests
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
     using System.Net.Http;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.OneDrive.Sdk;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Mocks;
     using Moq;
 
     [TestClass]
@@ -40,12 +21,11 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemCreateLinkRequest_BuildRequest()
         {
-            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/action.createLink");
+            var expectedRequestUri = new Uri("https://api.onedrive.com/v1.0/drive/items/id/oneDrive.createLink");
             var createLinkRequestBuilder = this.oneDriveClient.Drive.Items["id"].CreateLink("view") as ItemCreateLinkRequestBuilder;
 
             Assert.IsNotNull(createLinkRequestBuilder, "Unexpected request builder.");
             Assert.AreEqual(expectedRequestUri, new Uri(createLinkRequestBuilder.RequestUrl), "Unexpected request URL.");
-            Assert.AreEqual("view", createLinkRequestBuilder.Type, "Unexpected token.");
 
             var createLinkRequest = createLinkRequestBuilder.Request() as ItemCreateLinkRequest;
             Assert.IsNotNull(createLinkRequest, "Unexpected request.");
@@ -64,11 +44,13 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = streamContent;
 
-                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/action.createLink";
+                var requestUrl = "https://api.onedrive.com/v1.0/drive/items/id/oneDrive.createLink";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
-                            request => request.RequestUri.ToString().StartsWith(requestUrl))))
+                            request => request.RequestUri.ToString().StartsWith(requestUrl)),
+                        HttpCompletionOption.ResponseContentRead,
+                        CancellationToken.None))
                     .Returns(Task.FromResult(httpResponseMessage));
 
                 var expectedPermission = new Permission { Id = "id", Link = new SharingLink { Type = "edit" } };
@@ -91,20 +73,20 @@ namespace Test.OneDriveSdk.Requests
         [TestMethod]
         public void ItemDeltaRequest_BuildRequest()
         {
-            var expectedRequestUri = new Uri(string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/view.delta");
+            var baseRequestUrl = "https://api.onedrive.com/v1.0/drive/items/id/oneDrive.delta";
+            var expectedRequestUri = new Uri(baseRequestUrl);
             var deltaRequestBuilder = this.oneDriveClient.Drive.Items["id"].Delta("token") as ItemDeltaRequestBuilder;
 
             Assert.IsNotNull(deltaRequestBuilder, "Unexpected request builder.");
             Assert.AreEqual(expectedRequestUri, new Uri(deltaRequestBuilder.RequestUrl), "Unexpected request URL.");
-            Assert.AreEqual("token", deltaRequestBuilder.Token, "Unexpected token.");
 
             var deltaRequest = deltaRequestBuilder.Request() as ItemDeltaRequest;
             Assert.IsNotNull(deltaRequest, "Unexpected request.");
             Assert.AreEqual(expectedRequestUri, new Uri(deltaRequest.RequestUrl), "Unexpected request URL.");
             Assert.AreEqual("GET", deltaRequest.Method, "Unexpected method.");
             Assert.AreEqual(1, deltaRequest.QueryOptions.Count, "Unexpected number of query options.");
-            Assert.AreEqual("token", deltaRequest.QueryOptions[0].Name, "Unexpected token option name.");
-            Assert.AreEqual("token", deltaRequest.QueryOptions[0].Value, "Unexpected token option value.");
+            Assert.AreEqual("token", deltaRequest.QueryOptions[0].Name, "Unexpected query option name.");
+            Assert.AreEqual("token", deltaRequest.QueryOptions[0].Value, "Unexpected query option name.");
         }
 
         [TestMethod]
@@ -127,11 +109,13 @@ namespace Test.OneDriveSdk.Requests
             {
                 httpResponseMessage.Content = streamContent;
                 
-                var requestUrl = string.Format(Constants.Authentication.OneDriveConsumerBaseUrlFormatString, "v1.0") + "/drive/items/id/view.delta";
+                var requestUrl = "https://api.onedrive.com/v1.0/drive/items/id/oneDrive.delta";
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
-                            request => request.RequestUri.ToString().StartsWith(requestUrl))))
+                            request => request.RequestUri.ToString().StartsWith(requestUrl)),
+                        HttpCompletionOption.ResponseContentRead,
+                        CancellationToken.None))
                     .Returns(Task.FromResult(httpResponseMessage));
 
                 var expectedDeltaCollectionPage = new ItemDeltaCollectionPage
