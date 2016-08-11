@@ -23,6 +23,6 @@
   </metadata>
     <files>
         <!-- PCL projects -->
-        <file src="..\src\OneDriveSdk\bin\Release\OneDriveSdk.dll" target="lib\portable-net45+netcore45+wpa81+win8\OneDriveSdk.dll" />
+        <file src="..\src\OneDriveSdk\bin\Release\Microsoft.OneDrive.Sdk.dll" target="lib\portable-net45+netcore45+wpa81+win8\Microsoft.OneDrive.Sdk.dll" />
     </files>
 </package>
