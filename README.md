@@ -67,7 +67,7 @@ To retrieve a user's drive:
                           .GetAsync();
 ```
 
-`GetAsync` will return a `Drive` object on success and throw a `OneDriveException` on error.
+`GetAsync` will return a `Drive` object on success and throw a `Microsoft.Graph.ServiceException` on error.
 
 To get the current user's root folder of their drive:
 
@@ -79,7 +79,7 @@ To get the current user's root folder of their drive:
                              .GetAsync();
 ```
 
-`GetAsync` will return an `Item` object on success and throw a `OneDriveException` on error.
+`GetAsync` will return an `Item` object on success and throw a `Microsoft.Graph.ServiceException` on error.
 
 For a general overview of how the SDK is designed, see [overview](docs/overview.md).
 
