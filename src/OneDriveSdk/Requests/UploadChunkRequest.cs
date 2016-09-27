@@ -4,8 +4,6 @@
 
 namespace Microsoft.OneDrive.Sdk
 {
-    using Microsoft.Graph;
-    
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -13,11 +11,17 @@ namespace Microsoft.OneDrive.Sdk
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.Graph;
+    
     /// <summary>
     /// The type UploadChunkRequest.
     /// </summary>
     public partial class UploadChunkRequest : BaseRequest, IUploadChunkRequest
     {
+        public int RangeBegin { get; private set; }
+        public int RangeEnd { get; private set; }
+        public int TotalSessionLength { get; private set; }
+
         /// <summary>
         /// Constructs a new UploadChunkRequest.
         /// </summary>
@@ -27,16 +31,22 @@ namespace Microsoft.OneDrive.Sdk
         public UploadChunkRequest(
             string sessionUrl,
             IBaseClient client,
-            IEnumerable<Option> options)
+            IEnumerable<Option> options,
+            int rangeBegin,
+            int rangeEnd,
+            int totalSessionLength)
             : base(sessionUrl, client, options)
         {
+            this.RangeBegin = rangeBegin;
+            this.RangeEnd = rangeEnd;
+            this.TotalSessionLength = totalSessionLength;
         }
 
         /// <summary>
         /// Uploads the chunk using PUT.
         /// </summary>
         /// <returns>The status of the upload.</returns>
-        public Task PutAsync(byte[] bytes, int begin, int end, int total)
+        public Task<UploadSession> PutAsync(byte[] bytes)
         {
             throw new NotImplementedException();
         }
