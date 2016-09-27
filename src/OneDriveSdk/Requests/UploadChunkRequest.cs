@@ -46,9 +46,21 @@ namespace Microsoft.OneDrive.Sdk
         /// Uploads the chunk using PUT.
         /// </summary>
         /// <returns>The status of the upload.</returns>
-        public Task<UploadSession> PutAsync(byte[] bytes)
+        public Task<UploadSession> PutAsync(Stream stream)
         {
-            throw new NotImplementedException();
+            return this.SendAsync<UploadSession>(stream, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Uploads the chunk using PUT.
+        /// </summary>
+        /// <returns>The status of the upload.</returns>
+        public Task<UploadSession> PutAsync(Stream stream, CancellationToken cancellationToken)
+        {
+            this.Method = "PUT";
+            this.Headers.Add(new HeaderOption("Content-Range",
+                $"bytes {this.RangeBegin}-{this.RangeEnd}/{this.TotalSessionLength}"));
+            return this.SendAsync<UploadSession>(stream, cancellationToken);
         }
     }
 }

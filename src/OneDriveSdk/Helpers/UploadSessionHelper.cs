@@ -2,8 +2,6 @@
 //  Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
 
-using System.Linq;
-
 namespace Microsoft.OneDrive.Sdk.Helpers
 {
     using Microsoft.Graph;
@@ -11,10 +9,11 @@ namespace Microsoft.OneDrive.Sdk.Helpers
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
-    class UploadSessionHelper
+    public class UploadSessionHelper
     {
         private const int MaxChunkSize = 10 * 1024 * 1024;
 
@@ -88,6 +87,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             }
 
             this.rangesRemaining = newRangesRemaining;
+            newSession.UploadUrl = this.Session.UploadUrl; // Sometimes the UploadUrl is not returned
             this.Session = newSession;
             return newSession;
         }
@@ -114,14 +114,14 @@ namespace Microsoft.OneDrive.Sdk.Helpers
                 foreach (var request in chunkRequests)
                 {
                     var tries = 0;
-                    var bytes = new byte[request.RangeEnd - request.RangeBegin + 1];
-                    await this.uploadStream.ReadAsync(bytes, request.RangeBegin, bytes.Length);
+                    var stream = new MemoryStream(request.RangeEnd - request.RangeBegin + 1);
+                    await this.uploadStream.CopyToAsync(stream);
 
                     while (tries < 2) // Retry a given request only once
                     {
                         try
                         {
-                            await request.PutAsync(bytes);
+                            await request.PutAsync(stream);
                         }
                         catch (ServiceException exception)
                         {
@@ -158,13 +158,13 @@ namespace Microsoft.OneDrive.Sdk.Helpers
 
         private static int NextChunkSize(int rangeBegin, int rangeEnd)
         {
-            return rangeEnd - rangeBegin > MaxChunkSize
+            return (rangeEnd - rangeBegin) > MaxChunkSize
                 ? MaxChunkSize
                 : rangeEnd - rangeBegin + 1;
         }
     }
 
-    class UploadSessionRequest : BaseRequest
+    public class UploadSessionRequest : BaseRequest
     {
         private readonly UploadSession session;
 
