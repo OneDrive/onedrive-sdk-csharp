@@ -57,9 +57,10 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The status of the upload.</returns>
         public Task<UploadSession> PutAsync(Stream stream, CancellationToken cancellationToken)
         {
-            this.Method = "PUT";
+            this.Method = "POST";
             this.Headers.Add(new HeaderOption("Content-Range",
                 $"bytes {this.RangeBegin}-{this.RangeEnd}/{this.TotalSessionLength}"));
+            this.Headers.Add(new HeaderOption("Content-Length", $"{this.RangeEnd-this.RangeBegin+1}"));
             return this.SendAsync<UploadSession>(stream, cancellationToken);
         }
     }
