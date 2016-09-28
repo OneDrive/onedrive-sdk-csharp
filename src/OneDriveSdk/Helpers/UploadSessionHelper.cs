@@ -114,29 +114,31 @@ namespace Microsoft.OneDrive.Sdk.Helpers
                 foreach (var request in chunkRequests)
                 {
                     var tries = 0;
-                    var stream = new MemoryStream(request.RangeEnd - request.RangeBegin + 1);
-                    await this.uploadStream.CopyToAsync(stream);
 
                     while (tries < 2) // Retry a given request only once
                     {
-                        try
+                        using (var stream = new MemoryStream(request.RangeEnd - request.RangeBegin + 1))
                         {
-                            await request.PutAsync(stream);
-                        }
-                        catch (ServiceException exception)
-                        {
-                            if (exception.IsMatch("generalException"))
+                            await this.uploadStream.CopyToAsync(stream);
+                            try
                             {
-                                // Swallow and retry
-                                tries += 1;
+                                await request.PutAsync(stream);
                             }
-                            else if (exception.IsMatch("timeout"))
+                            catch (ServiceException exception)
                             {
-                                // Don't waste a retry on a timeout
-                            }
-                            else
-                            {
-                                throw;
+                                if (exception.IsMatch("generalException"))
+                                {
+                                    // Swallow and retry
+                                    tries += 1;
+                                }
+                                else if (exception.IsMatch("timeout"))
+                                {
+                                    // Don't waste a retry on a timeout
+                                }
+                                else
+                                {
+                                    throw;
+                                }
                             }
                         }
                     }
