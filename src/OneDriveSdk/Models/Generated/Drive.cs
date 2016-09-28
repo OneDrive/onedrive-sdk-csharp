@@ -77,6 +77,12 @@ namespace Microsoft.OneDrive.Sdk
         public ISharedCollectionPage Shared { get; set; }
     
         /// <summary>
+        /// Gets or sets sharedWithMe.
+        /// </summary>
+        [DataMember(Name = "sharedWithMe", EmitDefaultValue = false, IsRequired = false)]
+        public ISharedWithMeCollectionPage SharedWithMe { get; set; }
+    
+        /// <summary>
         /// Gets or sets special.
         /// </summary>
         [DataMember(Name = "special", EmitDefaultValue = false, IsRequired = false)]

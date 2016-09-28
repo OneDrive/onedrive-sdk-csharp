@@ -90,10 +90,22 @@ namespace Microsoft.OneDrive.Sdk
         }
     
         /// <summary>
-        /// Gets the request builder for Special.
+        /// Gets the request builder for SharedWithMe.
         /// </summary>
-        /// <returns>The <see cref="ISpecialCollectionRequestBuilder"/>.</returns>
-        public ISpecialCollectionRequestBuilder Special
+        /// <returns>The <see cref="ISharedWithMeCollectionRequestBuilder"/>.</returns>
+        public ISharedWithMeCollectionRequestBuilder SharedWithMe
+        {
+            get
+            {
+                return new SharedWithMeCollectionRequestBuilder(this.AppendSegmentToRequestUrl("sharedWithMe"), this.Client);
+            }
+        }
+
+		/// <summary>
+		/// Gets the request builder for Special.
+		/// </summary>
+		/// <returns>The <see cref="ISpecialCollectionRequestBuilder"/>.</returns>
+		public ISpecialCollectionRequestBuilder Special
         {
             get
             {

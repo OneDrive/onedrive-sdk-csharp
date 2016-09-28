@@ -173,7 +173,23 @@ namespace Microsoft.OneDrive.Sdk
                             nextPageLinkString);
                     }
                 }
-        
+
+                if (drive.SharedWithMe != null && drive.SharedWithMe.CurrentPage != null)
+                {
+                    drive.SharedWithMe.AdditionalData = drive.AdditionalData;
+
+                    object nextPageLink;
+                    drive.AdditionalData.TryGetValue("items@odata.nextLink", out nextPageLink);
+                    var nextPageLinkString = nextPageLink as string;
+
+                    if (!string.IsNullOrEmpty(nextPageLinkString))
+                    {
+                        drive.SharedWithMe.InitializeNextPageRequest(
+                            this.Client,
+                            nextPageLinkString);
+                    }
+                }
+
                 if (drive.Special != null && drive.Special.CurrentPage != null)
                 {
                     drive.Special.AdditionalData = drive.AdditionalData;
