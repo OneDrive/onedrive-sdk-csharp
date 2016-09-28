@@ -21,6 +21,7 @@ namespace Microsoft.OneDrive.Sdk
         public long RangeBegin { get; private set; }
         public long RangeEnd { get; private set; }
         public long TotalSessionLength { get; private set; }
+        public int RangeLength => (int)(this.RangeEnd - this.RangeBegin + 1);
 
         /// <summary>
         /// Constructs a new UploadChunkRequest.
@@ -42,7 +43,7 @@ namespace Microsoft.OneDrive.Sdk
             this.TotalSessionLength = totalSessionLength;
             this.Headers.Add(new HeaderOption("Content-Range",
                 $"bytes {this.RangeBegin}-{this.RangeEnd}/{this.TotalSessionLength}"));
-            this.Headers.Add(new HeaderOption("Content-Length", $"{this.RangeEnd-this.RangeBegin+1}"));
+            this.Headers.Add(new HeaderOption("Content-Length", $"{this.RangeLength}"));
         }
 
         /// <summary>

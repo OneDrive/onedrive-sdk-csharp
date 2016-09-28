@@ -106,6 +106,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         public async Task UploadAsync(int maxTries = 3, IEnumerable<Option> options = null)
         {
             var uploadTries = 0;
+            var readBuffer = new byte[MaxChunkSize];
             
             while (uploadTries < maxTries && !this.IsComplete)
             {
@@ -117,13 +118,14 @@ namespace Microsoft.OneDrive.Sdk.Helpers
 
                     while (tries < 2) // Retry a given request only once
                     {
-                        using (var stream = new MemoryStream((int)(request.RangeEnd - request.RangeBegin + 1)))
+                        using (var requestBodyStream = new MemoryStream((int)(request.RangeEnd - request.RangeBegin + 1)))
                         {
                             this.uploadStream.Seek(request.RangeBegin, SeekOrigin.Begin);
-                            await this.uploadStream.CopyToAsync(stream).ConfigureAwait(false);
+                            await this.uploadStream.ReadAsync(readBuffer, 0, request.RangeLength).ConfigureAwait(false);
+                            await requestBodyStream.WriteAsync(readBuffer, 0, request.RangeLength).ConfigureAwait(false);
                             try
                             {
-                                await request.PutAsync(stream).ConfigureAwait(false);
+                                await request.PutAsync(requestBodyStream).ConfigureAwait(false);
                             }
                             catch (ServiceException exception)
                             {
