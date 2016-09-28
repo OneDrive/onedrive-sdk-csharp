@@ -117,12 +117,13 @@ namespace Microsoft.OneDrive.Sdk.Helpers
 
                     while (tries < 2) // Retry a given request only once
                     {
-                        using (var stream = new MemoryStream(request.RangeEnd - request.RangeBegin + 1))
+                        using (var stream = new MemoryStream((int)(request.RangeEnd - request.RangeBegin + 1)))
                         {
-                            await this.uploadStream.CopyToAsync(stream);
+                            this.uploadStream.Seek(request.RangeBegin, SeekOrigin.Begin);
+                            await this.uploadStream.CopyToAsync(stream).ConfigureAwait(false);
                             try
                             {
-                                await request.PutAsync(stream);
+                                await request.PutAsync(stream).ConfigureAwait(false);
                             }
                             catch (ServiceException exception)
                             {
@@ -148,7 +149,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
                 uploadTries += 1;
                 if (!this.IsComplete)
                 {
-                    await Task.Delay(1000 * uploadTries * uploadTries);
+                    await Task.Delay(1000 * uploadTries * uploadTries).ConfigureAwait(false);
                 }
             }
 

@@ -18,9 +18,9 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial class UploadChunkRequest : BaseRequest, IUploadChunkRequest
     {
-        public int RangeBegin { get; private set; }
-        public int RangeEnd { get; private set; }
-        public int TotalSessionLength { get; private set; }
+        public long RangeBegin { get; private set; }
+        public long RangeEnd { get; private set; }
+        public long TotalSessionLength { get; private set; }
 
         /// <summary>
         /// Constructs a new UploadChunkRequest.
@@ -32,9 +32,9 @@ namespace Microsoft.OneDrive.Sdk
             string sessionUrl,
             IBaseClient client,
             IEnumerable<Option> options,
-            int rangeBegin,
-            int rangeEnd,
-            int totalSessionLength)
+            long rangeBegin,
+            long rangeEnd,
+            long totalSessionLength)
             : base(sessionUrl, client, options)
         {
             this.RangeBegin = rangeBegin;
