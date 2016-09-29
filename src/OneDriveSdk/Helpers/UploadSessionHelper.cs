@@ -15,15 +15,16 @@ namespace Microsoft.OneDrive.Sdk.Helpers
 
     public class UploadSessionHelper
     {
-        private const int MaxChunkSize = 10 * 1024 * 1024;
+        private const int DefaultMaxChunkSize = 10 * 1024 * 1024;
 
         public UploadSession Session { get; private set; }
+        private IBaseClient client;
         private Stream uploadStream;
         private int length;
+        private readonly int maxChunkSize;
         private List<Tuple<int, int>> rangesRemaining;
-        private IBaseClient client;
          
-        public UploadSessionHelper(UploadSession session, IBaseClient client, Stream uploadStream, int streamLength)
+        public UploadSessionHelper(UploadSession session, IBaseClient client, Stream uploadStream, int streamLength, int maxChunkSize = -1)
         {
             if (!uploadStream.CanRead || !uploadStream.CanSeek)
             {
@@ -34,7 +35,8 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             this.client = client;
             this.uploadStream = uploadStream;
             this.length = streamLength;
-            this.rangesRemaining = new List<Tuple<int, int>> { new Tuple<int, int> (0, streamLength - 1) };
+            this.rangesRemaining = this.GetRangesRemaining(session);
+            this.maxChunkSize = maxChunkSize < 0 ? DefaultMaxChunkSize : maxChunkSize;
         }
 
         public IEnumerable<UploadChunkRequest> GetUploadChunkRequests(IEnumerable<Option> options = null)
@@ -62,7 +64,8 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         }
 
         /// <summary>
-        /// Get the status of the session.
+        /// Get the status of the session. Stores returned session internally.
+        /// Updates internal list of ranges remaining to be uploaded (according to the server).
         /// </summary>
         /// <returns>UploadSession returned by the server.</returns>
         public async Task<UploadSession> UpdateSessionStatusAsync()
@@ -70,24 +73,28 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             var request = new UploadSessionRequest(this.Session, this.client, null);
             var newSession = await request.GetAsync();
             
-            // nextExpectedRanges: https://dev.onedrive.com/items/upload_large_files.htm
-            // Sample: ["12345-55232","77829-99375"]
-            // Also, second number in range can be blank, which means 'until the end'
-            var newRangesRemaining = new List<Tuple<int, int>>();
-            foreach (var range in newSession.NextExpectedRanges)
-            {
-                var rangeSpecifiers = range.Split('-');
-                newRangesRemaining.Add(new Tuple<int, int>(
-                    int.Parse(rangeSpecifiers[0]),
-                    string.IsNullOrEmpty(rangeSpecifiers[1])
-                        ? this.length - 1
-                        : int.Parse(rangeSpecifiers[1])));
-            }
+            var newRangesRemaining = this.GetRangesRemaining(newSession);
 
             this.rangesRemaining = newRangesRemaining;
             newSession.UploadUrl = this.Session.UploadUrl; // Sometimes the UploadUrl is not returned
             this.Session = newSession;
             return newSession;
+        }
+
+        private List<Tuple<int, int>> GetRangesRemaining(UploadSession session)
+        {
+            // nextExpectedRanges: https://dev.onedrive.com/items/upload_large_files.htm
+            // Sample: ["12345-55232","77829-99375"]
+            // Also, second number in range can be blank, which means 'until the end'
+            var newRangesRemaining = new List<Tuple<int, int>>();
+            foreach (var range in session.NextExpectedRanges)
+            {
+                var rangeSpecifiers = range.Split('-');
+                newRangesRemaining.Add(new Tuple<int, int>(int.Parse(rangeSpecifiers[0]),
+                    string.IsNullOrEmpty(rangeSpecifiers[1]) ? this.length - 1 : int.Parse(rangeSpecifiers[1])));
+            }
+
+            return newRangesRemaining;
         }
 
         public async Task DeleteSession()
@@ -104,7 +111,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         public async Task<Item> UploadAsync(int maxTries = 3, IEnumerable<Option> options = null)
         {
             var uploadTries = 0;
-            var readBuffer = new byte[MaxChunkSize];
+            var readBuffer = new byte[this.maxChunkSize];
             
             while (uploadTries < maxTries)
             {
@@ -167,10 +174,10 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             throw new TaskCanceledException("Upload failed too many times.");
         }
 
-        private static int NextChunkSize(int rangeBegin, int rangeEnd)
+        private int NextChunkSize(int rangeBegin, int rangeEnd)
         {
-            return (rangeEnd - rangeBegin) > MaxChunkSize
-                ? MaxChunkSize
+            return (rangeEnd - rangeBegin) > this.maxChunkSize
+                ? this.maxChunkSize
                 : rangeEnd - rangeBegin + 1;
         }
     }

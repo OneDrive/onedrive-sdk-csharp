@@ -44,9 +44,6 @@ namespace Microsoft.OneDrive.Sdk
             this.RangeBegin = rangeBegin;
             this.RangeEnd = rangeEnd;
             this.TotalSessionLength = totalSessionLength;
-            //this.Headers.Add(new HeaderOption("Content-Range",
-            //    $"bytes {this.RangeBegin}-{this.RangeEnd}/{this.TotalSessionLength}"));
-            //this.Headers.Add(new HeaderOption("Content-Length", $"{this.RangeLength}"));
         }
 
         /// <summary>
