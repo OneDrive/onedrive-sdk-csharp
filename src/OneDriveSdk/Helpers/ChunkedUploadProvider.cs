@@ -9,13 +9,17 @@ namespace Microsoft.OneDrive.Sdk.Helpers
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
 
-    public class UploadSessionHelper
+    /// <summary>
+    /// Use this class to make resumable uploads or to upload large files. This
+    /// class allows the client to control the size of chunks uploaded (for example, can be useful
+    /// to use small chunks if the connection is slow). Also allows the client to
+    /// pause an upload and resume later.
+    /// </summary>
+    public class ChunkedUploadProvider
     {
-        private const int DefaultMaxChunkSize = 10 * 1024 * 1024;
+        private const int DefaultMaxChunkSize = 5 * 1024 * 1024;
 
         public UploadSession Session { get; private set; }
         private IBaseClient client;
@@ -33,9 +37,9 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         /// <param name="uploadStream">Readable, seekable stream to be uploaded.</param>
         /// <param name="totalUploadLength">Total length of file to uploaded. <paramref name="uploadStream"/> must have at least
         /// this many bytes.</param>
-        /// <param name="maxChunkSize">Max size of each chunk to be uploaded. If less than 0, default value of 10 MB is used. Increment of 320 kb is
-        /// recommended.</param>
-        public UploadSessionHelper(UploadSession session, IBaseClient client, Stream uploadStream, int totalUploadLength, int maxChunkSize = -1)
+        /// <param name="maxChunkSize">Max size of each chunk to be uploaded. Multiple of 320 KiB (320 * 1024) is required.
+        /// If less than 0, default value of 5 MiB is used. .</param>
+        public ChunkedUploadProvider(UploadSession session, IBaseClient client, Stream uploadStream, int totalUploadLength, int maxChunkSize = -1)
         {
             if (!uploadStream.CanRead || !uploadStream.CanSeek)
             {
@@ -48,6 +52,10 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             this.totalUploadLength = totalUploadLength;
             this.rangesRemaining = this.GetRangesRemaining(session);
             this.maxChunkSize = maxChunkSize < 0 ? DefaultMaxChunkSize : maxChunkSize;
+            if (this.maxChunkSize%(320*1024) != 0)
+            {
+                throw new ArgumentException("Max chunk size must be a multiple of 320 KiB", nameof(maxChunkSize));
+            }
         }
 
         /// <summary>
@@ -133,6 +141,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         {
             var uploadTries = 0;
             var readBuffer = new byte[this.maxChunkSize];
+            var trackedExceptions = new List<ServiceException>();
             
             while (uploadTries < maxTries)
             {
@@ -140,46 +149,11 @@ namespace Microsoft.OneDrive.Sdk.Helpers
 
                 foreach (var request in chunkRequests)
                 {
-                    var tries = 0;
-                    var requestSucceeded = false;
-                    this.uploadStream.Seek(request.RangeBegin, SeekOrigin.Begin);
-                    await this.uploadStream.ReadAsync(readBuffer, 0, request.RangeLength).ConfigureAwait(false);
+                    var result = await this.GetChunkRequestResponseAsync(request, readBuffer, trackedExceptions);
 
-                    while (tries < 2 && !requestSucceeded) // Retry a given request only once
+                    if (result.UploadSucceeded)
                     {
-                        using (var requestBodyStream = new MemoryStream(request.RangeLength))
-                        {
-                            await requestBodyStream.WriteAsync(readBuffer, 0, request.RangeLength).ConfigureAwait(false);
-                            requestBodyStream.Seek(0, SeekOrigin.Begin);
-
-                            try
-                            {
-                                var result = await request.PutAsync(requestBodyStream).ConfigureAwait(false);
-                                if (result.UploadSucceeded)
-                                {
-                                    return result.ItemResponse;
-                                }
-
-                                requestSucceeded = true;
-                            }
-                            catch (ServiceException exception)
-                            {
-                                if (exception.IsMatch("generalException") || exception.IsMatch("timeout"))
-                                {
-                                    // Swallow and retry
-                                    tries += 1;
-                                }
-                                else if (exception.IsMatch("invalidRange"))
-                                {
-                                    // Range already received, so a previous request was successful
-                                    requestSucceeded = true;
-                                }
-                                else
-                                {
-                                    throw;
-                                }
-                            }
-                        }
+                        return result.ItemResponse;
                     }
                 }
 
@@ -195,63 +169,56 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             throw new TaskCanceledException("Upload failed too many times.");
         }
 
+        private async Task<UploadChunkResult> GetChunkRequestResponseAsync(UploadChunkRequest request, byte[] readBuffer, ICollection<ServiceException> exceptionTrackingList)
+        {
+            var firstAttempt = true;
+            this.uploadStream.Seek(request.RangeBegin, SeekOrigin.Begin);
+            await this.uploadStream.ReadAsync(readBuffer, 0, request.RangeLength).ConfigureAwait(false);
+
+            while (true)
+            {
+                using (var requestBodyStream = new MemoryStream(request.RangeLength))
+                {
+                    await requestBodyStream.WriteAsync(readBuffer, 0, request.RangeLength).ConfigureAwait(false);
+                    requestBodyStream.Seek(0, SeekOrigin.Begin);
+
+                    try
+                    {
+                        return await request.PutAsync(requestBodyStream).ConfigureAwait(false);
+                    }
+                    catch (ServiceException exception)
+                    {
+                        if (exception.IsMatch("generalException") || exception.IsMatch("timeout"))
+                        {
+                            if (firstAttempt)
+                            {
+                                firstAttempt = false;
+                                exceptionTrackingList.Add(exception);
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        else if (exception.IsMatch("invalidRange"))
+                        {
+                            // Succeeded previously, but nothing to return right now
+                            return new UploadChunkResult();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+            }
+        }
+
         private int NextChunkSize(int rangeBegin, int rangeEnd)
         {
             return (rangeEnd - rangeBegin) > this.maxChunkSize
                 ? this.maxChunkSize
                 : rangeEnd - rangeBegin + 1;
-        }
-    }
-
-    public class UploadSessionRequest : BaseRequest
-    {
-        private readonly UploadSession session;
-
-        public UploadSessionRequest(UploadSession session, IBaseClient client, IEnumerable<Option> options)
-            :base(session.UploadUrl, client, options)
-        {
-            this.session = session;
-        }
-
-        /// <summary>
-        /// Deletes the specified Session
-        /// </summary>
-        /// <returns>The task to await.</returns>
-        public Task DeleteAsync()
-        {
-            return this.DeleteAsync(CancellationToken.None);
-        }
-
-        /// <summary>
-        /// Deletes the specified Session
-        /// </summary>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>The task to await.</returns>
-        public async Task DeleteAsync(CancellationToken cancellationToken)
-        {
-            this.Method = "DELETE";
-            await this.SendAsync<UploadSession>(null, cancellationToken).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Gets the specified UploadSession.
-        /// </summary>
-        /// <returns>The Item.</returns>
-        public Task<UploadSession> GetAsync()
-        {
-            return this.GetAsync(CancellationToken.None);
-        }
-
-        /// <summary>
-        /// Gets the specified UploadSession.
-        /// </summary>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the request.</param>
-        /// <returns>The Item.</returns>
-        public async Task<UploadSession> GetAsync(CancellationToken cancellationToken)
-        {
-            this.Method = "GET";
-            var retrievedEntity = await this.SendAsync<UploadSession>(null, cancellationToken).ConfigureAwait(false);
-            return retrievedEntity;
         }
     }
 }

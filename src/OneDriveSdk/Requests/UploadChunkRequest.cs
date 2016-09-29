@@ -4,6 +4,7 @@
 
 using System.Net;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 
 namespace Microsoft.OneDrive.Sdk
 {
@@ -86,15 +87,31 @@ namespace Microsoft.OneDrive.Sdk
                     }
                     else
                     {
-                        return new UploadChunkResult
-                            {
-                                UploadSession =
-                                    this.Client.HttpProvider.Serializer.DeserializeObject<UploadSession>(responseString)
-                            };
+                        try
+                        {
+                            return new UploadChunkResult
+                                {
+                                    UploadSession =
+                                        this.Client.HttpProvider.Serializer.DeserializeObject<UploadSession>(responseString)
+                                };
+                        }
+                        catch (SerializationException)
+                        {
+                            throw new ServiceException(new Error()
+                                {
+                                    Code = OneDriveErrorCode.GeneralException.ToString(),
+                                    Message = "Error deserializing UploadSession response"
+                                });
+                        }
+                        
                     }
                 }
 
-                return default(UploadChunkResult);
+                throw new ServiceException(new Error
+                    {
+                        Code = OneDriveErrorCode.GeneralException.ToString(),
+                        Message = "UploadChunkRequest received no response."
+                    });
             }
         }
 
@@ -119,7 +136,7 @@ namespace Microsoft.OneDrive.Sdk
 
                 request.Content = new StreamContent(stream);
                 request.Content.Headers.ContentRange =
-                    ContentRangeHeaderValue.Parse($"bytes {this.RangeBegin}-{this.RangeEnd}/{this.TotalSessionLength}");
+                    new ContentRangeHeaderValue(this.RangeBegin, this.RangeEnd, this.TotalSessionLength);
                 request.Content.Headers.ContentLength = this.RangeLength;
 
                 return await this.Client.HttpProvider.SendAsync(request, completionOption, cancellationToken).ConfigureAwait(false);
