@@ -20,11 +20,22 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         public UploadSession Session { get; private set; }
         private IBaseClient client;
         private Stream uploadStream;
-        private int length;
+        private int totalUploadLength;
         private readonly int maxChunkSize;
         private List<Tuple<int, int>> rangesRemaining;
-         
-        public UploadSessionHelper(UploadSession session, IBaseClient client, Stream uploadStream, int streamLength, int maxChunkSize = -1)
+        
+        /// <summary>
+        /// Helps with resumable uploads. Generates chunk requests based on <paramref name="session"/>
+        /// information, and can control uploading of requests using <paramref name="client"/>
+        /// </summary>
+        /// <param name="session">Session information.</param>
+        /// <param name="client">Client used to upload chunks.</param>
+        /// <param name="uploadStream">Readable, seekable stream to be uploaded.</param>
+        /// <param name="totalUploadLength">Total length of file to uploaded. <paramref name="uploadStream"/> must have at least
+        /// this many bytes.</param>
+        /// <param name="maxChunkSize">Max size of each chunk to be uploaded. If less than 0, default value of 10 MB is used. Increment of 320 kb is
+        /// recommended.</param>
+        public UploadSessionHelper(UploadSession session, IBaseClient client, Stream uploadStream, int totalUploadLength, int maxChunkSize = -1)
         {
             if (!uploadStream.CanRead || !uploadStream.CanSeek)
             {
@@ -34,11 +45,17 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             this.Session = session;
             this.client = client;
             this.uploadStream = uploadStream;
-            this.length = streamLength;
+            this.totalUploadLength = totalUploadLength;
             this.rangesRemaining = this.GetRangesRemaining(session);
             this.maxChunkSize = maxChunkSize < 0 ? DefaultMaxChunkSize : maxChunkSize;
         }
 
+        /// <summary>
+        /// Get the series of requests needed to complete the upload session. Call <see cref="UpdateSessionStatusAsync"/>
+        /// first to update the internal session information.
+        /// </summary>
+        /// <param name="options">Options to be applied to each request.</param>
+        /// <returns>All requests currently needed to complete the upload session.</returns>
         public IEnumerable<UploadChunkRequest> GetUploadChunkRequests(IEnumerable<Option> options = null)
         {
             foreach (var range in this.rangesRemaining)
@@ -54,7 +71,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
                         options,
                         currentRangeBegins,
                         currentRangeBegins + nextChunkSize - 1,
-                        this.length);
+                        this.totalUploadLength);
                     
                     yield return uploadRequest;
 
@@ -91,12 +108,16 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             {
                 var rangeSpecifiers = range.Split('-');
                 newRangesRemaining.Add(new Tuple<int, int>(int.Parse(rangeSpecifiers[0]),
-                    string.IsNullOrEmpty(rangeSpecifiers[1]) ? this.length - 1 : int.Parse(rangeSpecifiers[1])));
+                    string.IsNullOrEmpty(rangeSpecifiers[1]) ? this.totalUploadLength - 1 : int.Parse(rangeSpecifiers[1])));
             }
 
             return newRangesRemaining;
         }
 
+        /// <summary>
+        /// Delete the session.
+        /// </summary>
+        /// <returns>Once returned task is complete, the session has been deleted.</returns>
         public async Task DeleteSession()
         {
             var request = new UploadSessionRequest(this.Session, this.client, null);
@@ -106,8 +127,8 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         /// <summary>
         /// Upload the whole session.
         /// </summary>
-        /// <param name="maxTries">Number of times to retry a given chunk request before giving up.</param>
-        /// <returns></returns>
+        /// <param name="maxTries">Number of times to retry entire session before giving up.</param>
+        /// <returns>Item information returned by server.</returns>
         public async Task<Item> UploadAsync(int maxTries = 3, IEnumerable<Option> options = null)
         {
             var uploadTries = 0;

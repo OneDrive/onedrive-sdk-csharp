@@ -27,11 +27,15 @@ namespace Microsoft.OneDrive.Sdk
         public int RangeLength => (int)(this.RangeEnd - this.RangeBegin + 1);
 
         /// <summary>
-        /// Constructs a new UploadChunkRequest.
+        /// Request for uploading one chunk of a session
         /// </summary>
-        /// <param name="requestUrl">The URL for the built request.</param>
-        /// <param name="client">The <see cref="IBaseClient"/> for handling requests.</param>
-        /// <param name="options">Query and header option name value pairs for the request.</param>
+        /// <param name="sessionUrl">URL to upload the chunk.</param>
+        /// <param name="client">Client used for sending the chunk.</param>
+        /// <param name="options">Options</param>
+        /// <param name="rangeBegin">Beginning of range of this chunk</param>
+        /// <param name="rangeEnd">End of range of this chunk</param>
+        /// <param name="totalSessionLength">Total session length. This MUST be consistent
+        /// across all chunks.</param>
         public UploadChunkRequest(
             string sessionUrl,
             IBaseClient client,
