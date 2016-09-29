@@ -37,8 +37,6 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             this.rangesRemaining = new List<Tuple<int, int>> { new Tuple<int, int> (0, streamLength - 1) };
         }
 
-        public bool IsComplete => this.rangesRemaining.Count == 0;
-
         public IEnumerable<UploadChunkRequest> GetUploadChunkRequests(IEnumerable<Option> options = null)
         {
             foreach (var range in this.rangesRemaining)
@@ -103,40 +101,50 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         /// </summary>
         /// <param name="maxTries">Number of times to retry a given chunk request before giving up.</param>
         /// <returns></returns>
-        public async Task UploadAsync(int maxTries = 3, IEnumerable<Option> options = null)
+        public async Task<Item> UploadAsync(int maxTries = 3, IEnumerable<Option> options = null)
         {
             var uploadTries = 0;
             var readBuffer = new byte[MaxChunkSize];
             
-            while (uploadTries < maxTries && !this.IsComplete)
+            while (uploadTries < maxTries)
             {
                 var chunkRequests = this.GetUploadChunkRequests(options);
 
                 foreach (var request in chunkRequests)
                 {
                     var tries = 0;
+                    var requestSucceeded = false;
+                    this.uploadStream.Seek(request.RangeBegin, SeekOrigin.Begin);
+                    await this.uploadStream.ReadAsync(readBuffer, 0, request.RangeLength).ConfigureAwait(false);
 
-                    while (tries < 2) // Retry a given request only once
+                    while (tries < 2 && !requestSucceeded) // Retry a given request only once
                     {
-                        using (var requestBodyStream = new MemoryStream((int)(request.RangeEnd - request.RangeBegin + 1)))
+                        using (var requestBodyStream = new MemoryStream(request.RangeLength))
                         {
-                            this.uploadStream.Seek(request.RangeBegin, SeekOrigin.Begin);
-                            await this.uploadStream.ReadAsync(readBuffer, 0, request.RangeLength).ConfigureAwait(false);
                             await requestBodyStream.WriteAsync(readBuffer, 0, request.RangeLength).ConfigureAwait(false);
+                            requestBodyStream.Seek(0, SeekOrigin.Begin);
+
                             try
                             {
-                                await request.PutAsync(requestBodyStream).ConfigureAwait(false);
+                                var result = await request.PutAsync(requestBodyStream).ConfigureAwait(false);
+                                if (result.UploadSucceeded)
+                                {
+                                    return result.ItemResponse;
+                                }
+
+                                requestSucceeded = true;
                             }
                             catch (ServiceException exception)
                             {
-                                if (exception.IsMatch("generalException"))
+                                if (exception.IsMatch("generalException") || exception.IsMatch("timeout"))
                                 {
                                     // Swallow and retry
                                     tries += 1;
                                 }
-                                else if (exception.IsMatch("timeout"))
+                                else if (exception.IsMatch("invalidRange"))
                                 {
-                                    // Don't waste a retry on a timeout
+                                    // Range already received, so a previous request was successful
+                                    requestSucceeded = true;
                                 }
                                 else
                                 {
@@ -149,16 +157,14 @@ namespace Microsoft.OneDrive.Sdk.Helpers
 
                 await this.UpdateSessionStatusAsync();
                 uploadTries += 1;
-                if (!this.IsComplete)
+                if (uploadTries < maxTries)
                 {
-                    await Task.Delay(1000 * uploadTries * uploadTries).ConfigureAwait(false);
+                    // Exponential backoff in case of failures.
+                    await Task.Delay(2000 * uploadTries * uploadTries).ConfigureAwait(false);
                 }
             }
 
-            if (!this.IsComplete)
-            {
-                throw new TaskCanceledException("Task was cancelled because upload failed too many times.");
-            }
+            throw new TaskCanceledException("Upload failed too many times.");
         }
 
         private static int NextChunkSize(int rangeBegin, int rangeEnd)

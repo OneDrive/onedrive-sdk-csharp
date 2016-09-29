@@ -21,6 +21,6 @@ namespace Microsoft.OneDrive.Sdk
         /// Puts the specified Chunk.
         /// </summary>
         /// <returns>The task to await.</returns>
-        Task<UploadSession> PutAsync(Stream stream);
+        Task<UploadChunkResult> PutAsync(Stream stream);
     }
 }
