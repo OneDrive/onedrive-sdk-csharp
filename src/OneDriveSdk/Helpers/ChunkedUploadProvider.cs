@@ -24,9 +24,9 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         public UploadSession Session { get; private set; }
         private IBaseClient client;
         private Stream uploadStream;
-        private int totalUploadLength;
         private readonly int maxChunkSize;
-        private List<Tuple<int, int>> rangesRemaining;
+        private List<Tuple<long, long>> rangesRemaining;
+        private long totalUploadLength => uploadStream.Length;
         
         /// <summary>
         /// Helps with resumable uploads. Generates chunk requests based on <paramref name="session"/>
@@ -34,12 +34,10 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         /// </summary>
         /// <param name="session">Session information.</param>
         /// <param name="client">Client used to upload chunks.</param>
-        /// <param name="uploadStream">Readable, seekable stream to be uploaded.</param>
-        /// <param name="totalUploadLength">Total length of file to uploaded. <paramref name="uploadStream"/> must have at least
-        /// this many bytes.</param>
+        /// <param name="uploadStream">Readable, seekable stream to be uploaded. Length of session is determined via uploadStream.Length</param>
         /// <param name="maxChunkSize">Max size of each chunk to be uploaded. Multiple of 320 KiB (320 * 1024) is required.
         /// If less than 0, default value of 5 MiB is used. .</param>
-        public ChunkedUploadProvider(UploadSession session, IBaseClient client, Stream uploadStream, int totalUploadLength, int maxChunkSize = -1)
+        public ChunkedUploadProvider(UploadSession session, IBaseClient client, Stream uploadStream, int maxChunkSize = -1)
         {
             if (!uploadStream.CanRead || !uploadStream.CanSeek)
             {
@@ -49,7 +47,6 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             this.Session = session;
             this.client = client;
             this.uploadStream = uploadStream;
-            this.totalUploadLength = totalUploadLength;
             this.rangesRemaining = this.GetRangesRemaining(session);
             this.maxChunkSize = maxChunkSize < 0 ? DefaultMaxChunkSize : maxChunkSize;
             if (this.maxChunkSize%(320*1024) != 0)
@@ -104,22 +101,6 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             newSession.UploadUrl = this.Session.UploadUrl; // Sometimes the UploadUrl is not returned
             this.Session = newSession;
             return newSession;
-        }
-
-        private List<Tuple<int, int>> GetRangesRemaining(UploadSession session)
-        {
-            // nextExpectedRanges: https://dev.onedrive.com/items/upload_large_files.htm
-            // Sample: ["12345-55232","77829-99375"]
-            // Also, second number in range can be blank, which means 'until the end'
-            var newRangesRemaining = new List<Tuple<int, int>>();
-            foreach (var range in session.NextExpectedRanges)
-            {
-                var rangeSpecifiers = range.Split('-');
-                newRangesRemaining.Add(new Tuple<int, int>(int.Parse(rangeSpecifiers[0]),
-                    string.IsNullOrEmpty(rangeSpecifiers[1]) ? this.totalUploadLength - 1 : int.Parse(rangeSpecifiers[1])));
-            }
-
-            return newRangesRemaining;
         }
 
         /// <summary>
@@ -214,11 +195,28 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             }
         }
 
-        private int NextChunkSize(int rangeBegin, int rangeEnd)
+        internal List<Tuple<long, long>> GetRangesRemaining(UploadSession session)
         {
-            return (rangeEnd - rangeBegin) > this.maxChunkSize
+            // nextExpectedRanges: https://dev.onedrive.com/items/upload_large_files.htm
+            // Sample: ["12345-55232","77829-99375"]
+            // Also, second number in range can be blank, which means 'until the end'
+            var newRangesRemaining = new List<Tuple<long, long>>();
+            foreach (var range in session.NextExpectedRanges)
+            {
+                var rangeSpecifiers = range.Split('-');
+                newRangesRemaining.Add(new Tuple<long, long>(long.Parse(rangeSpecifiers[0]),
+                    string.IsNullOrEmpty(rangeSpecifiers[1]) ? this.totalUploadLength - 1 : long.Parse(rangeSpecifiers[1])));
+            }
+
+            return newRangesRemaining;
+        }
+
+        private int NextChunkSize(long rangeBegin, long rangeEnd)
+        {
+            var sizeBasedOnRange = (int) (rangeEnd - rangeBegin) + 1;
+            return sizeBasedOnRange > this.maxChunkSize
                 ? this.maxChunkSize
-                : rangeEnd - rangeBegin + 1;
+                : sizeBasedOnRange;
         }
     }
 }
