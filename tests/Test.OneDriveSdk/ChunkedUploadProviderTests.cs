@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Microsoft.Graph;
 
@@ -84,8 +85,8 @@ namespace Test.OneDrive.Sdk
         {
             var chunkSize = 320 * 1024;
             var totalSize = 100;
-            var results = this.SetupGetUploadChunksTest(chunkSize, totalSize, new List<string> {"0-"});
-            var expectedRanges = new List<Tuple<long, long, long>> {new Tuple<long, long, long>(0, 99, 100)};
+            var results = this.SetupGetUploadChunksTest(chunkSize, totalSize, new[] {"0-"});
+            var expectedRanges = new[] {new Tuple<long, long, long>(0, 99, 100)};
             this.AssertChunksAre(this.CreateUploadExpectedChunkRequests(expectedRanges), results);
         }
 
@@ -94,8 +95,8 @@ namespace Test.OneDrive.Sdk
         {
             var chunkSize = 320 * 1024;
             var totalSize = chunkSize*2 + 1;
-            var results = this.SetupGetUploadChunksTest(chunkSize, totalSize, new List<string> { "0-" });
-            var expectedRanges = new List<Tuple<long, long, long>>
+            var results = this.SetupGetUploadChunksTest(chunkSize, totalSize, new[] { "0-" });
+            var expectedRanges = new[]
                 {
                     new Tuple<long, long, long>(0, chunkSize-1, totalSize),
                     new Tuple<long, long, long>(chunkSize, 2*chunkSize-1, totalSize),
@@ -110,12 +111,12 @@ namespace Test.OneDrive.Sdk
             var chunkSize = 320 * 1024;
             var totalSize = chunkSize*5;
             var offset = 20;
-            var results = this.SetupGetUploadChunksTest(chunkSize, totalSize, new List<string>
+            var results = this.SetupGetUploadChunksTest(chunkSize, totalSize, new[]
                 {
                     $"0-{chunkSize}",
                     $"{chunkSize*3 - offset}-"
                 });
-            var expectedRanges = new List<Tuple<long, long, long>>
+            var expectedRanges = new[]
                 {
                     // 0 - chunkSize
                     new Tuple<long, long, long>(0, chunkSize - 1, totalSize),
@@ -133,7 +134,7 @@ namespace Test.OneDrive.Sdk
         {
             var chunkSize = 320*1024;
             var totalSize = 100;
-            var results = this.SetupRangesRemainingTest(chunkSize, totalSize, new List<string> {"0-"});
+            var results = this.SetupRangesRemainingTest(chunkSize, totalSize, new[] {"0-"});
             var expected = new List<Tuple<long, long>> {new Tuple<long, long>(0, 99)};
             this.AssertRangesAre(expected, results);
         }
@@ -143,7 +144,7 @@ namespace Test.OneDrive.Sdk
         {
             var chunkSize = 320*1024;
             var totalSize = chunkSize*2 + 1;
-            var results = this.SetupRangesRemainingTest(chunkSize, totalSize, new List<string> { "0-" });
+            var results = this.SetupRangesRemainingTest(chunkSize, totalSize, new[] { "0-" });
             var expected = new List<Tuple<long, long>>
                 {
                     new Tuple<long, long>(0, chunkSize*2)
@@ -156,13 +157,13 @@ namespace Test.OneDrive.Sdk
         {
             var chunkSize = 320*1024;
             var totalSize = chunkSize*5;
-            var results = this.SetupRangesRemainingTest(chunkSize, totalSize, new List<string>
+            var results = this.SetupRangesRemainingTest(chunkSize, totalSize, new[]
                 {
                     $"0-{chunkSize - 1}",
                     $"{chunkSize*2}-{chunkSize*3}",
                     $"{chunkSize*4}-"
                 });
-            var expected = new List<Tuple<long, long>>
+            var expected = new[]
                 {
                     new Tuple<long, long>(0, chunkSize - 1),
                     new Tuple<long, long>(chunkSize*2, chunkSize*3),
@@ -171,10 +172,16 @@ namespace Test.OneDrive.Sdk
             this.AssertRangesAre(expected, results);
         }
 
+        [TestMethod]
+        public void GetChunkRequestResponseTest_Success()
+        {
+            
+        }
+
         private List<Tuple<long, long>> SetupRangesRemainingTest(
             int chunkSize,
             long currentFileSize,
-            List<string> nextExpectedRanges)
+            IList<string> nextExpectedRanges)
         {
             this.StreamSetup(true);
             var provider = new TestChunkedUploadProvider(
@@ -207,7 +214,51 @@ namespace Test.OneDrive.Sdk
                 chunkSize);
 
             return provider.GetUploadChunkRequests();
-        } 
+        }
+
+        // Things to test
+        // Throw an exception once => it ends up in TrackedExceptions
+        // Throw an exception twice => rethrow (this is handled at the test level)
+        // Thing returned by PutAsync is returned
+        private UploadChunkResult SetupGetChunkResponseTest(Type exceptionType = null, int triesBeforeRethrow = 0)
+        {
+            var chunkSize = 320 * 1024;
+            var bytesToUpload = new byte[] { 4, 8, 15, 16 };
+            var trackedExceptions = new List<Exception>();
+            this.uploadSession.Object.NextExpectedRanges = new[] { "0-" };
+            this.uploadStream = new Mock<Stream>();
+            this.uploadStream.Setup(s => s.Length).Returns(bytesToUpload.Length);
+            this.uploadStream.Setup(s => s.ReadAsync(
+                It.IsAny<byte[]>(),
+                It.Is<int>(i => i == 0),
+                It.Is<int>(i => i == bytesToUpload.Length)));
+            this.StreamSetup(true);
+
+            var provider = new ChunkedUploadProvider(
+                this.uploadSession.Object,
+                this.client.Object,
+                this.uploadStream.Object,
+                chunkSize);
+
+            var mockRequest = new Mock<UploadChunkRequest>(
+                this.uploadSession.Object.UploadUrl,
+                this.client.Object,
+                null,
+                0,
+                bytesToUpload.Length - 1,
+                bytesToUpload.Length);
+
+            var triesSoFar = 0;
+            mockRequest.Setup(r => r.PutAsync(It.IsAny<Stream>()))
+                .Returns(Task.FromResult(new UploadChunkResult()));
+
+            var task = provider.GetChunkRequestResponseAsync(
+                mockRequest.Object,
+                bytesToUpload,
+                trackedExceptions);
+            task.Wait();
+            return task.Result;
+        }
 
         private void AssertRangesAre(IList<Tuple<long, long>> rangesExpected, IList<Tuple<long, long>> rangesReceived)
         {
@@ -232,12 +283,13 @@ namespace Test.OneDrive.Sdk
             var receivedSet = new HashSet<Tuple<long, long, long>>();
             foreach (var chunk in receivedChunks)
             {
-                receivedSet.Add(new Tuple<long, long, long>(chunk.RangeBegin, chunk.RangeEnd, chunk.TotalSessionLength));
+                Assert.IsTrue(receivedSet.Add(new Tuple<long, long, long>(chunk.RangeBegin, chunk.RangeEnd, chunk.TotalSessionLength)),
+                    "Duplicate range added");
             }
 
             foreach (var chunk in expectedChunks)
             {
-                Assert.IsTrue(receivedSet.Contains(new Tuple<long, long, long>(chunk.RangeBegin, chunk.RangeEnd, chunk.TotalSessionLength)),
+                Assert.IsTrue(receivedSet.Remove(new Tuple<long, long, long>(chunk.RangeBegin, chunk.RangeEnd, chunk.TotalSessionLength)),
                     $"Expected chunk not found: {chunk.RangeBegin}-{chunk.RangeEnd}/{chunk.TotalSessionLength}");
             }
         }

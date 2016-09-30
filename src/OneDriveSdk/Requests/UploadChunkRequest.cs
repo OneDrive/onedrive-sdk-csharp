@@ -2,6 +2,7 @@
 //  Copyright (c) Microsoft Corporation.  All Rights Reserved.  Licensed under the MIT License.  See License in the project root for license information.
 // ------------------------------------------------------------------------------
 
+using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
@@ -95,15 +96,19 @@ namespace Microsoft.OneDrive.Sdk
                                         this.Client.HttpProvider.Serializer.DeserializeObject<UploadSession>(responseString)
                                 };
                         }
-                        catch (SerializationException)
+                        catch (SerializationException exception)
                         {
                             throw new ServiceException(new Error()
                                 {
                                     Code = OneDriveErrorCode.GeneralException.ToString(),
-                                    Message = "Error deserializing UploadSession response"
+                                    Message = "Error deserializing UploadSession response: " + exception.Message,
+                                    AdditionalData = new Dictionary<string, object>
+                                        {
+                                            { "rawResponse", responseString },
+                                            { "rawHeaders", string.Join(", ", response.Headers.Select(h => $"{h.Key}: {h.Value}"))}
+                                        }
                                 });
                         }
-                        
                     }
                 }
 

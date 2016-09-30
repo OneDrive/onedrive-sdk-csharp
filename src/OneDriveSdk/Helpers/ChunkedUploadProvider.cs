@@ -20,6 +20,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
     public class ChunkedUploadProvider
     {
         private const int DefaultMaxChunkSize = 5 * 1024 * 1024;
+        private const int RequiredChunkSizeIncrement = 320 * 1024;
 
         public UploadSession Session { get; private set; }
         private IBaseClient client;
@@ -49,7 +50,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             this.uploadStream = uploadStream;
             this.rangesRemaining = this.GetRangesRemaining(session);
             this.maxChunkSize = maxChunkSize < 0 ? DefaultMaxChunkSize : maxChunkSize;
-            if (this.maxChunkSize%(320*1024) != 0)
+            if (this.maxChunkSize % RequiredChunkSizeIncrement != 0)
             {
                 throw new ArgumentException("Max chunk size must be a multiple of 320 KiB", nameof(maxChunkSize));
             }
@@ -122,7 +123,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         {
             var uploadTries = 0;
             var readBuffer = new byte[this.maxChunkSize];
-            var trackedExceptions = new List<ServiceException>();
+            var trackedExceptions = new List<Exception>();
             
             while (uploadTries < maxTries)
             {
@@ -147,10 +148,10 @@ namespace Microsoft.OneDrive.Sdk.Helpers
                 }
             }
 
-            throw new TaskCanceledException("Upload failed too many times.");
+            throw new TaskCanceledException("Upload failed too many times. See InnerException for list of exceptions that occured.", new AggregateException(trackedExceptions.ToArray()));
         }
 
-        private async Task<UploadChunkResult> GetChunkRequestResponseAsync(UploadChunkRequest request, byte[] readBuffer, ICollection<ServiceException> exceptionTrackingList)
+        internal async Task<UploadChunkResult> GetChunkRequestResponseAsync(UploadChunkRequest request, byte[] readBuffer, ICollection<Exception> exceptionTrackingList)
         {
             var firstAttempt = true;
             this.uploadStream.Seek(request.RangeBegin, SeekOrigin.Begin);
