@@ -69,7 +69,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The status of the upload. If UploadSession.AdditionalData.ContainsKey("successResponse")
         /// is true, then the item has completed, and the value is the created item from the server.</returns>
-        public async Task<UploadChunkResult> PutAsync(Stream stream, CancellationToken cancellationToken)
+        public virtual async Task<UploadChunkResult> PutAsync(Stream stream, CancellationToken cancellationToken)
         {
             this.Method = "PUT";
             using (var response = await this.SendRequestAsync(stream, cancellationToken).ConfigureAwait(false))

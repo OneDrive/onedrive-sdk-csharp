@@ -62,7 +62,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         /// </summary>
         /// <param name="options">Options to be applied to each request.</param>
         /// <returns>All requests currently needed to complete the upload session.</returns>
-        public IEnumerable<UploadChunkRequest> GetUploadChunkRequests(IEnumerable<Option> options = null)
+        public virtual IEnumerable<UploadChunkRequest> GetUploadChunkRequests(IEnumerable<Option> options = null)
         {
             foreach (var range in this.rangesRemaining)
             {
@@ -91,7 +91,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
         /// Updates internal list of ranges remaining to be uploaded (according to the server).
         /// </summary>
         /// <returns>UploadSession returned by the server.</returns>
-        public async Task<UploadSession> UpdateSessionStatusAsync()
+        public virtual async Task<UploadSession> UpdateSessionStatusAsync()
         {
             var request = new UploadSessionRequest(this.Session, this.client, null);
             var newSession = await request.GetAsync();
@@ -151,7 +151,7 @@ namespace Microsoft.OneDrive.Sdk.Helpers
             throw new TaskCanceledException("Upload failed too many times. See InnerException for list of exceptions that occured.", new AggregateException(trackedExceptions.ToArray()));
         }
 
-        internal async Task<UploadChunkResult> GetChunkRequestResponseAsync(UploadChunkRequest request, byte[] readBuffer, ICollection<Exception> exceptionTrackingList)
+        public virtual async Task<UploadChunkResult> GetChunkRequestResponseAsync(UploadChunkRequest request, byte[] readBuffer, ICollection<Exception> exceptionTrackingList)
         {
             var firstAttempt = true;
             this.uploadStream.Seek(request.RangeBegin, SeekOrigin.Begin);

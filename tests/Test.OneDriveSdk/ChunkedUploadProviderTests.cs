@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Graph;
@@ -34,11 +35,12 @@ namespace Test.OneDrive.Sdk
         public void TestInitialize()
         {
             this.uploadSession = new Mock<UploadSession>();
-            this.uploadSession.Object.NextExpectedRanges = new List<string> {"0-"};
+            this.uploadSession.Object.NextExpectedRanges = new[] {"0-"};
             this.uploadSession.Object.UploadUrl = "http://www.example.com/api/v1.0";
             this.client = new Mock<IBaseClient>();
             this.uploadStream = new Mock<Stream>();
-            this.myChunkSize = 4242;
+            this.StreamSetup(true);
+            this.myChunkSize = 320 * 1024;
             this.mockChunkUploadProvider = new Mock<ChunkedUploadProvider>();
         }
 
@@ -175,7 +177,114 @@ namespace Test.OneDrive.Sdk
         [TestMethod]
         public void GetChunkRequestResponseTest_Success()
         {
+            var result = this.SetupGetChunkResponseTest(verifyTrackedExceptions: false);
+
+            Assert.IsNotNull(result.ItemResponse, "Expected Item in ItemResponse");
+            Assert.IsTrue(result.UploadSucceeded);
+        }
+
+        [TestMethod]
+        public void GetChunkRequestResponseTest_SuccessAfterOneException()
+        {
+            var exception = new ServiceException(new Error {Code = "GeneralException"});
+            var result = this.SetupGetChunkResponseTest(exception);
+
+            Assert.IsNotNull(result.ItemResponse, "Expected Item in ItemResponse");
+            Assert.IsTrue(result.UploadSucceeded);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ServiceException))]
+        public void GetChunkRequestResponseTest_Fail()
+        {
+            var exception = new ServiceException(new Error { Code = "Timeout" });
+            var result = this.SetupGetChunkResponseTest(exception, failsOnce: false);
+        }
+
+        [TestMethod]
+        public void GetChunkRequestResponseTest_InvalidRange()
+        {
+            var exception = new ServiceException(new Error { Code = "InvalidRange" });
+            var result = this.SetupGetChunkResponseTest(exception, verifyTrackedExceptions: false);
+
+            Assert.IsNull(result.ItemResponse, "Expected no Item in ItemResponse");
+            Assert.IsNull(result.UploadSession, "Expected no UploadSession in response");
+        }
+
+        [TestMethod]
+        public void UploadAsync_RetryUpToMax()
+        {
+            const string resultId = "awesome";
+            var provider = new Mock<ChunkedUploadProvider>(
+                this.uploadSession.Object,
+                this.client.Object,
+                this.uploadStream.Object,
+                this.myChunkSize)
+                {
+                    CallBase = true
+                };
+
+            var mockRequest = new Mock<UploadChunkRequest>(
+                "http://www.example.com/api/v1.0",
+                this.client.Object,
+                null,
+                0,
+                1,
+                2);
+
+            var emptyList = new List<UploadChunkRequest>();
+            var singleRequest = new List<UploadChunkRequest> {mockRequest.Object};
+
+            provider.SetupSequence(p => p.GetUploadChunkRequests(It.IsAny<IEnumerable<Option>>()))
+                .Returns(emptyList)
+                .Returns(emptyList)
+                .Returns(singleRequest);
+
+            provider.Setup(p => p.GetChunkRequestResponseAsync(
+                It.IsAny<UploadChunkRequest>(),
+                It.IsAny<byte[]>(),
+                It.IsAny<ICollection<Exception>>()))
+                .Returns(Task.FromResult(new UploadChunkResult {ItemResponse = new Item {Id = resultId} }));
+
+            provider.Setup(p => p.UpdateSessionStatusAsync()).Returns(Task.FromResult(new UploadSession()));
+
+            var task = provider.Object.UploadAsync(maxTries: 3);
+            task.Wait();
             
+            Assert.AreEqual(task.Result?.Id, resultId, "Unexpected Item result");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(TaskCanceledException))]
+        public void UploadAsync_TooManyRetries()
+        {
+            var provider = new Mock<ChunkedUploadProvider>(
+                this.uploadSession.Object,
+                this.client.Object,
+                this.uploadStream.Object,
+                this.myChunkSize)
+            {
+                CallBase = true
+            };
+            
+            var emptyList = new List<UploadChunkRequest>();
+
+            provider.SetupSequence(p => p.GetUploadChunkRequests(It.IsAny<IEnumerable<Option>>()))
+                .Returns(emptyList)
+                .Returns(emptyList)
+                .Returns(emptyList);
+
+            provider.Setup(p => p.UpdateSessionStatusAsync()).Returns(Task.FromResult(new UploadSession()));
+
+            try
+            {
+                var task = provider.Object.UploadAsync(maxTries: 3);
+                task.Wait();
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         private List<Tuple<long, long>> SetupRangesRemainingTest(
@@ -215,29 +324,21 @@ namespace Test.OneDrive.Sdk
 
             return provider.GetUploadChunkRequests();
         }
-
-        // Things to test
-        // Throw an exception once => it ends up in TrackedExceptions
-        // Throw an exception twice => rethrow (this is handled at the test level)
-        // Thing returned by PutAsync is returned
-        private UploadChunkResult SetupGetChunkResponseTest(Type exceptionType = null, int triesBeforeRethrow = 0)
+        
+        private UploadChunkResult SetupGetChunkResponseTest(ServiceException serviceException = null, bool failsOnce = true, bool verifyTrackedExceptions = true)
         {
             var chunkSize = 320 * 1024;
             var bytesToUpload = new byte[] { 4, 8, 15, 16 };
             var trackedExceptions = new List<Exception>();
             this.uploadSession.Object.NextExpectedRanges = new[] { "0-" };
-            this.uploadStream = new Mock<Stream>();
-            this.uploadStream.Setup(s => s.Length).Returns(bytesToUpload.Length);
-            this.uploadStream.Setup(s => s.ReadAsync(
-                It.IsAny<byte[]>(),
-                It.Is<int>(i => i == 0),
-                It.Is<int>(i => i == bytesToUpload.Length)));
-            this.StreamSetup(true);
+            var stream = new MemoryStream(bytesToUpload.Length);
+            stream.Write(bytesToUpload, 0, bytesToUpload.Length);
+            stream.Seek(0, SeekOrigin.Begin);
 
             var provider = new ChunkedUploadProvider(
                 this.uploadSession.Object,
                 this.client.Object,
-                this.uploadStream.Object,
+                stream,
                 chunkSize);
 
             var mockRequest = new Mock<UploadChunkRequest>(
@@ -248,15 +349,44 @@ namespace Test.OneDrive.Sdk
                 bytesToUpload.Length - 1,
                 bytesToUpload.Length);
 
-            var triesSoFar = 0;
-            mockRequest.Setup(r => r.PutAsync(It.IsAny<Stream>()))
-                .Returns(Task.FromResult(new UploadChunkResult()));
+            if (serviceException != null && failsOnce)
+            {
+                mockRequest.SetupSequence(r => r.PutAsync(
+                    It.IsAny<Stream>(),
+                    It.IsAny<CancellationToken>()))
+                    .Throws(serviceException)
+                    .Returns(Task.FromResult(new UploadChunkResult() { ItemResponse = new Item()}));
+            }
+            else if (serviceException != null)
+            {
+                mockRequest.Setup(r => r.PutAsync(
+                    It.IsAny<Stream>(),
+                    It.IsAny<CancellationToken>()))
+                    .Throws(serviceException);
+            }
+            else
+            {
+                mockRequest.Setup(r => r.PutAsync(
+                    It.IsAny<Stream>(),
+                    It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(new UploadChunkResult { ItemResponse = new Item()}));
+            }
 
-            var task = provider.GetChunkRequestResponseAsync(
-                mockRequest.Object,
-                bytesToUpload,
-                trackedExceptions);
-            task.Wait();
+            var task = provider.GetChunkRequestResponseAsync(mockRequest.Object, bytesToUpload, trackedExceptions);
+            try
+            {
+                task.Wait();
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
+
+            if (verifyTrackedExceptions)
+            {
+                Assert.IsTrue(trackedExceptions.Contains(serviceException), "Expected ServiceException in TrackedException list");
+            }
+
             return task.Result;
         }
 

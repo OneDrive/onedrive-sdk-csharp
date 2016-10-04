@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 using Microsoft.Graph;
 using Microsoft.OneDrive.Sdk;
@@ -12,7 +13,7 @@ using Microsoft.OneDrive.Sdk.Helpers;
 
 namespace Test.OneDrive.Sdk.Mocks
 {
-    class TestChunkedUploadProvider : ChunkedUploadProvider
+    public class TestChunkedUploadProvider : ChunkedUploadProvider
     {
         public TestChunkedUploadProvider(UploadSession session, IBaseClient client, Stream uploadStream, int maxChunkSize = -1)
             :base(session, client, uploadStream, maxChunkSize)
