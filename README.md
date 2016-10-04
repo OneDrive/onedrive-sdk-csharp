@@ -95,6 +95,7 @@ To run the OneDrivePhotoBrowser sample app your machine will need to be configur
 * [Overview](docs/overview.md)
 * [Auth](docs/auth.md)
 * [Items](docs/items.md)
+* [Chunked uploads](docs/chunked-uploads.md)
 * [Collections](docs/collections.md)
 * [Errors](docs/errors.md)
 * [OneDrive API](http://dev.onedrive.com)
