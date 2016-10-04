@@ -68,8 +68,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ChunkedUploadProviderTests.cs" />
     <Compile Include="Mocks\ExceptionHttpMessageHandler.cs" />
     <Compile Include="Mocks\MockAuthenticationProvider.cs" />
+    <Compile Include="Mocks\TestChunkedUploadProvider.cs" />
     <Compile Include="Mocks\MockHttpProvider.cs" />
     <Compile Include="Mocks\MockSerializer.cs" />
     <Compile Include="Mocks\TestHttpMessageHandler.cs" />
