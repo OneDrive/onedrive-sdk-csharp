@@ -17,7 +17,7 @@ constructor: `new ChunkedUploadProvider(session, oneDriveClient, fileStream, 102
 ## Controlling and Monitoring Large Uploads
 
 You may want to monitor the progress of an upload (perhaps to show a progress bar to the user). You can get finer control of uploading each chunk using
-the skeleton below. You will certainly need to make a few modifications. Also, you can check out how the (`ChunkedUploadProvider`)[../src/OneDriveSdk/Helpers/ChunkedUploadProvider.cs]
+the skeleton below. You will certainly need to make a few modifications. Also, you can check out how the [`ChunkedUploadProvider`](../src/OneDriveSdk/Helpers/ChunkedUploadProvider.cs)
 
 ```csharp
 // Get the provider
