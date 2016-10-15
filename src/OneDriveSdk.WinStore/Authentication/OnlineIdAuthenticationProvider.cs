@@ -25,6 +25,8 @@ namespace Microsoft.OneDrive.Sdk
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using Windows.Security.Authentication.OnlineId;
 
@@ -38,6 +40,26 @@ namespace Microsoft.OneDrive.Sdk
             : base(serviceInfo)
         {
             this.authenticator = new OnlineIdAuthenticator();
+        }
+
+        public override async Task AppendAuthHeaderAsync(HttpRequestMessage request)
+        {
+            // Reauthenticate only when the token expires.
+            if (this.CurrentAccountSession != null
+                && !string.IsNullOrEmpty(this.CurrentAccountSession.AccessToken)
+                && CurrentAccountSession.ExpiresOnUtc != DateTimeOffset.MinValue
+                && CurrentAccountSession.ExpiresOnUtc < DateTimeOffset.UtcNow)
+            {
+                await this.AuthenticateAsync();
+            }
+
+            if (this.CurrentAccountSession != null && !string.IsNullOrEmpty(this.CurrentAccountSession.AccessToken))
+            {
+                var tokenTypeString = string.IsNullOrEmpty(this.CurrentAccountSession.AccessTokenType)
+                    ? Constants.Headers.Bearer
+                    : this.CurrentAccountSession.AccessTokenType;
+                request.Headers.Authorization = new AuthenticationHeaderValue(Constants.Headers.Bearer, this.CurrentAccountSession.AccessToken);
+            }
         }
 
         /// <summary>
