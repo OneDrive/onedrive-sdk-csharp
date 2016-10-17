@@ -50,9 +50,11 @@
     <Compile Include="Requests\Extensions\IDriveSpecialCollectionRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\IItemRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\IOneDriveClientExtensions.cs" />
+    <Compile Include="Requests\Extensions\IShareRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\ItemRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\IThumbnailSetRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\OneDriveClientExtensions.cs" />
+    <Compile Include="Requests\Extensions\ShareRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\ThumbnailSetExtensions.cs" />
     <Compile Include="Requests\Extensions\ThumbnailSetRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Generated\*.cs" />

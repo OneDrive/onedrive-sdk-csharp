@@ -11,5 +11,29 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The item request builder.</returns>
         /// </summary>
         IItemRequestBuilder AppRoot { get; }
+
+        /// <summary>
+        /// Gets documents special folder item request builder.
+        /// <returns>The item request builder.</returns>
+        /// </summary>
+        IItemRequestBuilder Documents { get; }
+
+        /// <summary>
+        /// Gets photos special folder item request builder.
+        /// <returns>The item request builder.</returns>
+        /// </summary>
+        IItemRequestBuilder Photos { get; }
+
+        /// <summary>
+        /// Gets camera roll special folder item request builder.
+        /// <returns>The item request builder.</returns>
+        /// </summary>
+        IItemRequestBuilder CameraRoll { get; }
+
+        /// <summary>
+        /// Gets Music special folder item request builder.
+        /// <returns>The item request builder.</returns>
+        /// </summary>
+        IItemRequestBuilder Music { get; }
     }
 }
