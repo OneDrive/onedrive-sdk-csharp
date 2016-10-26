@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// <summary>
     /// The type ItemCreateLinkRequestBuilder.
     /// </summary>
-    public partial class ItemCreateLinkRequestBuilder : BasePostMethodRequestBuilder<IItemCreateLinkRequest>, IItemCreateLinkRequestBuilder
+    public partial class ItemCreateLinkRequestBuilder : BaseActionMethodRequestBuilder<IItemCreateLinkRequest>, IItemCreateLinkRequestBuilder
     {
         /// <summary>
         /// Constructs a new <see cref="ItemCreateLinkRequestBuilder"/>.
