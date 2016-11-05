@@ -95,16 +95,6 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The <see cref="IItemSearchRequestBuilder"/>.</returns>
         IItemSearchRequestBuilder Search(
             string q = null);
-
-        /// <summary>
-        /// Gets the request builder for ItemInvite.
-        /// </summary>
-        /// <returns>The <see cref="IItemInviteRequestBuilder"/>.</returns>
-        IItemInviteRequestBuilder Invite(string[] roles,
-            Recipient[] recipients,
-            bool requiresSignIn = false,
-            bool sendInvitation = false,
-            string message = null);
-
+    
     }
 }
