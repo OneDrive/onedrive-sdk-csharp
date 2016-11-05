@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// <summary>
     /// The type ItemDeltaRequestBuilder.
     /// </summary>
-    public partial class ItemDeltaRequestBuilder : BaseGetMethodRequestBuilder<IItemDeltaRequest>, IItemDeltaRequestBuilder
+    public partial class ItemDeltaRequestBuilder : BaseFunctionMethodRequestBuilder<IItemDeltaRequest>, IItemDeltaRequestBuilder
     {
         /// <summary>
         /// Constructs a new <see cref="ItemDeltaRequestBuilder"/>.
