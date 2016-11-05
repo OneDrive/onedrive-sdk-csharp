@@ -175,6 +175,27 @@ namespace Microsoft.OneDrive.Sdk
                 this.Client,
                 q);
         }
-    
+
+        /// <summary>
+        /// Gets the request builder for ItemCreateLink.
+        /// </summary>
+        /// <returns>The <see cref="IItemInviteRequestBuilder"/>.</returns>
+        public IItemInviteRequestBuilder Invite(
+            string[] roles,
+            Recipient[] recipients,
+            bool requiresSignIn = false,
+            bool sendInvitation = false,
+            string message = null)
+        {
+            return new ItemInviteRequestBuilder(
+                this.AppendSegmentToRequestUrl("action.invite"),
+                this.Client,
+                roles,
+                recipients,
+                requiresSignIn,
+                sendInvitation,
+                message);
+        }
+
     }
 }

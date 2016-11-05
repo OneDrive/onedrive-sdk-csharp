@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// <summary>
     /// The type DriveRecentRequestBuilder.
     /// </summary>
-    public partial class DriveRecentRequestBuilder : BaseGetMethodRequestBuilder<IDriveRecentRequest>, IDriveRecentRequestBuilder
+    public partial class DriveRecentRequestBuilder : BaseFunctionMethodRequestBuilder<IDriveRecentRequest>, IDriveRecentRequestBuilder
     {
         /// <summary>
         /// Constructs a new <see cref="DriveRecentRequestBuilder"/>.

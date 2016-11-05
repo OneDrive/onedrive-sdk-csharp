@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// <summary>
     /// The type ItemCopyRequestBuilder.
     /// </summary>
-    public partial class ItemCopyRequestBuilder : BasePostMethodRequestBuilder<IItemCopyRequest>, IItemCopyRequestBuilder
+    public partial class ItemCopyRequestBuilder : BaseActionMethodRequestBuilder<IItemCopyRequest>, IItemCopyRequestBuilder
     {
         /// <summary>
         /// Constructs a new <see cref="ItemCopyRequestBuilder"/>.

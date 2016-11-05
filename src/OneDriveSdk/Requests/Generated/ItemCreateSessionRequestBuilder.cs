@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// <summary>
     /// The type ItemCreateSessionRequestBuilder.
     /// </summary>
-    public partial class ItemCreateSessionRequestBuilder : BasePostMethodRequestBuilder<IItemCreateSessionRequest>, IItemCreateSessionRequestBuilder
+    public partial class ItemCreateSessionRequestBuilder : BaseActionMethodRequestBuilder<IItemCreateSessionRequest>, IItemCreateSessionRequestBuilder
     {
         /// <summary>
         /// Constructs a new <see cref="ItemCreateSessionRequestBuilder"/>.

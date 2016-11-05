@@ -15,7 +15,7 @@ namespace Microsoft.OneDrive.Sdk
     /// <summary>
     /// The type ItemSearchRequestBuilder.
     /// </summary>
-    public partial class ItemSearchRequestBuilder : BaseGetMethodRequestBuilder<IItemSearchRequest>, IItemSearchRequestBuilder
+    public partial class ItemSearchRequestBuilder : BaseFunctionMethodRequestBuilder<IItemSearchRequest>, IItemSearchRequestBuilder
     {
         /// <summary>
         /// Constructs a new <see cref="ItemSearchRequestBuilder"/>.
