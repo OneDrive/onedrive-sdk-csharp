@@ -22,14 +22,14 @@ namespace Microsoft.OneDrive.Sdk
         public OneDriveClient(
             IAuthenticationProvider authenticationProvider,
             IHttpProvider httpProvider = null)
-            : this("https://graph.microsoft.com/v1.0", authenticationProvider, httpProvider)
+            : this("https://api.onedrive.com/v1.0", authenticationProvider, httpProvider)
         {
         }
 
         /// <summary>
         /// Instantiates a new OneDriveClient.
         /// </summary>
-        /// <param name="baseUrl">The base service URL. For example, "https://graph.microsoft.com/v1.0."</param>
+        /// <param name="baseUrl">The base service URL. For example, "https://api.onedrive.com/v1.0."</param>
         /// <param name="authenticationProvider">The <see cref="IAuthenticationProvider"/> for authenticating request messages.</param>
         /// <param name="httpProvider">The <see cref="IHttpProvider"/> for sending requests.</param>
         public OneDriveClient(
