@@ -22,6 +22,7 @@ Package.StoreAssociation.xml
 **/bld/
 **/[Bb]in/
 **/[Oo]bj/
+/lib
 
 # NuGet
 *.nupkg
