@@ -51,6 +51,7 @@
     <Compile Include="Requests\Extensions\IItemRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\IOneDriveClientExtensions.cs" />
     <Compile Include="Requests\Extensions\IShareRequestBuilderExtensions.cs" />
+    <Compile Include="Requests\Extensions\ItemDeltaRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\ItemRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\IThumbnailSetRequestBuilderExtensions.cs" />
     <Compile Include="Requests\Extensions\OneDriveClientExtensions.cs" />

@@ -14,5 +14,13 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The item request builder.</returns>
         /// </summary>
         IItemRequestBuilder ItemWithPath(string path);
+
+        /// <summary>
+        /// Gets the request builder for ItemDelta.
+        /// </summary>
+        /// <returns>The <see cref="IItemDeltaRequestBuilder"/>.</returns>
+        IItemDeltaRequestBuilder Delta(
+            string token = null,
+            int? top = null);
     }
 }
