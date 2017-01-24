@@ -137,8 +137,6 @@ namespace Microsoft.OneDrive.Sdk
 
             using (var request = this.GetHttpRequestMessage())
             {
-                await this.Client.AuthenticationProvider.AuthenticateRequestAsync(request).ConfigureAwait(false);
-
                 request.Content = new StreamContent(stream);
                 request.Content.Headers.ContentRange =
                     new ContentRangeHeaderValue(this.RangeBegin, this.RangeEnd, this.TotalSessionLength);
