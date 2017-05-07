@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
   <metadata>
     <id>Microsoft.OneDriveSDK</id>
-    <version>2.0.3</version>
+    <version>2.0.7</version>
     <title>OneDrive .NET SDK</title>
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
@@ -15,14 +15,14 @@
     <tags>onedrive sharepoint files livesdk liveconnect cloud storage microsoftaccount windowsliveid microsoftid windowsphone windowsstore metro xaml html</tags>
     <dependencies>
       <group>
-        <dependency id="Microsoft.Graph.Core" version="1.1.1" />
-        <dependency id="Newtonsoft.Json" version="6.0.2" />
+        <dependency id="Microsoft.Graph.Core" version="1.2.1" />
+        <dependency id="Newtonsoft.Json" version="9.0.1" />
       </group>
     </dependencies>
 
   </metadata>
-    <files>
-        <!-- PCL projects -->
-        <file src="..\src\OneDriveSdk\bin\Release\Microsoft.OneDrive.Sdk.dll" target="lib\portable-net45+netcore45+wpa81+win8\Microsoft.OneDrive.Sdk.dll" />
-    </files>
+  <files>
+    <!-- PCL projects -->
+    <file src="..\lib\Microsoft.OneDrive.Sdk.dll" target="lib\portable-net45+netcore45+wpa81+win8\Microsoft.OneDrive.Sdk.dll" />
+  </files>
 </package>
