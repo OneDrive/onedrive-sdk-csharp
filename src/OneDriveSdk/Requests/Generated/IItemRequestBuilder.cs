@@ -29,7 +29,7 @@ namespace Microsoft.OneDrive.Sdk
         /// <param name="options">The query and header options for the request.</param>
         /// <returns>The built request.</returns>
         IItemRequest Request(IEnumerable<Option> options);
-    
+
         /// <summary>
         /// Gets the request builder for Permissions.
         /// </summary>
@@ -53,13 +53,13 @@ namespace Microsoft.OneDrive.Sdk
         /// </summary>
         /// <returns>The <see cref="IItemThumbnailsCollectionRequestBuilder"/>.</returns>
         IItemThumbnailsCollectionRequestBuilder Thumbnails { get; }
-    
+
         /// <summary>
         /// Gets the request builder for Content.
         /// </summary>
         /// <returns>The <see cref="IItemContentRequestBuilder"/>.</returns>
         IItemContentRequestBuilder Content { get; }
-    
+
         /// <summary>
         /// Gets the request builder for ItemCreateSession.
         /// </summary>
@@ -95,6 +95,16 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The <see cref="IItemSearchRequestBuilder"/>.</returns>
         IItemSearchRequestBuilder Search(
             string q = null);
-    
+
+        /// <summary>
+        /// Gets the request builder for ItemInvite.
+        /// </summary>
+        /// <returns>The <see cref="IItemInviteRequestBuilder"/>.</returns>
+        IItemInviteRequestBuilder Invite(string[] roles,
+            Recipient[] recipients,
+            bool requiresSignIn = false,
+            bool sendInvitation = false,
+            string message = null);
+
     }
 }

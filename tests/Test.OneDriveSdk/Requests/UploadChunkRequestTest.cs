@@ -39,7 +39,7 @@ namespace Test.OneDrive.Sdk.Requests
 
                 this.serializer.Setup(s => s.DeserializeObject<Item>(It.Is<string>(str => str.Equals(responseString))))
                     .Returns(item);
-                
+
                 this.httpProvider.Setup(
                     provider => provider.SendAsync(
                         It.Is<HttpRequestMessage>(
@@ -55,7 +55,7 @@ namespace Test.OneDrive.Sdk.Requests
                                 msg.Headers.Add(AuthorizationHeaderName, AuthorizationHeaderValue);
                                 return Task.FromResult(0);
                             });
-                
+
                 UploadChunkRequest uploadRequest = new UploadChunkRequest(sessionUrl, this.oneDriveClient, null, 0, 100, 200);
 
                 var result = await uploadRequest.PutAsync(uploadStream);
