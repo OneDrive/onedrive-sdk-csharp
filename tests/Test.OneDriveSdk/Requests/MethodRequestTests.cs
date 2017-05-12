@@ -75,7 +75,7 @@ namespace Test.OneDrive.Sdk.Requests
         {
             var baseRequestUrl = "https://api.onedrive.com/v1.0/drive/items/id/oneDrive.delta";
             var expectedRequestUri = new Uri(baseRequestUrl);
-            var deltaRequestBuilder = this.oneDriveClient.Drive.Items["id"].Delta("token") as ItemDeltaRequestBuilder;
+            var deltaRequestBuilder = this.oneDriveClient.Drive.Items["id"].Delta("token", 5) as ItemDeltaRequestBuilder;
 
             Assert.IsNotNull(deltaRequestBuilder, "Unexpected request builder.");
             Assert.AreEqual(expectedRequestUri, new Uri(deltaRequestBuilder.RequestUrl), "Unexpected request URL.");
@@ -84,9 +84,11 @@ namespace Test.OneDrive.Sdk.Requests
             Assert.IsNotNull(deltaRequest, "Unexpected request.");
             Assert.AreEqual(expectedRequestUri, new Uri(deltaRequest.RequestUrl), "Unexpected request URL.");
             Assert.AreEqual("GET", deltaRequest.Method, "Unexpected method.");
-            Assert.AreEqual(1, deltaRequest.QueryOptions.Count, "Unexpected number of query options.");
+            Assert.AreEqual(2, deltaRequest.QueryOptions.Count, "Unexpected number of query options.");
             Assert.AreEqual("token", deltaRequest.QueryOptions[0].Name, "Unexpected query option name.");
-            Assert.AreEqual("token", deltaRequest.QueryOptions[0].Value, "Unexpected query option name.");
+            Assert.AreEqual("token", deltaRequest.QueryOptions[0].Value, "Unexpected query option value.");
+            Assert.AreEqual("top", deltaRequest.QueryOptions[1].Name, "Unexpected query option name.");
+            Assert.AreEqual("5", deltaRequest.QueryOptions[1].Value, "Unexpected query option value.");
         }
 
         [TestMethod]

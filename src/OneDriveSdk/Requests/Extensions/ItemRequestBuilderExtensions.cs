@@ -27,5 +27,21 @@ namespace Microsoft.OneDrive.Sdk
                 string.Format("{0}:{1}:", this.RequestUrl, path),
                 this.Client);
         }
+
+
+        /// <summary>
+        /// Gets the request builder for ItemDelta.
+        /// </summary>
+        /// <returns>The <see cref="IItemDeltaRequestBuilder"/>.</returns>
+        public IItemDeltaRequestBuilder Delta(
+            string token = null,
+            int? top = null)
+        {
+            return new ItemDeltaRequestBuilder(
+                this.AppendSegmentToRequestUrl("oneDrive.delta"),
+                this.Client,
+                token,
+                top);
+        }
     }
 }
