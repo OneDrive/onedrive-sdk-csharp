@@ -9,11 +9,7 @@ namespace Microsoft.OneDrive.Sdk
     /// </summary>
     public partial class ItemRequestBuilder
     {
-        /// <summary>
-        /// Gets children request.
-        /// <returns>The children request.</returns>
-        /// </summary>
-        public IItemRequestBuilder ItemWithPath(string path)
+        internal static string PreparePath(string path)
         {
             if (!string.IsNullOrEmpty(path))
             {
@@ -21,10 +17,21 @@ namespace Microsoft.OneDrive.Sdk
                 {
                     path = string.Format("/{0}", path);
                 }
+
+                path = path.Replace("#", "%23");
             }
 
+            return path;
+        }
+
+        /// <summary>
+        /// Gets children request.
+        /// <returns>The children request.</returns>
+        /// </summary>
+        public IItemRequestBuilder ItemWithPath(string path)
+        {                     
             return new ItemRequestBuilder(
-                string.Format("{0}:{1}:", this.RequestUrl, path),
+                string.Format("{0}:{1}:", this.RequestUrl, PreparePath(path)),
                 this.Client);
         }
     }

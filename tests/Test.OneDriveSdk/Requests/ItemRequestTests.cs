@@ -111,6 +111,63 @@ namespace Test.OneDrive.Sdk.Requests
         }
 
         [TestMethod]
+        public void ItemByPath_BuildRequestWithHashtag()
+        {
+            var expectedRequestUri = new Uri("https://api.onedrive.com/v1.0/drive/root:/item/with/hashtag%23inpath:");
+            var itemRequestBuilder = this.oneDriveClient.Drive.Root.ItemWithPath("item/with/hashtag#inpath") as ItemRequestBuilder;            
+
+            Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequestBuilder.RequestUrl), "Unexpected request URL.");
+
+            var itemRequest = itemRequestBuilder.Request() as ItemRequest;
+            Assert.IsNotNull(itemRequest, "Unexpected request.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
+        }
+
+
+        [TestMethod]
+        public void OneDriveClient_ItemByPath_BuildRequest()
+        {
+            var expectedRequestUri = new Uri("https://api.onedrive.com/v1.0/drive/root:/item/with/path:");
+            var itemRequestBuilder = this.oneDriveClient.ItemWithPath("drive/root:/item/with/path") as ItemRequestBuilder;
+
+            Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequestBuilder.RequestUrl), "Unexpected request URL.");
+
+            var itemRequest = itemRequestBuilder.Request() as ItemRequest;
+            Assert.IsNotNull(itemRequest, "Unexpected request.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
+        }
+
+        [TestMethod]
+        public void OneDriveClient_ItemByPath_BuildRequestWithLeadingSlash()
+        {
+            var expectedRequestUri = new Uri("https://api.onedrive.com/v1.0/drive/root:/item/with/path:");
+            var itemRequestBuilder = this.oneDriveClient.ItemWithPath("/drive/root:/item/with/path") as ItemRequestBuilder;
+
+            Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequestBuilder.RequestUrl), "Unexpected request URL.");
+
+            var itemRequest = itemRequestBuilder.Request() as ItemRequest;
+            Assert.IsNotNull(itemRequest, "Unexpected request.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
+        }
+
+        [TestMethod]
+        public void OneDriveClient_ItemByPath_BuildRequestWithHashtag()
+        {
+            var expectedRequestUri = new Uri("https://api.onedrive.com/v1.0/drive/root:/item/with/hashtag%23inpath:");            
+            var itemRequestBuilder = this.oneDriveClient.ItemWithPath("drive/root:/item/with/hashtag#inpath") as ItemRequestBuilder;
+
+            Assert.IsNotNull(itemRequestBuilder, "Unexpected request builder.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequestBuilder.RequestUrl), "Unexpected request URL.");
+
+            var itemRequest = itemRequestBuilder.Request() as ItemRequest;
+            Assert.IsNotNull(itemRequest, "Unexpected request.");
+            Assert.AreEqual(expectedRequestUri, new Uri(itemRequest.RequestUrl), "Unexpected request URL.");
+        }
+
+        [TestMethod]
         public async Task ItemRequest_CreateAsync()
         {
             await this.RequestWithItemInBody(false);

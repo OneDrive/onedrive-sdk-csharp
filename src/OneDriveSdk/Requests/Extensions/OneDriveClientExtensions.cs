@@ -22,9 +22,9 @@ namespace Microsoft.OneDrive.Sdk
         /// <returns>The item request builder.</returns>
         /// </summary>
         public IItemRequestBuilder ItemWithPath(string path)
-        {
+        {                      
             return new ItemRequestBuilder(
-                string.Format("{0}{1}:", this.BaseUrl, path),
+                string.Format("{0}{1}:", this.BaseUrl, ItemRequestBuilder.PreparePath(path)),
                 this);
         }
     }

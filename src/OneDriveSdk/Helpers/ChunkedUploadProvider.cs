@@ -214,10 +214,10 @@ namespace Microsoft.OneDrive.Sdk.Helpers
 
         private int NextChunkSize(long rangeBegin, long rangeEnd)
         {
-            var sizeBasedOnRange = (int) (rangeEnd - rangeBegin) + 1;
+            var sizeBasedOnRange = (rangeEnd - rangeBegin) + 1;
             return sizeBasedOnRange > this.maxChunkSize
                 ? this.maxChunkSize
-                : sizeBasedOnRange;
+                : (int)sizeBasedOnRange;
         }
     }
 }
