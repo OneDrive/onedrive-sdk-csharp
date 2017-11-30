@@ -117,7 +117,7 @@ namespace Microsoft.OneDrive.Sdk
             ChunkedUploadSessionDescriptor item = null)
         {
             return new ItemCreateSessionRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.createSession"),
+                this.AppendSegmentToRequestUrl("createUploadSession"),
                 this.Client,
                 item);
         }
@@ -131,7 +131,7 @@ namespace Microsoft.OneDrive.Sdk
             ItemReference parentReference = null)
         {
             return new ItemCopyRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.copy"),
+                this.AppendSegmentToRequestUrl("copy"),
                 this.Client,
                 name,
                 parentReference);
@@ -145,7 +145,7 @@ namespace Microsoft.OneDrive.Sdk
             string type)
         {
             return new ItemCreateLinkRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.createLink"),
+                this.AppendSegmentToRequestUrl("createLink"),
                 this.Client,
                 type);
         }
@@ -158,7 +158,7 @@ namespace Microsoft.OneDrive.Sdk
             string token = null)
         {
             return new ItemDeltaRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.delta"),
+                this.AppendSegmentToRequestUrl("delta"),
                 this.Client,
                 token);
         }
@@ -171,7 +171,7 @@ namespace Microsoft.OneDrive.Sdk
             string q = null)
         {
             return new ItemSearchRequestBuilder(
-                this.AppendSegmentToRequestUrl("oneDrive.search"),
+                this.AppendSegmentToRequestUrl("search"),
                 this.Client,
                 q);
         }
@@ -189,7 +189,7 @@ namespace Microsoft.OneDrive.Sdk
             string message = null)
         {
             return new ItemInviteRequestBuilder(
-                this.AppendSegmentToRequestUrl("action.invite"),
+                this.AppendSegmentToRequestUrl("invite"),
                 this.Client,
                 roles,
                 recipients,
