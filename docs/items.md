@@ -20,6 +20,7 @@ Get an Item
 
 ```csharp
 var item = await oneDriveClient
+                     .Drive
                      .Items[itemId]
                      .Request()
                      .GetAsync();
